@@ -1,0 +1,59 @@
+{% import '_macros/form_errors.html' as macro %}
+{% extends 'layouts/security.html' %}
+
+{% block title %}
+Login Page
+{% endblock title %}
+
+{% block form_content %}
+    <div class="row">
+        <div class="col s6 offset-s3 z-depth-4 card-panel center">
+            <form class="login-form" action="{{ url_for('security.login') }}" method="POST" name="login_user_form">
+                {{ login_user_form.hidden_tag() }}
+                <div class="row">
+                    <div class="input-field col s12 center">
+                        <img src="{{ url_for('static', filename='img/openstax.svg') }}">
+                        <div class="disclaimer-blurb">
+                            <p>Note: All information contained in this page is
+                                strictly confidential! Do not copy or repost any
+                                information from this webpage without consent
+                                from the website administrators. Please send any
+                                questions or concerns to
+                                <a href="mailto:phillip.grimaldi@rice.edu?Subject=Openstax%20eGrader"
+                                   target="_top">phillip.grimaldi@rice.edu</a>.
+                                This page is optimized to work in Google Chrome
+                                on a computer. It may behave strangely on other
+                                browsers or on mobile. </p>
+                        </div>
+                    </div>
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">account_box</i>
+                        <input id="email" name="email" type="text" class="validate">
+                        <label for="email">Email</label>
+                        {{ macro.field_errors(login_user_form.email) }}
+                    </div>
+                    <div class="row margin">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">lock</i>
+                            <input id="password" name="password" type="password">
+                            <label for="password">Password</label>
+                            {{ macro.field_errors(login_user_form.password) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12">
+                            <input type="checkbox" id="remember" name="remember"/>
+                            <label for="remember">Remember me</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <button class="btn waves-effect waves-light" type="submit" name="action">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock form_content %}
+

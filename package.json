@@ -1,0 +1,33 @@
+{
+  "name": "digital-logic-exp-4",
+  "version": "0.1.0",
+  "description": "Personalized Practice Problems (P3) Experiment #4",
+  "main": "main.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node_modules/.bin/webpack-dev-server --port 2992 --content-base digital_logic/build/public --hot",
+    "build": "node_modules/.bin/webpack --display-error-details --progress --profile --colors"
+  },
+  "author": "m1yag1",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "babel-core": "^6.17.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "backbone": "^1.3.3",
+    "css-loader": "^0.25.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
+    "jquery": "^3.1.1",
+    "manifest-revision-webpack-plugin": "^0.3.0",
+    "materialize-css": "^0.97.7",
+    "style-loader": "^0.13.1",
+    "underscore": "^1.8.3",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.1"
+  }
+}

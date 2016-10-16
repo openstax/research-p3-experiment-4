@@ -1,0 +1,42 @@
+version: '2'
+services:
+  db:
+    image: postgres:9.5
+    ports:
+    # 5432 may already be taken by another Postgresql on host
+    - "5433:5432"
+
+  redis:
+    image: redis:latest
+
+  app:
+    build: .
+    environment:
+      CONFIG_ENV: development
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres@db/app
+      REDIS_HOST: redis
+      FLASK_DEBUG: 'True'
+      FLASK_APP: /app/wsgi.py
+      SESSION_SECRET: 'an insecure development secret'
+    volumes:
+      - .:/app
+
+  web:
+    extends:
+      service: app
+    command: python -u /app/wsgi.py
+    environment:
+      PORT: 5000
+    ports:
+      - "5000:5000"
+    links:
+      - db
+      - redis
+      - webpack
+
+  webpack:
+    extends:
+      service: app
+    command: npm start
+    ports:
+      - "2992:2992"
