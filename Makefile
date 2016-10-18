@@ -17,9 +17,7 @@ serve: .state/docker-build
 
 initdb:
 	docker-compose run web psql -h db -d postgres -U postgres -c "DROP DATABASE IF EXISTS app"
-	docker-compose run web psql -h db -d postgres -U postgres -c "DROP DATABASE IF EXISTS test"
 	docker-compose run web psql -h db -d postgres -U postgres -c "CREATE DATABASE app ENCODING 'UTF8'"
-	docker-compose run web psql -h db -d postgres -U postgres -c "CREATE DATABASE test ENCODING 'UTF8'"
 	docker-compose run web alembic upgrade head
 
 devServer:

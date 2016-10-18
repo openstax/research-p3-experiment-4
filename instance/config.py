@@ -24,7 +24,7 @@ WEBPACK_MANIFEST_PATH = '../digital_logic/build/manifest.json'
 
 # Flask-Security
 SECURITY_PASSWORD_HASH = 'bcrypt'
-SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_SALT')
+SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_SALT', 'development_secret')
 SECURITY_CONFIRMABLE = False
 SECURITY_REGISTERABLE = False
 SECURITY_RECOVERABLE = True
