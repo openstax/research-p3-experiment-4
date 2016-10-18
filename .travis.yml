@@ -19,9 +19,10 @@ install:
   - pip install .
   - pip install -r requirements.txt
   - npm install -g npm@2
+  - npm install -g webpack
 
 script:
  - node -v
  - npm -v
- - npm run build
+# - npm run build
  - bin/tests --dbfixtures-config tests/dbfixtures.travis.conf
