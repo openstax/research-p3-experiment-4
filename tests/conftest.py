@@ -21,9 +21,10 @@ def app():
         'TESTING': True,
         'SECRET_KEY': 'a key for testing',
         'DEBUG': False,
-        'SQLALCHEMY_DATABASE_URI': 'postgresql+psycopg2://postgres@localhost:5433/tests',
+        'SQLALCHEMY_DATABASE_URI': 'postgresql+psycopg2://postgres@localhost:5432/tests',
         'WTF_CSRF_ENABLED': False,
-        'SECURITY_REGISTERABLE': False
+        'SECURITY_REGISTERABLE': False,
+        'WEBPACK_MANIFEST_PATH' : '../digital_logic/build/manifest.json'
     }
 
     _app = create_app()

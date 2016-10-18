@@ -2,27 +2,40 @@ language: python
 python:
   - "3.5"
 
+env:
+  global:
+    - TRAVIS_NODE_VERSION=6.6.0
+
 dist: trusty
 sudo: false
 
+addons:
+  postgresql: "9.4" # https://github.com/travis-ci/travis-ci/issues/4264
+  # sauce_connect: true
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 
 services:
   - postgresql
+  - redis-server
 
 cache:
   directories:
     - ~/.cache/pip
-    - node_modules/
+    - node_modules
 
 # command to install dependencies
 install:
+  - 'rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION'
   - pip install .
   - pip install -r requirements.txt
-  - npm install -g npm@2
-  - npm install -g webpack
+  - npm install
 
 script:
  - node -v
  - npm -v
-# - npm run build
+ - npm run build
  - bin/tests --dbfixtures-config tests/dbfixtures.travis.conf
