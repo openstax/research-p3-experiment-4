@@ -1,12 +1,13 @@
-import os
-
+import psycopg2
 import pytest
+from pytest_dbfixtures.factories.postgresql import init_postgresql_database, \
+    drop_postgresql_database
+from pytest_dbfixtures.utils import get_config
 from pytest_factoryboy import register
 from webtest import TestApp
 
-from digital_logic.core import db
-
 from digital_logic import create_app
+from digital_logic.core import db
 from factories import UserFactory
 
 # Use the pytest_factory_boy plugin and register the Model Factory
@@ -20,7 +21,7 @@ def app():
         'TESTING': True,
         'SECRET_KEY': 'a key for testing',
         'DEBUG': False,
-        'SQLALCHEMY_DATABASE_URI': 'postgresql+psycopg2://postgres@localhost:5433/test',
+        'SQLALCHEMY_DATABASE_URI': 'postgresql+psycopg2://postgres@localhost:5433/tests',
         'WTF_CSRF_ENABLED': False,
         'SECURITY_REGISTERABLE': False
     }
@@ -42,17 +43,25 @@ def test_client(app):
 
 
 @pytest.yield_fixture(scope='function')
-def database(app):
+def database(app, request):
     """The database used for testing"""
-    # print(app.config)
     db.app = app
+    config = get_config(request)
+    pg_host = config.postgresql.host
+    pg_port = config.postgresql.port
+    pg_user = config.postgresql.user
+    pg_db = config.postgresql.db
+
+    init_postgresql_database(psycopg2, pg_user, pg_host, pg_port, pg_db)
+
     with app.app_context():
         db.create_all()
 
     yield db
 
     db.session.close()
-    db.drop_all()
+
+    drop_postgresql_database(psycopg2, pg_user, pg_host, pg_port, pg_db, '9.4')
 
 
 @pytest.fixture(scope='function')

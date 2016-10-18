@@ -1,0 +1,27 @@
+language: python
+python:
+  - "3.5"
+
+dist: trusty
+sudo: false
+
+
+services:
+  - postgresql
+
+cache:
+  directories:
+    - ~/.cache/pip
+    - node_modules/
+
+# command to install dependencies
+install:
+  - pip install .
+  - pip install -r requirements.txt
+  - npm install
+
+script:
+ - node -v
+ - npm -v
+ - npm run build
+ - bin/tests --dbfixtures-config tests/dbfixtures.travis.conf
