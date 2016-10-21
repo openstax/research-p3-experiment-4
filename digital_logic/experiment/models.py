@@ -3,13 +3,30 @@ from datetime import datetime
 from ..core import db
 
 
+def create_subject(data):
+    subject = Subject(**data)
+    db.session.add(subject)
+    db.session.commit()
+
+    return subject
+
+
+def update_subject(subject_id, data):
+    subject = Subject.get(subject_id)
+
+    for k, v in data.items():
+        setattr(subject, k, v)
+
+    db.session.add(subject)
+    db.session.commit()
+
+    return subject
+
+
 class Subject(db.Model):
     __tablename__ = 'subjects'
     __table_args__ = (db.UniqueConstraint('assignment_id', 'worker_id',
                                           name='worker_id_assignment_id_uix'),)
-    __json_public__ = None
-    __json_hidden__ = None
-    __json_modifiers__ = None
 
     id = db.Column(db.Integer(), primary_key=True)
     external_id = db.Column(db.String(128))
@@ -35,14 +52,8 @@ class Subject(db.Model):
 
     @classmethod
     def get(cls, id):
-        return db.session.query(cls).get(id)
+        return db.session.query(cls).filter(cls.id == id).one()
 
     @classmethod
     def get_by_worker_id(cls, worker_id):
         return db.session.query(cls).filter(cls.worker_id == worker_id).first()
-
-    def get_field_names(self):
-        for p in self.__mapper__.iterate_properties:
-            yield p.key
-
-

@@ -1,11 +1,14 @@
-from flask import Blueprint
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
 
 from .accounts.models import User, Role
-from .core import api, db, security, mail, webpack
+from .core import (db,
+                   security,
+                   mail,
+                   webpack)
 from .helpers import register_blueprints
 from .redis_session import RedisSessionInterface
+
 
 def create_app(package_name, package_path, settings_override=None):
     """

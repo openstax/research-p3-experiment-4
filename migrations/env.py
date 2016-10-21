@@ -1,24 +1,19 @@
 from __future__ import with_statement
 
 import os
+import sys
+from logging.config import fileConfig
 from os.path import dirname, abspath
 
-import sys
 from alembic import context
-
 from sqlalchemy import create_engine
-from sqlalchemy import engine_from_config, pool
-from logging.config import fileConfig
+
+from digital_logic import make_database_url
 
 sys.path.append(dirname(dirname(abspath(__file__))))
 sys.path.append(os.getcwd())
 
-from digital_logic.models import *
 from digital_logic.core import db
-from digital_logic import create_app
-
-
-app = create_app()
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -39,17 +34,6 @@ target_metadata = db.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-# def get_url():
-#     return "postgresql+psycopg2://{0}:{1}@{2}/{3}".format(
-#         os.getenv("DB_USER", "postgresql"),
-#         os.getenv("DB_PASSWORD", "password"),
-#         os.getenv("DB_HOST", "localhost"),
-#         os.getenv("DB_NAME", "postgresql"),
-#     )
-
-def get_url():
-    return app.config['SQLALCHEMY_DATABASE_URI']
-
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
@@ -63,7 +47,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = get_url()
+    url = make_database_url()
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True)
 
@@ -78,7 +62,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = create_engine(get_url())
+    connectable = create_engine(make_database_url())
 
     with connectable.connect() as connection:
         context.configure(

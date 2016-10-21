@@ -1,3 +1,6 @@
+[![build status](https://travis-ci.org/openstax/research-p3-experiment-4.svg?branch=master)](https://travis-ci.org/openstax/research-p3-experiment-4.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/openstax/research-p3-experiment-4/badge.svg?branch=master)](https://coveralls.io/github/openstax/research-p3-experiment-4?branch=master)
+
 # Personalized Practice Problems (P3) Experiment #4
 
 The documentation for this project is located on the Open Science Framework website.
