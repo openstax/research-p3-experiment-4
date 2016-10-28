@@ -1,6 +1,5 @@
 import psycopg2
 import pytest
-
 from alembic.command import upgrade
 from alembic.config import Config as AlembicConfig
 from pytest_dbfixtures.factories.postgresql import init_postgresql_database, \
@@ -10,8 +9,7 @@ from webtest import TestApp
 
 from digital_logic import create_app
 from digital_logic.core import db as _db
-
-from utils import populate_data
+from utils import populate_data, create_subjects
 
 
 @pytest.fixture(scope='session')
@@ -68,6 +66,7 @@ def app(app_config):
     ctx.push()
 
     populate_data(_app.security.datastore)
+    create_subjects(_db)
 
     yield _app
 
@@ -81,11 +80,29 @@ def test_client(app):
     return TestApp(app)
 
 
-@pytest.yield_fixture(scope='function')
-def db(app, request):
+@pytest.yield_fixture(scope='session')
+def db(app):
     """The database used for testing"""
     _db.app = app
 
     yield _db
 
     _db.session.close()
+    _db.drop_all()
+
+
+@pytest.yield_fixture(scope='function')
+def session(db, request):
+    connection = db.engine.connect()
+    transaction = connection.begin()
+
+    options = dict(bind=connection, binds={})
+    session = db.create_scoped_session(options=options)
+
+    db.session = session
+
+    yield session
+
+    transaction.rollback()
+    connection.close()
+    session.remove()

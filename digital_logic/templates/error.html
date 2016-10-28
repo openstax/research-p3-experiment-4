@@ -1,0 +1,20 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}
+    Error
+{% endblock title %}
+
+{% block content %}
+
+    <div id="container">
+
+        <div id="error">
+            <h1> Error: #{{ error_num }}</h1>
+            <p>
+                {{ error_desc }}
+            </p>
+        </div>
+
+    </div>
+
+{% endblock content %}

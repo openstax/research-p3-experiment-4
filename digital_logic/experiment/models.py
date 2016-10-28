@@ -1,6 +1,35 @@
+import random
+
+from collections import Counter
 from datetime import datetime
 
 from ..core import db
+
+
+def get_experiment_group(num_groups):
+    """
+    This will take a number of conditions and counter-balance the number of
+    subjects in each condition.
+    :param num_groups: (int) number of groups
+    :return: group
+    """
+    counts = Counter()
+
+    subjects = db.session.query(Subject)\
+        .filter(Subject.status == 'COMPLETED')\
+        .all()
+
+    for cond in range(num_groups):
+        counts[cond] = 0
+
+    for subject in subjects:
+        counts[subject.experiment_group] += 1
+
+    min_count = min(counts.values())
+
+    minimums = [hash for hash, count in counts.items() if count == min_count]
+
+    return random.choice(minimums)
 
 
 def create_subject(data):
@@ -33,7 +62,6 @@ class Subject(db.Model):
     assignment_id = db.Column(db.String(128), nullable=False)
     worker_id = db.Column(db.String(128), nullable=False)
     hit_id = db.Column(db.String(128), nullable=False)
-    assignment_name = db.Column(db.String(128), nullable=False)
     ua_raw = db.Column(db.String(128))
     ua_browser = db.Column(db.String(128))
     ua_browser_version = db.Column(db.String(128))

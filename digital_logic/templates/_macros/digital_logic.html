@@ -1,0 +1,20 @@
+
+{% macro equation() %}
+<p class="equation">
+  {{ caller() | replace('\'', '$\'$') }}
+</p>
+{% endmacro %}
+
+
+{% macro figure(name, alt="", class="") %}
+
+<div class="media {{ class }}">
+  <span class="">
+    <img src="{{ url_for('static', filename='img/digital_logic/' + name) }}" alt="{{ alt }}">
+  </span>
+  <div class="media-body">
+    {{ caller() | markdown | safe }}
+  </div>
+</div>
+
+{% endmacro %}
