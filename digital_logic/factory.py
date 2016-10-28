@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
 
+from digital_logic.ext.markdown_ext import Markdown, markdown
 from .accounts.models import User, Role
 from .core import (db,
                    security,
@@ -28,8 +29,20 @@ def create_app(package_name, package_path, settings_override=None):
                 template_folder='templates')
     app.config.from_pyfile('config.py', silent=True)
 
-    if settings_override is not None:
+    if settings_override:
         app.config.from_object(settings_override)
+
+    # register jinja2 extensions and filters
+    jinja_extensions = [
+        'jinja2.ext.do',
+        'jinja2.ext.loopcontrols',
+        'jinja2.ext.with_',
+        Markdown
+    ]
+
+    app.jinja_options = app.jinja_options.copy()
+    app.jinja_options['extensions'].extend(jinja_extensions)
+    app.jinja_env.filters['markdown'] = markdown
 
     # Init extensions
     db.init_app(app)

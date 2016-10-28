@@ -6,7 +6,7 @@ from werkzeug.datastructures import CallbackDict
 from flask.sessions import SessionInterface, SessionMixin
 
 
-class RedisSession(CallbackDict, SessionMixin):
+class RedisSession(CallbackDict, SessionMixin):  # pragma: no cover
 
     def __init__(self, initial=None, sid=None, new=False):
         def on_update(self):
@@ -41,7 +41,7 @@ class RedisSessionInterface(SessionInterface):
             sid = self.generate_sid()
             return self.session_class(sid=sid, new=True)
         val = self.redis.get(self.prefix + sid)
-        if val is not None:
+        if val is not None:  # pragma: no cover
             data = self.serializer.loads(val)
             return self.session_class(data, sid=sid)
         return self.session_class(sid=sid, new=True)

@@ -1,8 +1,7 @@
 import logging
 import traceback
 
-from flask import Blueprint
-from flask import current_app
+from flask import Blueprint, current_app
 from sqlalchemy.orm.exc import NoResultFound
 
 from .endpoints.ping import ns as ping_namespace
@@ -22,7 +21,7 @@ api.add_namespace(subjects_namespace)
 
 # register error handlers
 @api.errorhandler
-def default_error_handler(e):
+def default_error_handler(e):  # pragma: no cover
     message = 'An unhandled exception occurred.'
     log.exception(message)
 
@@ -33,5 +32,5 @@ def default_error_handler(e):
 @api.errorhandler(NoResultFound)
 def database_not_found_error_handler(e):
     log.warning(traceback.format_exc())
-    return {
-               'message': 'A database result was required but none was found.'}, 404
+    return {'message': 'A database result was required '
+                       'but none was found.'}, 404
