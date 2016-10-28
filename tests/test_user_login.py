@@ -1,18 +1,18 @@
-def test_successful_login(user, test_client):
+def test_successful_login(test_client):
     """Login successful!"""
     response = test_client.get('/login')
     form = response.form
-    form['email'] = user.email
-    form['password'] = 'iH3@r7P1zz@'
+    form['email'] = 'mike@mike.com'
+    form['password'] = 'password'
     response = form.submit()
     assert response.status_code == 302
 
 
-def test_unsuccessful_login(user, test_client):
+def test_unsuccessful_login(test_client):
     """Login unsuccessful"""
     response = test_client.get('/login')
     form = response.form
-    form['email'] = user.email
-    form['password'] = 'iH3@r7P@rsn1ps'
+    form['email'] = 'mike@mike.com'
+    form['password'] = 'pizza'
     response = form.submit()
     assert 'Invalid password' in response
