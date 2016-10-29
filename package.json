@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "webpack-dev-server --port 2992 --content-base digital_logic/build/public --hot",
+    "start": "webpack-dev-server --port 2992 --content-base digital_logic/build/public --hot --watch --inline",
     "build": "webpack --display-error-details --progress --profile --colors"
   },
   "author": "m1yag1",
