@@ -1,19 +1,17 @@
 import psycopg2
 import pytest
+
 from alembic.command import upgrade
 from alembic.config import Config as AlembicConfig
 from pytest_dbfixtures.factories.postgresql import init_postgresql_database, \
     drop_postgresql_database
 from pytest_dbfixtures.utils import get_config
-from pytest_factoryboy import register
 from webtest import TestApp
 
 from digital_logic import create_app
 from digital_logic.core import db as _db
-from factories import UserFactory
 
-# Use the pytest_factory_boy plugin and register the Model Factory
-register(UserFactory)
+from utils import populate_data
 
 
 @pytest.fixture(scope='session')
@@ -41,7 +39,6 @@ def config_database(request):
 
 @pytest.fixture(scope='session')
 def app_config(config_database):
-    print('Loading config')
     settings = {
         'TESTING': True,
         'SECRET_KEY': 'a key for testing',
@@ -49,7 +46,8 @@ def app_config(config_database):
         'SQLALCHEMY_DATABASE_URI': config_database,
         'WTF_CSRF_ENABLED': False,
         'SECURITY_REGISTERABLE': False,
-        'WEBPACK_MANIFEST_PATH': '../digital_logic/build/manifest.json'
+        'WEBPACK_MANIFEST_PATH': '../digital_logic/build/manifest.json',
+        'LOGIN_REQUIRED': False
     }
 
     # Ensure our migrations have been ran.
@@ -60,15 +58,16 @@ def app_config(config_database):
     return settings
 
 
-@pytest.yield_fixture(scope='function')
+@pytest.yield_fixture(scope='session')
 def app(app_config):
     """An application for the tests."""
-
     _app = create_app()
     _app.config.update(app_config)
 
     ctx = _app.test_request_context()
     ctx.push()
+
+    populate_data(_app.security.datastore)
 
     yield _app
 
@@ -77,6 +76,8 @@ def app(app_config):
 
 @pytest.fixture(scope='function')
 def test_client(app):
+    """
+    Configure a WebTest client for nice convenience methods."""
     return TestApp(app)
 
 
@@ -88,11 +89,3 @@ def db(app, request):
     yield _db
 
     _db.session.close()
-
-
-@pytest.fixture(scope='function')
-def user(db, user_factory):
-    """A user for the tests"""
-    _user = user_factory(password='iH3@r7P1zz@')
-    db.session.commit()
-    return _user

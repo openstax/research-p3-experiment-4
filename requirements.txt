@@ -6,7 +6,6 @@ blinker==1.4
 cffi==1.8.3
 click==6.6
 coverage==4.2
-factory-boy==2.7.0
 fake-factory==0.7.2
 Flask==0.11.1
 Flask-Login==0.3.2
@@ -36,7 +35,6 @@ pymlconf==0.6.0
 pytest==3.0.3
 pytest-cov==2.4.0
 pytest-dbfixtures==0.16.0
-pytest-factoryboy==1.2.2
 python-dateutil==2.5.3
 python-editor==1.0.1
 pytz==2016.7

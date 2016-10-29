@@ -128,3 +128,4 @@ pip-selfcheck.json
 
 /.state/
 /node_modules/
+cov.xml

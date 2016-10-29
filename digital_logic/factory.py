@@ -33,9 +33,9 @@ def create_app(package_name, package_path, settings_override=None):
 
     # Init extensions
     db.init_app(app)
-    security.init_app(app,
-                      SQLAlchemyUserDatastore(db, User, Role),
-                      register_blueprint=True)
+    app.security = security.init_app(app,
+                                     SQLAlchemyUserDatastore(db, User, Role),
+                                     register_blueprint=True)
     mail.init_app(app)
     webpack.init_app(app)
 
