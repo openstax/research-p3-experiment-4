@@ -26,6 +26,7 @@ module.exports = {
     publicPath: publicHost + '/static/',
     filename: '[name].js'
   },
+  devtool: 'source-map',
   devServer: {
     // Proxy requests to the API server that the
     // webpack-dev-server can't satisfy.
