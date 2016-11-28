@@ -8,11 +8,10 @@ from os.path import dirname, abspath
 from alembic import context
 from sqlalchemy import create_engine
 
-from digital_logic import make_database_url
-
 sys.path.append(dirname(dirname(abspath(__file__))))
 sys.path.append(os.getcwd())
 
+from digital_logic import make_database_url
 from digital_logic.core import db
 
 # this is the Alembic Config object, which provides
