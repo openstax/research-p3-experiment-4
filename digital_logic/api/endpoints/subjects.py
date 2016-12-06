@@ -1,8 +1,12 @@
+import json
+
 from flask import request
 from flask_restplus import Resource
 
-from digital_logic.api.serializers import subject
-from digital_logic.core import api
+from digital_logic.api.serializers import (subject,
+                                           experiment_data_setup,
+                                           experiment_data_put)
+from digital_logic.core import api, db
 from digital_logic.models import Subject, create_subject, update_subject
 
 ns = api.namespace('subjects',
@@ -66,4 +70,51 @@ class SubjectItem(Resource):
         """
         posted = request.get_json()
         sub = update_subject(subject_id, posted)
+        return sub, 204
+
+
+@ns.route('/data/<int:subject_id>')
+@ns.response(404, 'Subject not found')
+class SubjectExperimentData(Resource):
+    """
+    This endpoint is designed to only interact with the data_string field as a
+    json payload. The data_string field is a field on the Subject table and
+    is used separately to save experiment data. This is designed specifically
+    to be used with a backbone.js model.
+    """
+
+    @ns.doc('get_subject')
+    @ns.marshal_with(experiment_data_setup)
+    def get(self, subject_id):
+        """
+        Returns a subject item
+        """
+        sub = Subject.get(subject_id)
+
+        try:
+            resp = json.loads(sub.data_string)
+        except:
+            resp = dict(
+                id=sub.id,
+                assignment_id=sub.assignment_id,
+                worker_id=sub.worker_id,
+                hit_id=sub.hit_id
+            )
+
+        return resp
+
+    @ns.expect(experiment_data_put, validate=True)
+    @ns.marshal_with(experiment_data_put)
+    @ns.response(204, 'Experiment data successfully updated.')
+    def put(self, subject_id):
+        """
+        Updates a subject's data_string in the database via backbone.js model
+        """
+        posted = request.get_json()
+        sub = Subject.get(subject_id)
+
+        if hasattr(request, 'json'):
+            sub.data_string = json.dumps(posted)
+            db.session.add(sub)
+            db.session.commit()
         return sub, 204

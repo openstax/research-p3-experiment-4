@@ -75,3 +75,7 @@ class ExperimentError(Exception):
                                error_desc=self.error_desc,
                                contact_address=contact_on_error,
                                **request.args), 400
+
+
+class SectionNotFound(Exception):
+    pass

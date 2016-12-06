@@ -26,13 +26,14 @@ module.exports = {
     publicPath: publicHost + '/static/',
     filename: '[name].js'
   },
+  devtool: 'source-map',
   devServer: {
     // Proxy requests to the API server that the
     // webpack-dev-server can't satisfy.
     host: '0.0.0.0',
     proxy: {
       '*': {
-        target: 'http://web:5000',
+        target: 'http://127.0.0.1:5000',
         secure: false
       }
     },
@@ -47,12 +48,10 @@ module.exports = {
   },
   module: {
     // Various loaders to pre-process files of specific types.
-    // If you wanted to SASS for example, you'd want to install this:
-    //   https://github.com/jtangelder/sass-loader
     loaders: [
       {
         test: /\.jsx?$/i,
-        loaders: ['babel-loader'],
+        loaders: ['react-hot-loader/webpack','babel-loader'],
         exclude: /node_modules/
       },
       {
@@ -85,7 +84,7 @@ module.exports = {
     new webpack.NoErrorsPlugin(),
     // Ensure CSS chunks get written to their own file.
     new ExtractTextPlugin('[name].css'),
-    // Create the manifest file that Flask and other frameworks use.
+    // Create the manifest file that Flask will use.
     new ManifestRevisionPlugin(path.join('digital_logic', 'build', 'manifest.json'), {
       rootAssetPath: rootAssetPath,
       ignorePaths: ['/js', '/css', '/img']
