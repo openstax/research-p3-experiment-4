@@ -7,7 +7,7 @@ default:
 build:
 	docker-compose build
 
-	# Mark this state so that the other target will known it's recently been
+	# Mark this state so that the other target will known it has recently been
 	# rebuilt.
 	mkdir -p .state
 	touch .state/docker-build
@@ -30,9 +30,12 @@ purge:
 	rm -rf .state
 	docker-compose rm --force --all \
 
-
 test:
 	docker-compose run web env -i ENCODING="C.UTF-8" \
 															PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-															bin/tests --dbfixtures-config tests/dbfixtures.conf $(T) $(TESTARGS)
+															bin/tests --dbfixtures-config tests/dbfixtures.docker.conf $(T) $(TESTARGS)
 
+clean-pyc:
+	find . -name '*.pyc' -exec rm {} +
+	find . -name '*.pyo' -exec rm {} +
+	find . -name '*~' -exec rm {} +

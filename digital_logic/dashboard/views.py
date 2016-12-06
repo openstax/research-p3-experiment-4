@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template
-from flask.ext.principal import Permission, RoleNeed
+from flask_principal import Permission, RoleNeed
 from flask_security import login_required
 
 dashboard = Blueprint('home',
