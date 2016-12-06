@@ -13,6 +13,7 @@ from digital_logic import make_database_url
 sys.path.append(dirname(dirname(abspath(__file__))))
 sys.path.append(os.getcwd())
 
+from digital_logic import create_app
 from digital_logic.core import db
 
 # this is the Alembic Config object, which provides
@@ -35,6 +36,9 @@ target_metadata = db.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+
+app = create_app()
+
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
 
@@ -47,7 +51,7 @@ def run_migrations_offline():
     script output.
 
     """
-    url = make_database_url()
+    url = app.config['SQLALCHEMY_DATABASE_URI']
     context.configure(
         url=url, target_metadata=target_metadata, literal_binds=True)
 
@@ -62,7 +66,7 @@ def run_migrations_online():
     and associate a connection with the context.
 
     """
-    connectable = create_engine(make_database_url())
+    connectable = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 
     with connectable.connect() as connection:
         context.configure(
