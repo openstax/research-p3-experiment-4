@@ -13,7 +13,7 @@
 </div>
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-## Preface
+## Preface {:.preface}
 
 Digital logic is the basis of every modern computer. Digital logic
 takes binary inputs, valued at 1 or 0, and transforms them into useful

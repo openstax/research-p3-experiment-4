@@ -30,7 +30,6 @@ purge:
 	rm -rf .state
 	docker-compose rm --force --all \
 
-
 test:
 	docker-compose run web env -i ENCODING="C.UTF-8" \
 															PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
