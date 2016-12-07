@@ -62,7 +62,7 @@ def create_admin_user(email, password):
 @app.cli.command()
 def send_test_email():
     """Send a test email."""
-    from flask.ext.mail import Message
+    from flask_mail import Message
     from digital_logic.core import mail
 
     to = ['labs@openstax.org']
