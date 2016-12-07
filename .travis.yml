@@ -39,7 +39,7 @@ script:
  - node -v
  - npm -v
  - npm run build
- - bin/tests --dbfixtures-config tests/dbfixtures.travis.conf
+ - python setup.py test
 
 after_success:
   coveralls

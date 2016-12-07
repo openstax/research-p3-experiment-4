@@ -33,7 +33,7 @@ purge:
 test:
 	docker-compose run web env -i ENCODING="C.UTF-8" \
 															PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-															bin/tests --dbfixtures-config tests/dbfixtures.docker.conf $(T) $(TESTARGS)
+															bin/tests --postgresql-host db $(T) $(TESTARGS)
 
 clean-pyc:
 	find . -name '*.pyc' -exec rm {} +
