@@ -2,6 +2,7 @@ import random
 
 from collections import Counter
 from datetime import datetime
+from sqlalchemy.dialects.postgresql import JSON
 
 from ..core import db
 
@@ -85,3 +86,16 @@ class Subject(db.Model):
     @classmethod
     def get_by_worker_id(cls, worker_id):
         return db.session.query(cls).filter(cls.worker_id == worker_id).first()
+
+
+class Exercise(db.Model):
+    __tablename__ = 'exercises'
+    id = db.Column(db.Integer(), primary_key=True)
+    qb_id = db.Column(db.String(), unique=True, nullable=True)
+    topic = db.Column(db.String(), nullable=False)
+    data = db.Column(JSON(), nullable=False)
+    level = db.Column(db.Integer(), nullable=False)
+
+    @classmethod
+    def get(cls, id):
+        return db.session.query(cls).filter(cls.id == id).one()

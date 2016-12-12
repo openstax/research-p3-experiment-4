@@ -6,6 +6,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from digital_logic.exceptions import SectionNotFound
 from .endpoints.ping import ns as ping_namespace
+from .endpoints.exercises import ns as exercise_namespace
 from .endpoints.subjects import ns as subjects_namespace
 from .endpoints.textbook import ns as textbook_namespace
 from ..core import api
@@ -20,6 +21,7 @@ api.init_app(bp)
 api.add_namespace(ping_namespace)
 api.add_namespace(subjects_namespace)
 api.add_namespace(textbook_namespace)
+api.add_namespace(exercise_namespace)
 
 
 # register error handlers
@@ -37,6 +39,7 @@ def database_not_found_error_handler(e):
     log.warning(traceback.format_exc())
     return {'message': 'A database result was required '
                        'but none was found.'}, 404
+
 
 @api.errorhandler(SectionNotFound)
 def no_section_found_error_handler(e):

@@ -1,4 +1,3 @@
-import psycopg2
 import pytest
 from alembic.command import upgrade
 from alembic.config import Config as AlembicConfig
@@ -12,7 +11,7 @@ from digital_logic.core import db as _db
 from utils import populate_data, create_subjects
 
 
-@pytest.fixture(scope='session')
+@pytest.yield_fixture(scope='session')
 def config_database(request):
     connection_string = 'postgresql+psycopg2://{0}@{1}:{2}/{3}'
 
@@ -25,14 +24,12 @@ def config_database(request):
     # Create the database
     init_postgresql_database(pg_user, pg_host, pg_port, pg_db)
 
-    # Ensure the database gets deleted
-    @request.addfinalizer
-    def drop_database():
-        drop_postgresql_database(
-            pg_user, pg_host, pg_port, pg_db, '9.4'
-        )
+    yield connection_string.format(pg_user, pg_host, pg_port, pg_db)
 
-    return connection_string.format(pg_user, pg_host, pg_port, pg_db)
+    # Ensure the database gets deleted
+    drop_postgresql_database(
+        pg_user, pg_host, pg_port, pg_db, '9.4'
+    )
 
 
 @pytest.fixture(scope='session')

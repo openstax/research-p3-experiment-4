@@ -37,7 +37,7 @@ class SubjectCollection(Resource):
 @ns.response(404, 'Subject not found')
 @ns.param('subject_id', 'The subject identifier')
 class SubjectItem(Resource):
-    """Show a single subject. A delete is not allowed"""
+    """Returns a single subject. A delete is not allowed"""
 
     @ns.doc('get_subject')
     @ns.marshal_with(subject)
