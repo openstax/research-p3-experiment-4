@@ -1,5 +1,6 @@
 [![build status](https://travis-ci.org/openstax/research-p3-experiment-4.svg?branch=master)](https://travis-ci.org/openstax/research-p3-experiment-4.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/openstax/research-p3-experiment-4/badge.svg?branch=master)](https://coveralls.io/github/openstax/research-p3-experiment-4?branch=master)
+[![Coverage][codecov-image]][codecov-url]
+
 
 # Personalized Practice Problems (P3) Experiment #4
 
@@ -21,3 +22,6 @@ $ make build
 $ # Start up the local environment
 $ make serve
 ```
+
+[codecov-image]: https://img.shields.io/codecov/c/github/connexions/esearch-p3-experiment-4.svg
+[codecov-url]: https://codecov.io/gh/Connexions/esearch-p3-experiment-4

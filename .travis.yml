@@ -32,7 +32,6 @@ install:
   - 'rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION'
   - pip install .
   - pip install -r requirements.txt
-  - pip install coveralls
   - npm install
 
 script:
@@ -42,4 +41,5 @@ script:
  - python setup.py test
 
 after_success:
-  coveralls
+  # Report coverage to codecov
+  - bash <(curl -s https://codecov.io/bash)
