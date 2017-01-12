@@ -23,5 +23,5 @@ $ # Start up the local environment
 $ make serve
 ```
 
-[codecov-image]: https://img.shields.io/codecov/c/github/connexions/esearch-p3-experiment-4.svg
-[codecov-url]: https://codecov.io/gh/Connexions/esearch-p3-experiment-4
+[codecov-image]: https://img.shields.io/codecov/c/github/openstax/research-p3-experiment-4.svg
+[codecov-url]: https://codecov.io/gh/openstax/research-p3-experiment-4
