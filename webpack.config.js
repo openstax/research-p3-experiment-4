@@ -43,7 +43,10 @@ module.exports = {
   },
   resolve: {
     // Avoid having to require files with an extension if they are here.
-    extensions: ['', '.js', '.jsx', '.css']
+    extensions: ['', '.js', '.jsx', '.css'],
+    alias: {
+      'jquery': path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js')
+    }
   },
   module: {
     // Various loaders to pre-process files of specific types.

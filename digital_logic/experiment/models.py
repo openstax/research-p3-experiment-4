@@ -11,9 +11,12 @@ class UserSubject(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     external_id = db.Column(db.String(128))
-
     mturk_worker_id = db.Column(db.String(128), nullable=False)
-
+    skill_level = db.Column(db.String(50))
+    age = db.Column(db.String(3))
+    education = db.Column(db.String(50))
+    gender = db.Column(db.String(50))
+    english_level = db.Column(db.String(50))
     experiment_group = db.Column(db.String(128))
     data_string = db.Column(db.Text())
     created_on = db.Column(db.DateTime(), default=datetime.utcnow())
@@ -68,11 +71,6 @@ class SubjectAssignment(db.Model):
     ua_os_version = db.Column(db.String(128))
     ua_device = db.Column(db.String(128))
 
-    skill_level = db.Column(db.String(50))
-    education = db.Column(db.String(50))
-    gender = db.Column(db.String(50))
-    english_level = db.Column(db.String(50))
-
     comments = db.Column(db.Text())
     did_cheat = db.Column(db.Boolean())
     did_timeout = db.Column(db.Boolean(),
@@ -126,6 +124,10 @@ class AssignmentResponse(db.Model):
     def all_by_subject_id(cls, subject_id):
         return db.session.query(cls).filter(cls.id == subject_id).all()
 
+    @classmethod
+    def all_by_assignment_id(cls, assignment_id):
+        return db.session.query(cls).filter(cls.assignment_id == assignment_id).all()
+
 
 class AssignmentSession(db.Model):
     __tablename__ = 'assignment_sessions'
@@ -136,3 +138,7 @@ class AssignmentSession(db.Model):
     status = db.Column(db.String(100))
     start_time = db.Column(db.DateTime(), nullable=False,
                            default=datetime.now())
+
+    @classmethod
+    def all_by_assignment_id(cls, assignment_id):
+        return db.session.query(cls).filter(cls.assignment_id == assignment_id).all()

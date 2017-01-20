@@ -1,14 +1,27 @@
 import logging
 
-from flask import Blueprint, render_template, request, session
+from flask import (Blueprint,
+                   render_template,
+                   request,
+                   session,
+                   current_app as app)
+from flask import redirect
+from flask import url_for
 from flask_login import current_user
 
-from digital_logic.accounts.auth import _login_and_prep_subject, \
-    logout_mturk_user
+from digital_logic.accounts.auth import (
+    _login_and_prep_subject,
+    logout_mturk_user)
+from digital_logic.core import db
 from digital_logic.exceptions import ExperimentError
-from digital_logic.experiment.business_logic import purge_subject_data, \
-    get_latest_subject_assignment
+from digital_logic.experiment.service import (
+    get_latest_subject_assignment,
+    all_subject_assignments,
+    get_subject_by_user_id,
+    add_session_record)
+from digital_logic.experiment.forms import DemographyForm
 from digital_logic.experiment.models import UserSubject as Subject
+from digital_logic.experiment.models import SubjectAssignment
 from digital_logic.helpers import parse_user_agent
 
 logging.basicConfig(level=logging.INFO)
@@ -70,9 +83,9 @@ def start():
     1. A subject is looked up based on the worker_id to see if they have done
     this experiment before. If they have they are redirected.
     2. If the mturk_worker_id is unique their browser user agent is parsed and
-    a new `Subject` is created in the database.
+    a new `Subject` and `SubjectAssignment` is created in the database.
     3. If the mode is debug the subject is allowed to be overwritten in the
-    database
+    database.
 
     Required GET request params:
 
@@ -102,36 +115,74 @@ def start():
 
     subject = Subject.get_by_mturk_worker_id(worker_id)
 
+    log.info(
+        'MTurk worker {} attempting to start the experiment'.format(worker_id))
+
     if mode == 'debug':
         debug_mode = True
     else:
         debug_mode = False
 
-    # If the subject exists and debug is True
-    # clear subject's data and load the experiment
-    if subject and debug_mode:
-        # TODO: Add delete statements for all data tables associated with debug
-        purge_subject_data(subject.id)
-        _login_and_prep_subject(worker_id,
-                                assignment_id,
-                                hit_id,
-                                ua_dict)
-        return render_template('start.html')
+    log.info('debug mode is {0}'.format(debug_mode))
 
-    # If the subject exists and debug is False
-    if subject and not debug_mode:
-        # Find the subject's last assignment.
-        # Check the status on the assignment.
-        # TODO: Write logic if not debug and subject is found
-        latest_assignment = get_latest_subject_assignment(subject.id)
-        if latest_assignment.is_complete == True:
-            raise ExperimentError('experiment_completed')
-        elif latest_assignment.did_quit == True:
-            raise ExperimentError('quit_experiment_early')
+    if subject:
+        assignments = all_subject_assignments(subject.id)
+
+        if len(assignments) < len(app.config['ASSIGNMENT_PHASES']):
+            latest_assignment = get_latest_subject_assignment(subject.id)
+
+            if latest_assignment and latest_assignment.did_quit:
+                raise ExperimentError('quit_experiment_early')
+            else:
+                assignment = _login_and_prep_subject(worker_id,
+                                                     assignment_id,
+                                                     hit_id,
+                                                     ua_dict,
+                                                     debug_mode)
+                session['current_assignment_id'] = assignment.id
+                return redirect(url_for('exp.demography'))
         else:
-            raise ExperimentError('unknown_status')
+            raise ExperimentError('experiment_completed')
 
     # If no subject is found create one and enter the experiment
     if not subject:
-        _login_and_prep_subject(worker_id, assignment_id, hit_id, ua_dict)
-        return render_template('start.html')
+        assignment = _login_and_prep_subject(worker_id,
+                                             assignment_id,
+                                             hit_id,
+                                             ua_dict,
+                                             debug_mode)
+        session['current_assignment_id'] = assignment.id
+        return redirect(url_for('exp.demography'))
+
+
+@exp.route('/demography', methods=['GET', 'POST'])
+def demography():
+    subject = get_subject_by_user_id(current_user.id)
+    assignment = SubjectAssignment.get(
+        session['current_assignment_id'])
+
+    form = DemographyForm(request.form)
+
+    if form.validate_on_submit():
+        form.populate_obj(subject)
+        db.session.add(subject)
+        add_session_record(assignment.id, 'Reading')
+        db.session.commit()
+        return redirect(url_for('exp.reading'))
+
+    return render_template('demography.html', form=form)
+
+
+@exp.route('/reading', methods=['GET'])
+def reading():
+    return render_template('reading.html')
+
+
+@exp.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    return 'Tell us how we did!'
+
+
+@exp.route('/assessment', methods=['GET', 'POST'])
+def assessment_index():
+    return 'assessment_index!'

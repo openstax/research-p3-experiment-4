@@ -1,10 +1,18 @@
+import logging
 import random
 from collections import Counter
 
 from digital_logic.accounts.models import User
 from digital_logic.core import db
 from digital_logic.experiment.models import UserSubject as Subject, \
-    SubjectAssignment, AssignmentResponse
+    SubjectAssignment, AssignmentResponse, AssignmentSession
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
+
+
+def all_subject_assignments(subject_id):
+    return SubjectAssignment.get_all_by_subject_id(subject_id)
 
 
 def get_subject_by_user_id(user_id):
@@ -65,7 +73,9 @@ def get_latest_subject_assignment(subject_id):
     return assignment
 
 
-def create_subject_assignment(subject_id, assignment_phase, assignment_id,
+def create_subject_assignment(subject_id,
+                              assignment_phase,
+                              assignment_id,
                               hit_id, ua_dict):
     assignment = SubjectAssignment(subject_id=subject_id,
                                    assignment_phase=assignment_phase,
@@ -84,4 +94,40 @@ def purge_subject_data(subject_id):
     if subject_assignments:
         for assignment in subject_assignments:
             responses = AssignmentResponse.all_by_assignment_id(
-                assignment.id).delete()
+                assignment.id)
+            if responses:
+                responses.delete()
+                db.session.add(responses)
+            db.session.delete(assignment)
+            db.session.add(assignment)
+    db.session.commit()
+
+
+def purge_subject_assignment_data(assignment_id):
+    assignment = SubjectAssignment.get(assignment_id)
+    responses = AssignmentResponse.all_by_assignment_id(assignment.id)
+    sessions = AssignmentSession.all_by_assignment_id(assignment.id)
+
+    if responses:
+        for response in responses:
+            db.session.delete(response)
+        db.session.commit()
+
+    if sessions:
+        for session in sessions:
+            db.session.delete(session)
+        db.session.commit()
+
+    db.session.delete(assignment)
+    db.session.commit()
+
+
+def add_session_record(assignment_id, status):
+    assignment_session = AssignmentSession(assignment_id=assignment_id,
+                                status=status)
+    db.session.add(assignment_session)
+    db.session.commit()
+    log.info(
+        'Recording session status {0} for assignment {1}'.format(assignment_id,
+                                                                 status))
+    return assignment_session

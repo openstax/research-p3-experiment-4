@@ -3,7 +3,7 @@ from flask_restplus import Resource
 
 from digital_logic.api.serializers import subject
 from digital_logic.core import api
-from digital_logic.experiment.business_logic import create_subject, \
+from digital_logic.experiment.service import create_subject, \
     update_subject
 from digital_logic.experiment.models import UserSubject
 
