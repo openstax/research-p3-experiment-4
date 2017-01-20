@@ -1,12 +1,18 @@
+import logging
+
 from flask import (Blueprint,
                    render_template,
                    request)
 
+from digital_logic.accounts.auth import _authenticate_mturk_worker
 from digital_logic.core import db
 from digital_logic.exceptions import ExperimentError
-from digital_logic.experiment.models import Subject, create_subject, \
-    get_experiment_group
-from digital_logic.helpers import parse_user_agent, make_external_id
+from digital_logic.experiment.models import UserSubject as Subject
+from digital_logic.helpers import parse_user_agent
+
+logging.getLogger(__name__)
+
+log = logging.basicConfig(level='info')
 
 exp = Blueprint('exp',
                 __name__,
@@ -42,6 +48,7 @@ def introduction():
     assignment_id = request.values.get('assignment_id', None)
     worker_id = request.values.get('worker_id', None)
     mode = request.values.get('mode', None)
+    log.info('MTurk worker {0} loaded introduction page'.format(worker_id))
 
     return render_template('introduction.html',
                            assignment_id=assignment_id,
@@ -103,6 +110,7 @@ def start():
     # If the subject exists and debug is True
     # clear subject's data and load the experiment
     if subject and debug_mode:
+        _authenticate_mturk_worker(worker_id, assignment_id, hit_id)
         subject.data_string = ''
         db.session.add(subject)
         db.session.commit()
@@ -123,14 +131,5 @@ def start():
     # If no subject is found create one and enter the experiment
     if not subject:
         # Add an external_id so we can send the subject to other systems.
-        data['external_id'] = make_external_id(data['worker_id'],
-                                               data['assignment_id'],
-                                               data['hit_id'])
-
-        data['experiment_group'] = get_experiment_group(2)
-        data['status'] = 'STARTED'
-
-        new_subject = create_subject(data)
-        return render_template('start.html',
-                               subject_id=new_subject.id,
-                               mode=mode)
+        _authenticate_mturk_worker(worker_id, assignment_id, hit_id)
+        return render_template('start.html')

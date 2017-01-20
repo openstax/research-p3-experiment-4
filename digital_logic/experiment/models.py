@@ -1,79 +1,23 @@
-import random
-
-from collections import Counter
 from datetime import datetime
+
 from sqlalchemy.dialects.postgresql import JSON
 
 from ..core import db
 
 
-def get_experiment_group(num_groups):
-    """
-    This will take a number of conditions and counter-balance the number of
-    subjects in each condition.
-    :param num_groups: (int) number of groups
-    :return: group
-    """
-    counts = Counter()
-
-    subjects = db.session.query(Subject)\
-        .filter(Subject.status == 'COMPLETED')\
-        .all()
-
-    for cond in range(num_groups):
-        counts[cond] = 0
-
-    for subject in subjects:
-        counts[subject.experiment_group] += 1
-
-    min_count = min(counts.values())
-
-    minimums = [hash for hash, count in counts.items() if count == min_count]
-
-    return random.choice(minimums)
-
-
-def create_subject(data):
-    subject = Subject(**data)
-    db.session.add(subject)
-    db.session.commit()
-
-    return subject
-
-
-def update_subject(subject_id, data):
-    subject = Subject.get(subject_id)
-
-    for k, v in data.items():
-        setattr(subject, k, v)
-
-    db.session.add(subject)
-    db.session.commit()
-
-    return subject
-
-
-class Subject(db.Model):
-    __tablename__ = 'subjects'
-    __table_args__ = (db.UniqueConstraint('assignment_id', 'worker_id',
-                                          name='worker_id_assignment_id_uix'),)
+class UserSubject(db.Model):
+    __tablename__ = 'user_subjects'
 
     id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     external_id = db.Column(db.String(128))
-    assignment_id = db.Column(db.String(128), nullable=False)
-    worker_id = db.Column(db.String(128), nullable=False)
-    hit_id = db.Column(db.String(128), nullable=False)
-    ua_raw = db.Column(db.String(128))
-    ua_browser = db.Column(db.String(128))
-    ua_browser_version = db.Column(db.String(128))
-    ua_os = db.Column(db.String(128))
-    ua_os_version = db.Column(db.String(128))
-    ua_device = db.Column(db.String(128))
+
+    mturk_worker_id = db.Column(db.String(128), nullable=False)
+
     status = db.Column(db.String(128))
     experiment_group = db.Column(db.String(128))
     data_string = db.Column(db.Text())
     created_on = db.Column(db.DateTime(), default=datetime.utcnow())
-    completion_code = db.Column(db.String(128))
 
     @classmethod
     def all(cls):
@@ -87,6 +31,10 @@ class Subject(db.Model):
     def get_by_worker_id(cls, worker_id):
         return db.session.query(cls).filter(cls.worker_id == worker_id).first()
 
+    @classmethod
+    def get_by_user_id(cls, user_id):
+        return db.session.query(cls).filter(cls.user_id == user_id).first()
+
 
 class Exercise(db.Model):
     __tablename__ = 'exercises'
@@ -99,3 +47,73 @@ class Exercise(db.Model):
     @classmethod
     def get(cls, id):
         return db.session.query(cls).filter(cls.id == id).one()
+
+
+class SubjectAssignment(db.Model):
+    __tablename__ = 'subject_assignments'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    subject_id = db.Column(db.Integer(), db.ForeignKey('user_subjects.id'),
+                           nullable=False)
+
+    mturk_assignment_id = db.Column(db.String(128), nullable=False)
+    hit_id = db.Column(db.String(128), nullable=False)
+
+    assignment_phase = db.Column(db.String(50))
+
+    ua_raw = db.Column(db.String(255))
+    ua_browser = db.Column(db.String(128))
+    ua_browser_version = db.Column(db.String(128))
+    ua_os = db.Column(db.String(128))
+    ua_os_version = db.Column(db.String(128))
+    ua_device = db.Column(db.String(128))
+
+    skill_level = db.Column(db.String(50))
+    education = db.Column(db.String(50))
+    gender = db.Column(db.String(50))
+    english_level = db.Column(db.String(50))
+
+    comments = db.Column(db.Text())
+    did_cheat = db.Column(db.Boolean())
+    did_timeout = db.Column(db.Boolean(),
+                            nullable=False,
+                            default=False)
+    is_complete = db.Column(db.Boolean(),
+                            nullable=False,
+                            default=False)
+
+    mturk_completion_code = db.Column(db.String(255))
+    mturk_assignment_status = db.Column(db.String(100))
+    mturk_assignment_status_date = db.Column(db.DateTime())
+    assignment_results = db.Column(JSON())
+    assignment_predictions = db.Column(JSON())
+    created_on = db.Column(db.DateTime(),
+                           nullable=False,
+                           default=datetime.utcnow)
+
+    sessions = db.relationship("Session")
+
+
+class AssignmentResponse(db.Model):
+    __tablename__ = 'assignment_responses'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    assignment_id = db.Column(db.Integer(),
+                              db.ForeignKey('subject_assignments.id'))
+    exercise_id = db.Column(db.Integer(), db.ForeignKey('exercises.id'))
+    selection = db.Column(db.Integer(), nullable=False)
+    credit = db.Column(db.Float(), nullable=False, default=0.0)
+    user_response_time = db.Column(db.Float, nullable=False, default=0.0)
+    started_on = db.Column(db.DateTime(), nullable=False)
+    completed_on = db.Column(db.DateTime(), default=datetime.utcnow())
+
+
+class AssignmentSession(db.Model):
+    __tablename__ = 'assignment_sessions'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    assignment_id = db.Column(db.Integer(),
+                              db.ForeignKey('subject_assignments.id'))
+    status = db.Column(db.String(100))
+    start_time = db.Column(db.DateTime(), nullable=False,
+                           default=datetime.now())

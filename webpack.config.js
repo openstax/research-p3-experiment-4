@@ -29,10 +29,10 @@ module.exports = {
   devServer: {
     // Proxy requests to the API server that the
     // webpack-dev-server can't satisfy.
-    host: '0.0.0.0',
+    host: 'localhost',
     proxy: {
       '*': {
-        target: 'http://web:5000',
+        target: 'http://127.0.0.1:5000',
         secure: false
       }
     },

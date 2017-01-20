@@ -1,6 +1,6 @@
 from flask_security.utils import encrypt_password
 
-from digital_logic.experiment.models import Subject
+from digital_logic.experiment.models import UserSubject as Subject
 
 subject_data = {
     'assignment_id': u'debugSIP7SD',

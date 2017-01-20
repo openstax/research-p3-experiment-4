@@ -36,6 +36,7 @@ target_metadata = db.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+app = create_app()
 url = make_database_url()
 
 

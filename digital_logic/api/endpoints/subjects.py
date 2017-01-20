@@ -3,7 +3,8 @@ from flask_restplus import Resource
 
 from digital_logic.api.serializers import subject
 from digital_logic.core import api
-from digital_logic.models import Subject, create_subject, update_subject
+from digital_logic.experiment.business_logic import create_subject, \
+    update_subject
 
 ns = api.namespace('subjects',
                    description='Operations related to experiment subjects')
