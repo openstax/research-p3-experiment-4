@@ -42,13 +42,13 @@ class User(UserMixin, db.Model):
 
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
-    subject = db.relationship('Subject',
-                              backref=db.backref('users', lazy='dynamic'))
+    subject = db.relationship('UserSubject',
+                              backref=db.backref('users'))
 
     @classmethod
-    def get_by_worker_id(cls, worker_id):
+    def get_by_worker_id(cls, mturk_worker_id):
         query = db.session.query(cls).join(UserSubject).filter(
-            UserSubject.worker_id == worker_id)
+            UserSubject.mturk_worker_id == mturk_worker_id)
         return query.first()
 
 

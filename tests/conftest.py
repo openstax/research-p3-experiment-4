@@ -8,7 +8,7 @@ from webtest import TestApp
 
 from digital_logic import create_app
 from digital_logic.core import db as _db
-from utils import populate_data, create_subjects
+from utils import populate_data, create_subjects, create_assignments
 
 
 @pytest.yield_fixture(scope='session')
@@ -64,6 +64,7 @@ def app(app_config):
 
     populate_data(_app.security.datastore)
     create_subjects(_db)
+    create_assignments(_db)
 
     yield _app
 

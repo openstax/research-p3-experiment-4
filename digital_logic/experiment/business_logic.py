@@ -3,7 +3,8 @@ from collections import Counter
 
 from digital_logic.accounts.models import User
 from digital_logic.core import db
-from digital_logic.experiment.models import UserSubject as Subject
+from digital_logic.experiment.models import UserSubject as Subject, \
+    SubjectAssignment, AssignmentResponse
 
 
 def get_subject_by_user_id(user_id):
@@ -23,9 +24,8 @@ def get_experiment_group(num_groups):
     """
     counts = Counter()
 
-    subjects = db.session.query(Subject)\
-        .filter(Subject.status == 'COMPLETED')\
-        .all()
+    subjects = db.session.query(Subject).join(SubjectAssignment).filter(
+        SubjectAssignment.is_complete == True).all()
 
     for cond in range(num_groups):
         counts[cond] = 0
@@ -59,5 +59,29 @@ def update_subject(subject_id, data):
 
     return subject
 
-def get_latest_user_assignment(user_id):
-    pass
+
+def get_latest_subject_assignment(subject_id):
+    assignment = SubjectAssignment.get_lastest_by_subject_id(subject_id)
+    return assignment
+
+
+def create_subject_assignment(subject_id, assignment_phase, assignment_id,
+                              hit_id, ua_dict):
+    assignment = SubjectAssignment(subject_id=subject_id,
+                                   assignment_phase=assignment_phase,
+                                   mturk_hit_id=hit_id,
+                                   mturk_assignment_id=assignment_id,
+                                   **ua_dict)
+    db.session.add(assignment)
+    db.session.commit()
+
+    return assignment
+
+
+def purge_subject_data(subject_id):
+    subject_assignments = SubjectAssignment.get_all_by_subject_id(subject_id)
+
+    if subject_assignments:
+        for assignment in subject_assignments:
+            responses = AssignmentResponse.all_by_assignment_id(
+                assignment.id).delete()

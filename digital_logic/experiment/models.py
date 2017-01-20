@@ -14,7 +14,6 @@ class UserSubject(db.Model):
 
     mturk_worker_id = db.Column(db.String(128), nullable=False)
 
-    status = db.Column(db.String(128))
     experiment_group = db.Column(db.String(128))
     data_string = db.Column(db.Text())
     created_on = db.Column(db.DateTime(), default=datetime.utcnow())
@@ -28,8 +27,9 @@ class UserSubject(db.Model):
         return db.session.query(cls).filter(cls.id == id).one()
 
     @classmethod
-    def get_by_worker_id(cls, worker_id):
-        return db.session.query(cls).filter(cls.worker_id == worker_id).first()
+    def get_by_mturk_worker_id(cls, mturk_worker_id):
+        return db.session.query(cls).filter(
+            cls.mturk_worker_id == mturk_worker_id).first()
 
     @classmethod
     def get_by_user_id(cls, user_id):
@@ -57,7 +57,7 @@ class SubjectAssignment(db.Model):
                            nullable=False)
 
     mturk_assignment_id = db.Column(db.String(128), nullable=False)
-    hit_id = db.Column(db.String(128), nullable=False)
+    mturk_hit_id = db.Column(db.String(128), nullable=False)
 
     assignment_phase = db.Column(db.String(50))
 
@@ -78,6 +78,9 @@ class SubjectAssignment(db.Model):
     did_timeout = db.Column(db.Boolean(),
                             nullable=False,
                             default=False)
+    did_quit = db.Column(db.Boolean(),
+                         nullable=False,
+                         default=False)
     is_complete = db.Column(db.Boolean(),
                             nullable=False,
                             default=False)
@@ -91,7 +94,19 @@ class SubjectAssignment(db.Model):
                            nullable=False,
                            default=datetime.utcnow)
 
-    sessions = db.relationship("Session")
+    @classmethod
+    def get_all_by_subject_id(cls, subject_id):
+        return db.session.query(cls).filter(cls.id == subject_id).all()
+
+    @classmethod
+    def get(cls, subject_id):
+        return db.session.query(cls).filter(cls.id == subject_id).first()
+
+    @classmethod
+    def get_lastest_by_subject_id(cls, subject_id):
+        query = db.session.query(cls).filter(
+            cls.subject_id == subject_id).order_by(cls.created_on.desc())
+        return query.first()
 
 
 class AssignmentResponse(db.Model):
@@ -106,6 +121,10 @@ class AssignmentResponse(db.Model):
     user_response_time = db.Column(db.Float, nullable=False, default=0.0)
     started_on = db.Column(db.DateTime(), nullable=False)
     completed_on = db.Column(db.DateTime(), default=datetime.utcnow())
+
+    @classmethod
+    def all_by_subject_id(cls, subject_id):
+        return db.session.query(cls).filter(cls.id == subject_id).all()
 
 
 class AssignmentSession(db.Model):

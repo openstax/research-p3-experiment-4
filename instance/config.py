@@ -2,8 +2,12 @@ import os
 
 from digital_logic import make_database_url
 
+# MAIN FLASK APP
 SECRET_KEY = os.environ.get('SESSION_SECRET')
 DEBUG = os.environ.get('FLASK_DEBUG')
+
+# EXPERIMENT SPECIFIC SETTINGS
+ASSIGNMENT_PHASES = ['Practice', 'Assessment']
 
 # REDIS
 REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
