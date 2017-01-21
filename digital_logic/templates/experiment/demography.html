@@ -62,9 +62,7 @@
                                     <p class="right-align">
                                     <button type="submit" class="btn btn-large waves-effect waves-light">Start Reading</button><br/><strong>Thank you!</strong></p>
                                 </footer>
-
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -77,6 +75,10 @@
     {{ super() }}
     <script>
     $(document).ready(function() {
+      // This is needed in order to change the first values of the select without causing errors to flask-wtf
+      // I tried dynamic values but the age field would not validate. This is a hack but it works.
+      $('select option:first-child').html('Select an option').val('');
+
       $('select').material_select();
     });
     </script>

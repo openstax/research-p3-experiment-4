@@ -8,6 +8,11 @@
                 <div class="textbook-text">
                     {{ text | safe }}
                 </div>
+                <div>
+                    <form action="{{ url_for('exp.reading') }}">
+                   <p class="right-align"><button type="submit" class="btn btn-large waves-effect waves-light">Next</button><br/><strong></strong></p>
+                   </form>
+                </div>
             </div>
         </div>
     </div>

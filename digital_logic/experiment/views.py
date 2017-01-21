@@ -197,10 +197,11 @@ def reading():
 
         section = session['reading_sections'][sections_completed]
     else:
-
+        session['sections_completed'] += 1
         if session['sections_completed'] < session['total_sections']:
-            session['sections_completed'] += 1
             section = session['reading_sections'][session['sections_completed']]
+        else:
+            return redirect(url_for('exp.feedback'))
 
     text = render_textbook_text(section)
 

@@ -4,7 +4,7 @@
 
 {% markdown %}
 
-## Preface {:.preface}
+# Preface {:.preface}
 
 Digital logic is the basis of every modern computer. Digital logic
 takes binary inputs, valued at 1 or 0, and transforms them into useful
@@ -13,8 +13,7 @@ understanding the basic building blocks of digital logic circuits and
 how these can be combined to produce more complicated logic circuits.
 
 
-Introductory Digital Logic {:.introduction}
-===========================================
+# Introductory Digital Logic {:.introduction}
 
 Digital logic is a subarea of traditional algebra. Like algebra,
 digital logic consists of variables and operations that can be carried
@@ -24,8 +23,7 @@ the types of variables that are used and operations that allow us to
 manipulate those variables.
 
 
-Boolean Variables {:.boolean-variables}
----------------------------------------
+# Boolean Variables {:.boolean-variables}
 
 Traditional algebraic variables can take on a wide array of values. For
 example, $x=7$, $t=-7.3$, and $z=57$ are perfectly acceptable
@@ -45,11 +43,11 @@ another binary value. The three primitive Boolean operations are:
 
 The outputs of these operations will be discussed in the next section.
 These primitive Boolean operations can be used together to produce
-more complex functions. We use the term **Boolean experssion** when we
+more complex functions. We use the term **Boolean expression** when we
 write these functions mathematically.
 
-Logic Gates {:.logic-gates}
----------------------------
+# Logic Gates {:.logic-gates}
+
 
 **Logic gates** are the theoretical and physical electronic components
 that execute Boolean operations. They are often used to provide a
@@ -58,7 +56,7 @@ designing and interpreting digital logic circuits. Here we introduce
 the primitive logic gates. For this section, let A and B be Boolean
 variables.
 
-### AND {:.and}
+## AND {:.and}
 
 The **AND** logic gate takes two inputs. The output of the AND gate is
 $1$ only if both inputs are $1$. For example, A AND B will only equal
@@ -103,7 +101,7 @@ if the first input **and** the second input are true.
 
 {% endcall %}
 
-### Truth Tables {:.truth-tables}
+# Truth Tables {:.truth-tables}
 
 Now that we have seen our first Boolean expression, AB, let's learn
 how to represent its behavior. **Truth tables** show the output of a
@@ -126,7 +124,7 @@ Draw a truth table for A AND B.
 
 {% endcall %}
 
-### OR {:.or}
+# OR {:.or}
 
 The **OR** logic gate takes two inputs. The output of the OR gate is 1
 if at least one of the inputs is 1. A OR B only outputs 0 if A=B=0. In
@@ -152,7 +150,7 @@ Evaluate 0 OR 0.
 
 Since OR only evaluates to 1 when at least one input is 1, 0 OR 0 = 0.
 
-### NOT {:.not}
+# NOT {:.not}
 
 The **NOT** logic gate takes one input. The output of the NOT gate is
 simply the opposite of the input. NOT A, for example, would output 1

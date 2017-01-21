@@ -15,3 +15,8 @@ body {
     margin: auto;
     padding: 0 1em;
 }
+
+.has-error {
+    border: solid 1px;
+    color: red;
+}
