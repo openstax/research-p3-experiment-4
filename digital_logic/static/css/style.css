@@ -1,5 +1,6 @@
 body {
     background-color: lightblue;
+    font-size: 1.2em;
 }
 
 #remember-me {
@@ -7,8 +8,8 @@ body {
 }
 
 .textbook-text {
-    font-size: 2em;
-    line-height: 1.5;
+    font-size: 1.5em;
+    line-height: 1.3;
     font-family: 'Merriweather', Georgia, 'Times New Roman', Times, serif;
     color: #424242;
     max-width: 34em;
@@ -31,6 +32,10 @@ input[type=text]:focus:not([readonly]),
     display: inline-block;
 }
 
-label {
-    padding-bottom: 10px;
+.textbook-text.loading {
+    display: none;
+}
+
+.input-field label {
+    font-size: 1.2rem;
 }

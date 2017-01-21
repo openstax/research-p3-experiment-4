@@ -1,6 +1,16 @@
 from transitions import Machine
 
-reading_sections = ['preface', 'introduction', 'boolean-variables']
+reading_sections = [
+    'preface',
+    'introduction',
+    'boolean-variables',
+    'logic-gates',
+    'truth-tables',
+    'compound-boolean-expression',
+    'circuits-to-truth-tables',
+    'truth-tables-to-boolean',
+    'summary'
+]
 
 
 class Reading(object):

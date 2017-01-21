@@ -118,7 +118,7 @@ Draw a truth table for A AND B.
 3.  Underneath A AND B, write the value of A AND B based on the values
     of A and B in that row.
 
-{% call m.figure("truth_table_A_and_B.PNG", "truth table for A AND B", "restrict no-border") %}
+{% call m.figure("truth_table_A_and_B.PNG", "truth table for A AND B", "restrict no-border responsive-img") %}
 
 **Figure 2**  Truth table for A AND B.
 
@@ -138,7 +138,7 @@ A OR B = A + B
 **Figure 3** The electronic symbol for the OR logic gate.
 {% endcall %}
 
-{% call m.figure("truth_table_A_or_B.PNG", "truth table for A OR B", "no-border") %}
+{% call m.figure("truth_table_A_or_B.PNG", "truth table for A OR B", "no-border responsive-img") %}
 **Figure 4** Truth table for A OR B.
 {% endcall %}
 
@@ -166,7 +166,7 @@ NOT A = A'
 **Figure 5** The electronic symbol for the NOT logic gate.
 {% endcall %}
 
-{% call m.figure("truth_table_NOT_A.PNG", "truth table for NOT A", "no-border") %}
+{% call m.figure("truth_table_NOT_A.PNG", "truth table for NOT A", "no-border responsive-img") %}
 **Figure 6** Truth table for NOT A.
 {% endcall %}
 
@@ -215,13 +215,14 @@ the order of operations.
 Write the truth table for A AND (B AND C).
 
 **Solution**
+
 Since we have three variables, we will have $2^3=8$ rows in the truth
 table. For each row in the truth table, we can first evaluate the (B
 AND C) term and then use this result to obtain the final output. By
 inspection we can see that this expression will evaluate to 1 only
 when A, B, and C are 1.
 
-{% call m.figure("TT_AandBandC.png", "truth table for A AND (B AND C)", "no-border restrict") %}
+{% call m.figure("TT_AandBandC.png", "truth table for A AND (B AND C)", "no-border restrict responsive-img") %}
 
 **Figure 8** Truth table for A AND (B AND C).  We note that the
 only time the output of this circuit is is 1 is for the case when
@@ -237,7 +238,7 @@ Since we have three variables, we will have $2^3=8$ rows in the truth
 table. For each row in the truth table, we can first evaluate the (B
 AND C) term and then use this result to obtain the final output.
 
-{% call m.figure("TT_AorBandC.png", "truth table for A OR (B AND C)", "no-border restrict") %}
+{% call m.figure("TT_AorBandC.png", "truth table for A OR (B AND C)", "no-border restrict responsive-img") %}
 **Figure 9** Truth table for A OR (B AND C).
 {% endcall %}
 
@@ -255,7 +256,7 @@ implements the expression A OR (B AND C) from the previous example.
 
 Write the truth table for the following circuit.
 
-{% call m.figure("circuit_tt_1_prob_v2.png", "Circuit diagram for A OR (B AND C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_1_prob_v2.png", "Circuit diagram for A OR (B AND C)", "no-border restrict responsive-img") %}
 **Figure 10** Circuit diagram for A OR (B AND C)
 {% endcall %}
 
@@ -266,7 +267,7 @@ the circuit. We can then propagate the results through the circuit to
 obtain the final result. As a concrete example, we show how this works
 for the case A=1, B=1, and C=0.
 
-{% call m.figure("circuit_tt_1_ans_v2.png", "Realization of the circuit diagram for A OR (B AND C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_1_ans_v2.png", "Realization of the circuit diagram for A OR (B AND C)", "no-border restrict responsive-img") %}
 **Figure 11** Realization of the circuit diagram for A OR (B AND C) for A=1, B=1 and C=0.
 {% endcall %}
 
@@ -283,7 +284,7 @@ at the final truth table given in Example 6.
 Write the truth table for the following circuit, which implements the expression
 (NOT A) AND (B OR C) = A' $\cdot$ (B + C).
 
-{% call m.figure("circuit_tt_2_prob_v2.png", "Circuit diagram for (NOT A) AND (B OR C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_2_prob_v2.png", "Circuit diagram for (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
 **Figure 12** Circuit diagram for (NOT A) AND (B OR C).
 {% endcall %}
 
@@ -294,7 +295,7 @@ and apply their inputs into the circuit. Propagating the results
 through the circuit will obtain the final result. As a concrete
 example, we show how this works for the case A=0, B=1, and C=0.
 
-{% call m.figure("circuit_tt_2_ans_v2.png", "Realization of the circuit (NOT A) AND (B OR C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_2_ans_v2.png", "Realization of the circuit (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
 **Figure 13** Realization of the circuit (NOT A) AND (B OR C) when A=0, B=1 and C=0.
 {% endcall %}
 
@@ -306,7 +307,7 @@ achieved for the case under consideration.  This, the final result
 is 1.  Repeating this for all input combinations we can arrive at the
 final truth table given below.
 
-{% call m.figure("truth_table_NOTA_AND_BORC.png", "Truth table for (NOT A) AND (B OR C)", "no-border restrict") %}
+{% call m.figure("truth_table_NOTA_AND_BORC.png", "Truth table for (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
 
 **Figure 14** Truth table for (NOT A) AND (B OR C).
 
@@ -343,7 +344,7 @@ This process will be clearer with an example.
 
 Write a Boolean expression for Z from the truth table below.
 
-{% call m.figure("truth_bool.PNG", "Truth table to be translated to a boolean expression", "no-border restrict") %}
+{% call m.figure("truth_bool.PNG", "Truth table to be translated to a boolean expression", "no-border restrict responsive-img") %}
 **Figure 15** Truth table to be translated to a boolean expression.
 {% endcall %}
 

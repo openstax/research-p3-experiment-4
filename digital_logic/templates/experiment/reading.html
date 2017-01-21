@@ -5,7 +5,10 @@
     <div class="row">
         <div class="col s12 m10 l10 offset-l1 offset-m1">
             <div class="card-panel">
-                <div class="textbook-text">
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                </div>
+                <div class="textbook-text loading">
                     {{ text | safe }}
                 </div>
                 <div>
@@ -20,5 +23,36 @@
 {% endblock content %}
 
 {% block scripts %}
+    {{ super() }}
+
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          processEscapes: true
+        }
+      });
+
+
+    </script>
+    <script type="text/javascript"
+            src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
+    <script>
+        function loaded() {
+          $('.textbook-text').removeClass('loading');
+          $('.progress').hide()
+        }
+
+        function delayLoad() {
+          MathJax.Hub.Queue(function() {
+            loaded();
+          });
+          setTimeout(loaded, 500)
+        }
+        setTimeout(delayLoad, 800)
+    </script>
 
 {% endblock scripts %}

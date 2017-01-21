@@ -10,7 +10,7 @@
 
 <div class="media {{ class }}">
   <span class="">
-    <img src="{{ url_for('static', filename='img/digital_logic/' + name) }}" alt="{{ alt }}">
+    <img src="{{ url_for('static', filename='img/digital_logic/' + name) }}" alt="{{ alt }}" class="{{ class }}">
   </span>
   <div class="media-body">
     {{ caller() | markdown | safe }}
