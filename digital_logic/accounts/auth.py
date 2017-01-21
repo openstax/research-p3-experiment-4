@@ -6,6 +6,7 @@ from flask_principal import Permission, RoleNeed
 from flask_security import utils
 
 from digital_logic.core import db
+from digital_logic.experiment.reading import reading_sections
 from digital_logic.experiment.service import (
     create_subject,
     get_subject_by_user_id,

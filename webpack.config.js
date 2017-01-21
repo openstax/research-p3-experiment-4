@@ -18,6 +18,9 @@ module.exports = {
     app: [
       rootAssetPath + '/js/src/index.js',
       cssAssetPath + '/style.css'
+    ],
+    reading_js: [
+      rootAssetPath + '/js/src/Reading.js'
     ]
   },
   output: {

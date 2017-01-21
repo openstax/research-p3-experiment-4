@@ -12,8 +12,10 @@ from flask_login import current_user
 from digital_logic.accounts.auth import (
     _login_and_prep_subject,
     logout_mturk_user)
+from digital_logic.api.endpoints.textbook import render_textbook_text
 from digital_logic.core import db
 from digital_logic.exceptions import ExperimentError
+from digital_logic.experiment.reading import reading_sections
 from digital_logic.experiment.service import (
     get_latest_subject_assignment,
     all_subject_assignments,
@@ -133,6 +135,13 @@ def start():
 
             if latest_assignment and latest_assignment.did_quit:
                 raise ExperimentError('quit_experiment_early')
+            elif latest_assignment and latest_assignment.is_complete:
+                assignment = _login_and_prep_subject(worker_id,
+                                                     assignment_id,
+                                                     hit_id,
+                                                     ua_dict,
+                                                     debug_mode)
+                session['current_assignment_id'] = assignment.id
             else:
                 assignment = _login_and_prep_subject(worker_id,
                                                      assignment_id,
@@ -175,7 +184,27 @@ def demography():
 
 @exp.route('/reading', methods=['GET'])
 def reading():
-    return render_template('reading.html')
+    section = None
+    text = None
+
+    if 'reading_sections' not in session or not session['reading_sections']:
+        sections_completed = 0
+        total_sections = len(reading_sections)
+
+        session['reading_sections'] = reading_sections
+        session['sections_completed'] = sections_completed
+        session['total_sections'] = total_sections
+
+        section = session['reading_sections'][sections_completed]
+    else:
+
+        if session['sections_completed'] < session['total_sections']:
+            session['sections_completed'] += 1
+            section = session['reading_sections'][session['sections_completed']]
+
+    text = render_textbook_text(section)
+
+    return render_template('reading.html', text=text)
 
 
 @exp.route('/feedback', methods=['GET', 'POST'])

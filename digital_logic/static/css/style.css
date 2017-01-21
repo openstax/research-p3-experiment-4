@@ -5,3 +5,13 @@ body {
 #remember-me {
     float: left;
 }
+
+.textbook-text {
+    font-size: 2em;
+    line-height: 1.5;
+    font-family: 'Merriweather', Georgia, 'Times New Roman', Times, serif;
+    color: #424242;
+    max-width: 34em;
+    margin: auto;
+    padding: 0 1em;
+}
