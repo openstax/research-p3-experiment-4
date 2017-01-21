@@ -21,7 +21,7 @@ from digital_logic.experiment.service import (
     all_subject_assignments,
     get_subject_by_user_id,
     add_session_record)
-from digital_logic.experiment.forms import DemographyForm
+from digital_logic.experiment.forms import DemographyForm, FinalizeForm
 from digital_logic.experiment.models import UserSubject as Subject
 from digital_logic.experiment.models import SubjectAssignment
 from digital_logic.helpers import parse_user_agent
@@ -201,16 +201,17 @@ def reading():
         if session['sections_completed'] < session['total_sections']:
             section = session['reading_sections'][session['sections_completed']]
         else:
-            return redirect(url_for('exp.feedback'))
+            return redirect(url_for('exp.finalize'))
 
     text = render_textbook_text(section)
 
     return render_template('reading.html', text=text)
 
 
-@exp.route('/feedback', methods=['GET', 'POST'])
-def feedback():
-    return 'Tell us how we did!'
+@exp.route('/finalize', methods=['GET', 'POST'])
+def finalize():
+    form = FinalizeForm()
+    return render_template('finalize.html', form=form)
 
 
 @exp.route('/assessment', methods=['GET', 'POST'])

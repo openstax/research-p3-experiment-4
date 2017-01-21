@@ -18,5 +18,19 @@ body {
 
 .has-error {
     border: solid 1px;
-    color: red;
+    color: lightcoral;
+}
+
+input[type=text]:focus:not([readonly]),
+
+.clearfix {
+  overflow: auto;
+}
+
+.form-wrapper {
+    display: inline-block;
+}
+
+label {
+    padding-bottom: 10px;
 }
