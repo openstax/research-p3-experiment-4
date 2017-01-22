@@ -2,10 +2,12 @@ import logging
 import random
 from collections import Counter
 
+from sqlalchemy import and_
+
 from digital_logic.accounts.models import User
 from digital_logic.core import db
 from digital_logic.experiment.models import UserSubject as Subject, \
-    SubjectAssignment, AssignmentResponse, AssignmentSession
+    SubjectAssignment, AssignmentResponse, AssignmentSession, Exercise
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -85,6 +87,7 @@ def create_subject_assignment(subject_id,
     db.session.add(assignment)
     db.session.commit()
 
+
     return assignment
 
 
@@ -124,10 +127,30 @@ def purge_subject_assignment_data(assignment_id):
 
 def add_session_record(assignment_id, status):
     assignment_session = AssignmentSession(assignment_id=assignment_id,
-                                status=status)
+                                           status=status)
     db.session.add(assignment_session)
     db.session.commit()
     log.info(
         'Recording session status {0} for assignment {1}'.format(assignment_id,
                                                                  status))
     return assignment_session
+
+
+def list_answered_exercise_ids(subject_id, assignment_id):
+    query = db.session.query(
+        Exercise).join(
+            AssignmentResponse).join(
+                SubjectAssignment).filter(
+                    SubjectAssignment.subject_id == subject_id,
+                        SubjectAssignment.id == assignment_id)
+
+    return query.all()
+
+
+def list_unanswered_exercise_ids(subject_id, assignment_id):
+    subquery = db.session.query(AssignmentResponse).join(
+        SubjectAssignment).filter(
+            SubjectAssignment.subject_id == subject_id).subquery()
+    return db.session.query(Exercise.id).filter(
+        and_(Exercise.level >=0,
+            ~Exercise.id.in_(subquery))).all()

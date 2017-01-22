@@ -6,7 +6,8 @@ from flask_principal import Permission, RoleNeed
 from flask_security import utils
 
 from digital_logic.core import db
-from digital_logic.experiment.reading import reading_sections
+from digital_logic.exceptions import ExperimentError
+from digital_logic.experiment.exercise import initialize_subject_exercises
 from digital_logic.experiment.service import (
     create_subject,
     get_subject_by_user_id,
@@ -123,6 +124,7 @@ def _login_and_prep_subject(worker_id,
 
         latest_assignment = get_latest_subject_assignment(subject.id)
         assignment_phases = app.config['ASSIGNMENT_PHASES']
+        session['debug_mode'] = debug_mode
 
         if latest_assignment and debug_mode:
             purge_subject_assignment_data(latest_assignment.id)
@@ -134,6 +136,7 @@ def _login_and_prep_subject(worker_id,
                                                    assignment_id,
                                                    hit_id,
                                                    ua_dict)
+            initialize_subject_exercises(subject.id, assignment.id)
             return assignment
         elif latest_assignment.assignment_phase == assignment_phases[0]:
             subject_user = get_subject_by_user_id(user.id)
@@ -143,4 +146,7 @@ def _login_and_prep_subject(worker_id,
                                                        assignment_id,
                                                        hit_id,
                                                        ua_dict)
+                initialize_subject_exercises(subject.id, assignment.id)
                 return assignment
+    else:
+        raise ExperimentError('incorrect_experiment_params')

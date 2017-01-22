@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.dialects.postgresql import ARRAY, JSON
+from sqlalchemy import func
 
 from ..core import db
 
@@ -51,6 +52,10 @@ class Exercise(db.Model):
     def get(cls, id):
         return db.session.query(cls).filter(cls.id == id).one()
 
+    @classmethod
+    def get_random(cls, random):
+        return db.session.query(cls).order_by(func.random())
+
 
 class SubjectAssignment(db.Model):
     __tablename__ = 'subject_assignments'
@@ -82,6 +87,8 @@ class SubjectAssignment(db.Model):
     is_complete = db.Column(db.Boolean(),
                             nullable=False,
                             default=False)
+    exercise_pool = db.Column(ARRAY(db.Integer()))
+    mastery = db.Column(ARRAY(db.Integer()))
 
     mturk_completion_code = db.Column(db.String(255))
     mturk_assignment_status = db.Column(db.String(100))
@@ -91,13 +98,16 @@ class SubjectAssignment(db.Model):
     created_on = db.Column(db.DateTime(),
                            nullable=False,
                            default=datetime.utcnow)
+    @classmethod
+    def get(cls, assignment_id):
+        return db.session.query(cls).filter(cls.id == assignment_id).first()
 
     @classmethod
     def get_all_by_subject_id(cls, subject_id):
         return db.session.query(cls).filter(cls.id == subject_id).all()
 
     @classmethod
-    def get(cls, subject_id):
+    def get_by_subject_id(cls, subject_id):
         return db.session.query(cls).filter(cls.id == subject_id).first()
 
     @classmethod

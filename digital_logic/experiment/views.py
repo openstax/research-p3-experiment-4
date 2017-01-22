@@ -11,7 +11,7 @@ from flask_login import current_user
 
 from digital_logic.accounts.auth import (
     _login_and_prep_subject,
-    logout_mturk_user)
+    logout_mturk_user, mturk_permission)
 from digital_logic.api.endpoints.textbook import render_textbook_text
 from digital_logic.core import db
 from digital_logic.exceptions import ExperimentError
@@ -28,6 +28,8 @@ from digital_logic.helpers import parse_user_agent
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
+
 
 exp = Blueprint('exp',
                 __name__,
@@ -142,6 +144,8 @@ def start():
                                                      ua_dict,
                                                      debug_mode)
                 session['current_assignment_id'] = assignment.id
+                add_session_record(assignment.id, 'Started')
+                return redirect(url_for('exp.assessment'))
             else:
                 assignment = _login_and_prep_subject(worker_id,
                                                      assignment_id,
@@ -149,6 +153,7 @@ def start():
                                                      ua_dict,
                                                      debug_mode)
                 session['current_assignment_id'] = assignment.id
+                add_session_record(assignment.id, 'Started')
                 return redirect(url_for('exp.demography'))
         else:
             raise ExperimentError('experiment_completed')
@@ -161,10 +166,12 @@ def start():
                                              ua_dict,
                                              debug_mode)
         session['current_assignment_id'] = assignment.id
+        add_session_record(assignment.id, 'Started')
         return redirect(url_for('exp.demography'))
 
 
 @exp.route('/demography', methods=['GET', 'POST'])
+@mturk_permission.require()
 def demography():
     subject = get_subject_by_user_id(current_user.id)
     assignment = SubjectAssignment.get(
@@ -183,9 +190,12 @@ def demography():
 
 
 @exp.route('/reading', methods=['GET'])
+@mturk_permission.require()
 def reading():
     section = None
     text = None
+    subject = get_subject_by_user_id(current_user.id)
+    assignment_id = session['current_assignment_id']
 
     if 'reading_sections' not in session or not session['reading_sections']:
         sections_completed = 0
@@ -201,19 +211,50 @@ def reading():
         if session['sections_completed'] < session['total_sections']:
             section = session['reading_sections'][session['sections_completed']]
         else:
+            add_session_record(session['current_assignment_id'], 'Finalizing')
             return redirect(url_for('exp.finalize'))
 
-    text = render_textbook_text(section)
+    text = render_textbook_text(section.get('name'))
 
-    return render_template('reading.html', text=text)
+    return render_template('reading.html',
+                           text=text,
+                           section=section,
+                           subject_id=subject.id,
+                           assignment_id=assignment_id)
 
 
 @exp.route('/finalize', methods=['GET', 'POST'])
+@mturk_permission.require()
 def finalize():
     form = FinalizeForm()
     return render_template('finalize.html', form=form)
 
 
+@exp.route('/summary', methods=['GET'])
+@mturk_permission.require()
+def summary():
+    return 'YO DIS DA SUMMARY!'
+
+
 @exp.route('/assessment', methods=['GET', 'POST'])
+@mturk_permission.require()
 def assessment_index():
     return 'assessment_index!'
+
+
+@exp.route('/distracting', methods=['GET'])
+@mturk_permission.require()
+def distractor_task():
+    return 'Distracting!!!!'
+
+
+@exp.route('/predicting', methods=['GET'])
+@mturk_permission.require()
+def prediction_task():
+    return 'Predicting how well i will do at the pageant'
+
+
+@exp.route('/testing')
+@mturk_permission.require()
+def testing():
+    return 'Testing ... Testing ... 1 - 2 - 3'

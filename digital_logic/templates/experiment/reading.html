@@ -1,21 +1,39 @@
 {% extends 'layouts/base.html' %}
 
-{% block content %}
+{% set section_name = section.name %}
+{% set exercises = section.exercises %}
 
+{% block content %}
     <div class="row">
         <div class="col s12 m10 l10 offset-l1 offset-m1">
             <div class="card-panel">
                 <div class="progress">
                     <div class="indeterminate"></div>
                 </div>
-                <div class="textbook-text loading">
-                    {{ text | safe }}
+                <div class="reading-wrapper loading">
+                    <div class="textbook-text">
+                        {{ text | safe }}
+                    </div>
+                    <div>
+                        {% if not exercises %}
+                        <form action="{{ url_for('exp.reading') }}">
+                            <p class="right-align"><button type="submit" class="btn btn-large waves-effect waves-light">Next</button><br/><strong></strong></p>
+                       </form>
+                        {% else %}
+
+                            <p class="exercise-button right-align"><button type="submit" class="btn btn-large waves-effect waves-light">Answer Exercises</button><br/>
+                                <strong>
+                                    You have some practice exercises coming up
+                                </strong>
+                            </p>
+
+                        {% endif %}
+                    </div>
                 </div>
-                <div>
-                    <form action="{{ url_for('exp.reading') }}">
-                   <p class="right-align"><button type="submit" class="btn btn-large waves-effect waves-light">Next</button><br/><strong></strong></p>
-                   </form>
+                <div class="exercise-wrapper" style="display:none">
+                    WE GOTZ STUFF
                 </div>
+
             </div>
         </div>
     </div>
@@ -24,6 +42,7 @@
 
 {% block scripts %}
     {{ super() }}
+    {{ javascript_tag('exercise_js') | safe }}
 
 
     <script type="text/x-mathjax-config">
@@ -34,7 +53,6 @@
         }
       });
 
-
     </script>
     <script type="text/javascript"
             src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
@@ -42,7 +60,7 @@
 
     <script>
         function loaded() {
-          $('.textbook-text').removeClass('loading');
+          $('.reading-wrapper').removeClass('loading');
           $('.progress').hide()
         }
 
@@ -55,4 +73,11 @@
         setTimeout(delayLoad, 800)
     </script>
 
+    {% if exercises %}
+    <script>
+        $('.exercise-button').on('click', function() {
+          window.ExercisePhase.start('{{section_name}}', '{{subject_id}}', '{{assignment_id}}')
+        })
+    </script>
+    {% endif %}
 {% endblock scripts %}

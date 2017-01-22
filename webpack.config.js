@@ -19,8 +19,8 @@ module.exports = {
       rootAssetPath + '/js/src/index.js',
       cssAssetPath + '/style.css'
     ],
-    reading_js: [
-      rootAssetPath + '/js/src/Reading.js'
+    exercise_js: [
+      rootAssetPath + '/js/src/Exercise.js'
     ]
   },
   output: {
