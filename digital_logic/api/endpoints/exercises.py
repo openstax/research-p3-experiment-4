@@ -11,6 +11,29 @@ ns = api.namespace('exercises',
                    description='Operations related to experiment exercises')
 
 
+def format_exercise(exercise_model):
+    """
+    Formats the json that contains the exercise text and answer choices in an
+    appropriate manner for the subject. This will remove correctness scores from
+    the answers to thwart any attempts of the user to cheat and view the
+    response from the web api using devtools.
+
+    :param question_data: the json representation of the exercise
+    :return: question
+    """
+    exercise = dict()
+    exercise['id'] = exercise_model.id
+    exercise['text'] = exercise_model.data['simple_question']['content']['html']
+
+    choices = exercise_model.data['simple_question']['answer_choices']
+    print(choices)
+    exercise['choices'] = choices
+
+    exercise['choices'] = [choice for choice in choices]
+
+    return exercise
+
+
 @ns.route('/<int:exercise_id>')
 @ns.response(404, 'Exercise not found')
 @ns.param('exercise_id', 'The exercise identifier')
@@ -44,4 +67,5 @@ class ExperimentExercise(Resource):
         section_name = args.get('section_name')
         assignment_id = args.get('assignment_id')
         exercise = get_subject_next_exercise(subject_id, assignment_id)
-        return exercise
+        formatted_exercise = format_exercise(exercise)
+        return formatted_exercise
