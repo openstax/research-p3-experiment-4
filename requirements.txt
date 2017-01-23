@@ -18,6 +18,7 @@ Flask-Security==1.7.5
 Flask-SQLAlchemy==2.1
 Flask-Webpack==0.1.0
 Flask-WTF==0.13.1
+functools32==3.2.3-2
 gunicorn==19.6.0
 inflection==0.3.1
 itsdangerous==0.24

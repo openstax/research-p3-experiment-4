@@ -27,6 +27,7 @@ let ExercisePhase = {
     this.$currentExerciseCount = $('.current-exercise-counter');
     this.$exerciseTotal = $('.total-exercises');
     this.$exerciseForm = $('.exercise-form');
+    this.$exerciseOptions = $('.exercise-options');
 
     this.$readingSection.hide();
     // this.$loadingBar.show();
@@ -95,7 +96,7 @@ let ExercisePhase = {
     });
 
     $inputField.append($optionsList);
-    this.$exerciseForm.append($inputField)
+    this.$exerciseOptions.append($inputField)
 
   },
 

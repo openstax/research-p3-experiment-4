@@ -38,7 +38,7 @@ def parse_readme():
 setup(
     long_description=parse_readme(),
     name="openstax-p3-exp-4",
-    version="0.1.0",
+    version="0.0.3",
     author="m1yag1",
     author_email="mike.arbelaez@rice.edu",
     py_modules=[],

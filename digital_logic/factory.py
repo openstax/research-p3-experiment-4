@@ -27,7 +27,7 @@ def create_app(package_name, package_path, settings_override=None):
     app = Flask(package_name,
                 instance_relative_config=True,
                 template_folder='templates')
-    app.config.from_pyfile('config.py', silent=True)
+    app.config.from_pyfile('conf.py', silent=True)
 
     if settings_override:
         app.config.from_object(settings_override)
