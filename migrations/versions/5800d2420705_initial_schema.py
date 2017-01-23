@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """initial schema
 
 Revision ID: 5800d2420705
