@@ -4,4 +4,4 @@ include wsgi.py
 include setup.py
 include manage.py
 recursive-include migrations *
-recursive-include digital_logic *.j2 *.py *.html *.txt *.png *.jpg *.css *.PNG *.JPG *.part *.js *.json *.eot *.svg *.ttf *.woff *.woff2
+recursive-include digital_logic *.j2 *.md *.py *.html *.txt *.png *.jpg *.css *.PNG *.JPG *.part *.js *.json *.eot *.svg *.ttf *.woff *.woff2
