@@ -2,11 +2,12 @@ from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
 
 from digital_logic.ext.markdown_ext import Markdown, markdown
+from jobs import scheduler
 from .accounts.models import User, Role
 from .core import (db,
                    security,
                    mail,
-                   webpack)
+                   webpack, mturk)
 from .helpers import register_blueprints
 from .redis_session import RedisSessionInterface
 
@@ -51,6 +52,7 @@ def create_app(package_name, package_path, settings_override=None):
                                      register_blueprint=True)
     mail.init_app(app)
     webpack.init_app(app)
+    mturk.init_app(app)
 
     # attach redis sessions
     app.session_interface = RedisSessionInterface(
@@ -58,5 +60,12 @@ def create_app(package_name, package_path, settings_override=None):
 
     # Helper function that registers all blueprints to the application
     register_blueprints(app, package_name, package_path)
+
+    # Cancel any scheduled jobs
+    list_of_jobs = scheduler.get_jobs()
+
+    if list_of_jobs:
+        for job in list_of_jobs:
+            scheduler.cancel(job)
 
     return app
