@@ -3,5 +3,8 @@ include requirements.txt
 include wsgi.py
 include setup.py
 include manage.py
+include jobs.py
+include worker.py
+include scheduler.py
 recursive-include migrations *
 recursive-include digital_logic *.j2 *.md *.py *.html *.txt *.png *.jpg *.css *.PNG *.JPG *.part *.js *.json *.eot *.svg *.ttf *.woff *.woff2

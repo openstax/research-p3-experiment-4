@@ -23,20 +23,46 @@ MONKEY_CATCHER = 64
 MONKEY_INDEX = int(DEFAULT_E_NUM / 2)
 
 
+def get_question_params():
+    data = np.load('P3next.npy', encoding='latin1')
+    H = data[0]
+    d = data[1]
+    wmu = data[2]
+    Gamma = data[3]
+    question_ids = data[4]
+
+    K, Q = d.shape
+
+    # re-format the trained info
+    question_params_all = []
+    for ii in range(Q):
+        temp_question = []
+        k = np.where(H[ii,] > 0)[0][0]
+        temp_question = [wmu[k, ii], wmu[-1, ii], d[k, ii], Gamma[k, k, ii], k]
+        question_params_all.append(temp_question)
+    return question_params_all
+
+
 def initialize_subject_exercises(subject_id, assignment_id):
     subject = UserSubject.get(subject_id)
     assignment = SubjectAssignment.get(assignment_id)
 
     assignment_phases = app.config['ASSIGNMENT_PHASES']
 
+    # If they are in the Assesment phase only store the first 3 static questions
     if assignment.assignment_phase == assignment_phases[1]:
         assignment.exercise_pool = A_POOL
         db.session.add(assignment)
         db.session.commit()
     else:
+        # If they are in the Experiment phase make a random equal distribution
+        # of each level of question to make up for the number of items in the
+        # assessment.
 
         if subject.experiment_group == 0:
-            answered_exercises = list_answered_exercise_ids(subject_id, assignment_id)
+
+            answered_exercises = list_answered_exercise_ids(subject_id,
+                                                            assignment_id)
 
             total_exercises = DEFAULT_E_NUM
             static_pool = STATIC_POOL
@@ -48,7 +74,8 @@ def initialize_subject_exercises(subject_id, assignment_id):
             unanswered = list_unanswered_exercise_ids(subject_id, assignment_id)
             unanswered = [q_id for q_id in unanswered]
 
-            exercise_pool = [q_id for q_id in unanswered if q_id not in assessment_qs and q_id not in static_pool]
+            exercise_pool = [q_id for q_id in unanswered if
+                             q_id not in assessment_qs and q_id not in static_pool]
 
             monkey_catcher = MONKEY_CATCHER
             monkey_catcher_index = needed_exercises / 2
@@ -81,6 +108,9 @@ def get_subject_next_exercise(subject_id, assignment_id):
     if subject.experiment_group == 0:
 
         if total_answered < DEFAULT_E_NUM:
+            if total_answered == MONKEY_INDEX:
+                exercise = Exercise.get(MONKEY_CATCHER)
+                return exercise
             exercise_id = assignment.exercise_pool[total_answered]
             exercise = Exercise.get(exercise_id)
             return exercise
@@ -96,10 +126,9 @@ def get_subject_next_exercise(subject_id, assignment_id):
             exercise = Exercise.get(exercise_id)
             return exercise
 
-        elif total_answered > len(assignment.exercise_pool) and total_answered < DEFAULT_E_NUM:
-            exercise = Exercise.get(11)
-            return exercise
+        elif total_answered >= len(
+                assignment.exercise_pool) and total_answered < DEFAULT_E_NUM:
+            # TODO: USE SPARFA_TAG!
+            return Exercise.get_random()
         else:
             return None
-
-

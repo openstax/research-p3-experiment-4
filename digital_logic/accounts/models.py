@@ -51,6 +51,10 @@ class User(UserMixin, db.Model):
             UserSubject.mturk_worker_id == mturk_worker_id)
         return query.first()
 
+    @classmethod
+    def get(cls, id):
+        return db.session.query(cls).filter(cls.id == id).first()
+
 
 __all__ = [
     'Role',

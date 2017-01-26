@@ -1,0 +1,50 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12 m10 l10 offset-l1 offset-m1">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">
+                    <h4>Congratulations!
+                        <small>You have completed the study.</small>
+                    </h4>
+                        </span>
+
+                    <div class="card-panel teal white-text lighten-2 experiment-results col s12 center-align">
+                        <div class="row">
+                            <h4>Results</h4>
+                            <div class="results-correct results col s12 m4 l4">
+                                <h5>Correct</h5>
+                                {{ result.correct }}
+                            </div>
+                            <div class="results-incorrect results col s12 m4 l4">
+                                <h5>Incorrect</h5>
+                                {{ result.incorrect }}
+                            </div>
+                            <div class="score results col s12 m4 l4">
+                                <h5>Score</h5>
+                                {{ result.score | round(1, 'floor') }} %
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-panel center-align">
+                        <div class="experiment-succcess">
+                            <h5>Your completion code</h5>
+                            <p class="completion-code results">{{ completion_code }}</p>
+                            <p>
+                            <small>
+                                Paste this code in the mechanical turk window
+                                and press the
+                                submit button to complete your assignment.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+

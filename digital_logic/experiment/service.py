@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 import random
 from collections import Counter
@@ -23,6 +24,10 @@ def get_subject_by_user_id(user_id):
 
 def get_user_by_worker_id(worker_id):
     return User.get_by_worker_id(worker_id)
+
+
+def get_exercise(exercise_id):
+    return Exercise.get(exercise_id)
 
 
 def get_experiment_group(num_groups):
@@ -87,7 +92,6 @@ def create_subject_assignment(subject_id,
     db.session.add(assignment)
     db.session.commit()
 
-
     return assignment
 
 
@@ -138,11 +142,11 @@ def add_session_record(assignment_id, status):
 
 def list_answered_exercise_ids(subject_id, assignment_id):
     query = db.session.query(
-        Exercise).join(
-            AssignmentResponse).join(
-                SubjectAssignment).filter(
-                    SubjectAssignment.subject_id == subject_id,
-                        SubjectAssignment.id == assignment_id)
+        Exercise.id, Exercise.qb_id, Exercise.level).join(
+        AssignmentResponse).join(
+        SubjectAssignment).filter(
+        SubjectAssignment.subject_id == subject_id,
+        SubjectAssignment.id == assignment_id)
 
     return query.all()
 
@@ -150,7 +154,39 @@ def list_answered_exercise_ids(subject_id, assignment_id):
 def list_unanswered_exercise_ids(subject_id, assignment_id):
     subquery = db.session.query(AssignmentResponse).join(
         SubjectAssignment).filter(
-            SubjectAssignment.subject_id == subject_id).subquery()
-    return db.session.query(Exercise.id).filter(
-        and_(Exercise.level >=0,
-            ~Exercise.id.in_(subquery))).all()
+        SubjectAssignment.subject_id == subject_id).subquery()
+    return db.session.query(Exercise.id, Exercise.qb_id, Exercise.level).filter(
+        and_(Exercise.level >= 0,
+             ~Exercise.id.in_(subquery))).all()
+
+
+def get_assignment(assignment_id):
+    return SubjectAssignment.get(assignment_id)
+
+
+def create_assignment_response(assignment_id,
+                               exercise_id,
+                               credit,
+                               selection,
+                               start_time,
+                               end_time=None):
+    ex_response = AssignmentResponse(assignment_id=assignment_id,
+                                     exercise_id=exercise_id,
+                                     credit=credit,
+                                     selection=selection
+                                     )
+
+    ex_response.started_on = start_time
+    end_time = end_time or datetime.utcnow()
+    ex_response.completed_on = end_time
+    response_time = (end_time - start_time).total_seconds()
+    ex_response.user_response_time = response_time
+    db.session.add(ex_response)
+
+    db.session.commit()
+
+
+def get_latest_assignment_by_user_id(user_id):
+    return db.session.query(SubjectAssignment).join(Subject).filter(
+        Subject.user_id == user_id).filter(SubjectAssignment.is_complete == True).order_by(
+        SubjectAssignment.created_on.desc())

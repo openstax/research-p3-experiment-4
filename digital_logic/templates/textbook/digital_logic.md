@@ -118,7 +118,7 @@ Draw a truth table for A AND B.
 3.  Underneath A AND B, write the value of A AND B based on the values
     of A and B in that row.
 
-{% call m.figure("truth_table_A_and_B.PNG", "truth table for A AND B", "restrict no-border responsive-img") %}
+{% call m.figure("truth_table_A_AND_B.PNG", "truth table for A AND B", "restrict no-border responsive-img") %}
 
 **Figure 2**  Truth table for A AND B.
 

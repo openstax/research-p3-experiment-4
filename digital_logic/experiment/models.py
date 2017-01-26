@@ -53,8 +53,8 @@ class Exercise(db.Model):
         return db.session.query(cls).filter(cls.id == id).one()
 
     @classmethod
-    def get_random(cls, random):
-        return db.session.query(cls).order_by(func.random())
+    def get_random(cls):
+        return db.session.query(cls).order_by(func.random()).first()
 
 
 class SubjectAssignment(db.Model):
@@ -98,6 +98,7 @@ class SubjectAssignment(db.Model):
     created_on = db.Column(db.DateTime(),
                            nullable=False,
                            default=datetime.utcnow)
+
     @classmethod
     def get(cls, assignment_id):
         return db.session.query(cls).filter(cls.id == assignment_id).first()
@@ -136,7 +137,8 @@ class AssignmentResponse(db.Model):
 
     @classmethod
     def all_by_assignment_id(cls, assignment_id):
-        return db.session.query(cls).filter(cls.assignment_id == assignment_id).all()
+        return db.session.query(cls).filter(
+            cls.assignment_id == assignment_id).all()
 
 
 class AssignmentSession(db.Model):
@@ -151,4 +153,10 @@ class AssignmentSession(db.Model):
 
     @classmethod
     def all_by_assignment_id(cls, assignment_id):
-        return db.session.query(cls).filter(cls.assignment_id == assignment_id).all()
+        return db.session.query(cls).filter(
+            cls.assignment_id == assignment_id).all()
+
+    @classmethod
+    def get_lastest_by_assignment_id(cls, assignment_id):
+        return db.session.query(cls).filter(
+            cls.assignment_id == assignment_id).order_by(cls.start_time.desc())
