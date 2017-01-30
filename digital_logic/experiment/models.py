@@ -56,6 +56,10 @@ class Exercise(db.Model):
     def get_random(cls):
         return db.session.query(cls).order_by(func.random()).first()
 
+    @classmethod
+    def get_by_qb_id(cls, qb_id):
+        return db.session.query(cls).filter(cls.qb_id == qb_id).first()
+
 
 class SubjectAssignment(db.Model):
     __tablename__ = 'subject_assignments'
@@ -88,7 +92,7 @@ class SubjectAssignment(db.Model):
                             nullable=False,
                             default=False)
     exercise_pool = db.Column(ARRAY(db.Integer()))
-    mastery = db.Column(ARRAY(db.Integer()))
+    mastery = db.Column(ARRAY(db.Float()))
 
     mturk_completion_code = db.Column(db.String(255))
     mturk_assignment_status = db.Column(db.String(100))
@@ -160,3 +164,13 @@ class AssignmentSession(db.Model):
     def get_lastest_by_assignment_id(cls, assignment_id):
         return db.session.query(cls).filter(
             cls.assignment_id == assignment_id).order_by(cls.start_time.desc())
+
+
+class SparfaTrace(db.Model):
+    __tablename__ = 'sparfa_trace'
+    id = db.Column(db.Integer, primary_key=True)
+    H = db.Column(db.PickleType, nullable=False)
+    d = db.Column(db.PickleType, nullable=False)
+    wmu = db.Column(db.PickleType, nullable=False)
+    Gamma = db.Column(db.PickleType, nullable=False)
+    question_ids = db.Column(db.PickleType, nullable=False)

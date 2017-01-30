@@ -24,7 +24,8 @@ from digital_logic.experiment.service import (
     get_latest_subject_assignment,
     all_subject_assignments,
     get_subject_by_user_id,
-    add_session_record, get_exercise,
+    add_session_record,
+    get_exercise,
     get_assignment,
     create_assignment_response)
 from digital_logic.experiment.forms import DemographyForm, FinalizeForm
@@ -70,7 +71,7 @@ def introduction():
     assignment_id = request.values.get('assignment_id', None)
     worker_id = request.values.get('worker_id', None)
     mode = request.values.get('mode', None)
-    log.info('MTurk worker {0} loaded introduction page'.format(worker_id))
+    log.info('MTurk worker {0} loaded practice introduction page'.format(worker_id))
 
     return render_template('introduction.html',
                            assignment_id=assignment_id,

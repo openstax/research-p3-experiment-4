@@ -4,11 +4,15 @@ import random
 from collections import Counter
 
 from sqlalchemy import and_
+import numpy as np
 
 from digital_logic.accounts.models import User
+from digital_logic.alg.P3code.p3_selectquestion import prepare_question_params, \
+    update
 from digital_logic.core import db
 from digital_logic.experiment.models import UserSubject as Subject, \
-    SubjectAssignment, AssignmentResponse, AssignmentSession, Exercise
+    SubjectAssignment, AssignmentResponse, AssignmentSession, Exercise, \
+    UserSubject, SparfaTrace
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -175,6 +179,37 @@ def create_assignment_response(assignment_id,
                                      credit=credit,
                                      selection=selection
                                      )
+    assignment = get_assignment(assignment_id)
+
+    # Check if the subject is in control or experimental group
+    subject = get_subject_by_assignment_id(assignment_id)
+
+    if int(subject.experiment_group) == 1 and exercise_id != 64:
+        training_set = db.session.query(SparfaTrace).first()
+        # if subject is in experiment group update the
+        # mastery matrix with the new response
+        H = np.fromstring(training_set.H, dtype='float64').reshape((29, 4))
+        d = np.fromstring(training_set.d, dtype='float64').reshape((4, 29))
+        wmu = np.fromstring(training_set.wmu, dtype='float64').reshape((5, 29))
+        Gamma = np.fromstring(training_set.Gamma, dtype=np.float64).reshape(
+            (4, 4, 29))
+        y = credit
+        mastery = np.array(assignment.mastery, dtype=np.float64)
+        K, Q = d.shape
+
+        question_params_all = prepare_question_params(Q, H, d, wmu, Gamma)
+        question_ids = np.fromstring(training_set.question_ids, dtype="<U7")
+
+        # get the exercise to lookup the qb_id
+        exercise = get_exercise(exercise_id)
+        answered_index = np.where(question_ids == exercise.qb_id)
+        answered_index = answered_index[0][0]
+        mp, Vp = update(y, question_params_all[answered_index], mastery)
+        k = np.where(H[answered_index,] > 0)[0][0]
+        mastery[k] = mp
+        mastery[K + k] = Vp
+        assignment.mastery = mastery.tolist()
+        db.session.add(assignment)
 
     ex_response.started_on = start_time
     end_time = end_time or datetime.utcnow()
@@ -188,5 +223,21 @@ def create_assignment_response(assignment_id,
 
 def get_latest_assignment_by_user_id(user_id):
     return db.session.query(SubjectAssignment).join(Subject).filter(
-        Subject.user_id == user_id).filter(SubjectAssignment.is_complete == True).order_by(
+        Subject.user_id == user_id).filter(
+        SubjectAssignment.is_complete == True).order_by(
         SubjectAssignment.created_on.desc())
+
+
+def get_subject_by_assignment_id(assignment_id):
+    return db.session.query(UserSubject).join(SubjectAssignment).filter(
+        SubjectAssignment.id == assignment_id).first()
+
+
+def get_subject_assignment_response_by_qb_id(assignment_id, qb_id):
+    return db.session.query(AssignmentResponse).join(Exercise).filter(
+        Exercise.qb_id == qb_id).filter(
+        AssignmentResponse.assignment_id == assignment_id).first()
+
+
+def get_exercise_by_qb_id(qb_id):
+    return Exercise.get_by_qb_id(qb_id)

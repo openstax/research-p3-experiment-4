@@ -1,12 +1,16 @@
 from random import random
 
+import numpy as np
 from flask import current_app as app
 
+from ..alg.P3code.p3_selectquestion import prepare_question_params, \
+    question_selector
 from digital_logic.core import db
 from digital_logic.experiment.models import UserSubject, Exercise, \
-    SubjectAssignment
+    SubjectAssignment, SparfaTrace
 from digital_logic.experiment.service import list_answered_exercise_ids, \
-    list_unanswered_exercise_ids
+    list_unanswered_exercise_ids, get_subject_assignment_response_by_qb_id, \
+    get_exercise_by_qb_id
 
 Q_POOL = [1, 2, 9, 16, 17, 18, 19, 21, 22, 27,
           32, 34, 43, 44, 45, 48, 49, 50,
@@ -128,7 +132,33 @@ def get_subject_next_exercise(subject_id, assignment_id):
 
         elif total_answered >= len(
                 assignment.exercise_pool) and total_answered < DEFAULT_E_NUM:
-            # TODO: USE SPARFA_TAG!
-            return Exercise.get_random()
+            # TODO: Move this to its file somewhere!
+            training_set = db.session.query(SparfaTrace).first()
+            H = np.fromstring(training_set.H, dtype='float64').reshape((29, 4))
+            d = np.fromstring(training_set.d, dtype='float64').reshape((4, 29))
+            wmu = np.fromstring(training_set.wmu, dtype='float64').reshape(
+                (5, 29))
+            Gamma = np.fromstring(training_set.Gamma, dtype=np.float64).reshape(
+                (4, 4, 29))
+            mastery = np.array(assignment.mastery, dtype=np.float64)
+            K, Q = d.shape
+
+            qb_ids = np.fromstring(training_set.question_ids, dtype="<U7")
+
+            # create an array of ones and zeroes to deterimene if the the question is
+            # available to sparfa trace
+            avail = []
+            for qb_id in qb_ids:
+                answered = get_subject_assignment_response_by_qb_id(assignment.id,
+                                                                    qb_id)
+                if answered:
+                    avail.append(float(0.0))
+                else:
+                    avail.append(float(1.0))
+            avail = np.array(avail)
+            question_params_all = prepare_question_params(Q, H, d, wmu, Gamma)
+            q = question_selector(question_params_all, avail, mastery, 1)[0]
+            qb_id = qb_ids[q]
+            return get_exercise_by_qb_id(qb_id)
         else:
             return None

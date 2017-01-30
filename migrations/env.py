@@ -8,8 +8,6 @@ from os.path import dirname, abspath
 from alembic import context
 from sqlalchemy import create_engine
 
-
-
 sys.path.append(dirname(dirname(abspath(__file__))))
 sys.path.append(os.getcwd())
 
