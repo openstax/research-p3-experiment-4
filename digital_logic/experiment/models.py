@@ -116,9 +116,11 @@ class SubjectAssignment(db.Model):
         return db.session.query(cls).filter(cls.id == subject_id).first()
 
     @classmethod
-    def get_lastest_by_subject_id(cls, subject_id):
+    def get_lastest_by_subject_id(cls, subject_id, assignment_phase):
         query = db.session.query(cls).filter(
             cls.subject_id == subject_id).order_by(cls.created_on.desc())
+        if assignment_phase:
+            query = query.filter(cls.assignment_phase == assignment_phase)
         return query.first()
 
 

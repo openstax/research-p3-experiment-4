@@ -79,8 +79,9 @@ def update_subject(subject_id, data):
     return subject
 
 
-def get_latest_subject_assignment(subject_id):
-    assignment = SubjectAssignment.get_lastest_by_subject_id(subject_id)
+def get_latest_subject_assignment(subject_id, assignment_phase=None):
+    assignment = SubjectAssignment.get_lastest_by_subject_id(subject_id,
+                                                             assignment_phase)
     return assignment
 
 

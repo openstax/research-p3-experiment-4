@@ -30,6 +30,14 @@ strong {
     padding: 0 1em;
 }
 
+.introduction-text {
+    font-family: 'Merriweather', Georgia, 'Times New Roman', Times, serif;
+    color: #424242;
+    max-width: 40em;
+    margin: auto;
+    padding: 0 1em;
+}
+
 .has-error {
     border: solid 1px;
     color: lightcoral;

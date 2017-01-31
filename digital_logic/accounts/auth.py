@@ -116,14 +116,15 @@ def _login_and_prep_subject(worker_id,
                             assignment_id,
                             hit_id,
                             ua_dict,
+                            assignment_phase,
                             debug_mode=False):
     if worker_id and assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
         user, subject = login_mturk_user(worker_id,
                                          hit_id,
                                          assignment_id)
 
-        latest_assignment = get_latest_subject_assignment(subject.id)
-        assignment_phases = app.config['ASSIGNMENT_PHASES']
+        latest_assignment = get_latest_subject_assignment(subject.id,
+                                                          assignment_phase)
         session['debug_mode'] = debug_mode
 
         if latest_assignment and debug_mode:
@@ -132,21 +133,11 @@ def _login_and_prep_subject(worker_id,
 
         if not latest_assignment:
             assignment = create_subject_assignment(subject.id,
-                                                   assignment_phases[0],
+                                                   assignment_phase,
                                                    assignment_id,
                                                    hit_id,
                                                    ua_dict)
             initialize_subject_exercises(subject.id, assignment.id)
             return assignment
-        elif latest_assignment.assignment_phase == assignment_phases[0]:
-            subject_user = get_subject_by_user_id(user.id)
-            if subject_user and latest_assignment.mturk_hit_id != hit_id:
-                assignment = create_subject_assignment(subject.id,
-                                                       assignment_phases[1],
-                                                       assignment_id,
-                                                       hit_id,
-                                                       ua_dict)
-                initialize_subject_exercises(subject.id, assignment.id)
-                return assignment
     else:
         raise ExperimentError('incorrect_experiment_params')

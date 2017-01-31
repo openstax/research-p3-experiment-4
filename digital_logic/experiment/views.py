@@ -71,7 +71,8 @@ def introduction():
     assignment_id = request.values.get('assignment_id', None)
     worker_id = request.values.get('worker_id', None)
     mode = request.values.get('mode', None)
-    log.info('MTurk worker {0} loaded practice introduction page'.format(worker_id))
+    log.info(
+        'MTurk worker {0} loaded practice introduction page'.format(worker_id))
 
     return render_template('introduction.html',
                            assignment_id=assignment_id,
@@ -120,6 +121,7 @@ def start():
     assignment_id = request.args.get('assignment_id')
     hit_id = request.args.get('hit_id')
     mode = request.args.get('mode', None)
+    assignment_phase = 'Assessment'
 
     ua_dict = parse_user_agent(request.headers.get('User-Agent'))
 
@@ -139,24 +141,19 @@ def start():
         assignments = all_subject_assignments(subject.id)
 
         if len(assignments) < len(app.config['ASSIGNMENT_PHASES']):
-            latest_assignment = get_latest_subject_assignment(subject.id)
+            latest_assignment = get_latest_subject_assignment(subject.id,
+                                                              assignment_phase)
 
-            if latest_assignment and latest_assignment.did_quit:
+            if not debug_mode and (latest_assignment and latest_assignment.did_quit):
                 raise ExperimentError('quit_experiment_early')
-            # elif latest_assignment and latest_assignment.is_complete:
-            #     assignment = _login_and_prep_subject(worker_id,
-            #                                          assignment_id,
-            #                                          hit_id,
-            #                                          ua_dict,
-            #                                          debug_mode)
-            #     session['current_assignment_id'] = assignment.id
-            #     add_session_record(assignment.id, 'Started')
-            #     return redirect(url_for('exp.assessment'))
+            elif not debug_mode and (latest_assignment and latest_assignment.is_complete):
+                raise ExperimentError('phase_completed')
             else:
                 assignment = _login_and_prep_subject(worker_id,
                                                      assignment_id,
                                                      hit_id,
                                                      ua_dict,
+                                                     assignment_phase,
                                                      debug_mode)
                 session['current_assignment_id'] = assignment.id
                 add_session_record(assignment.id, 'Started')
@@ -169,6 +166,7 @@ def start():
                                              assignment_id,
                                              hit_id,
                                              ua_dict,
+                                             assignment_phase,
                                              debug_mode)
         session['current_assignment_id'] = assignment.id
         add_session_record(assignment.id, 'Started')
@@ -288,7 +286,8 @@ def submit_response():
     if answer:
         session['last_answer'] = int(answer)
         credit = float(
-            exercise.data['simple_question']['answer_choices'][int(answer)]['credit'])
+            exercise.data['simple_question']['answer_choices'][int(answer)][
+                'credit'])
 
         create_assignment_response(assignment.id, exercise.id, credit, answer,
                                    started_on)
@@ -301,7 +300,6 @@ def submit_response():
         return redirect(url_for('exp.show_feedback'))
     else:
         return redirect(url_for('exp.next_exercise'))
-
 
 
 @exp.route('/feedback', methods=['GET', 'POST'])
@@ -392,30 +390,7 @@ def summary():
     result = assignment.assignment_results
     completion_code = assignment.mturk_completion_code
 
-
     return render_template('summary.html', result=result,
                            completion_code=completion_code)
 
 
-@exp.route('/assessment', methods=['GET', 'POST'])
-@mturk_permission.require()
-def assessment_index():
-    return 'assessment_index!'
-
-
-@exp.route('/distracting', methods=['GET'])
-@mturk_permission.require()
-def distractor_task():
-    return 'Distracting!!!!'
-
-
-@exp.route('/predicting', methods=['GET'])
-@mturk_permission.require()
-def prediction_task():
-    return 'Predicting how well i will do at the pageant'
-
-
-@exp.route('/testing')
-@mturk_permission.require()
-def testing():
-    return 'Testing ... Testing ... 1 - 2 - 3'

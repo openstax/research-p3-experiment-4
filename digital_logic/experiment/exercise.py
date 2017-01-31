@@ -53,7 +53,7 @@ def initialize_subject_exercises(subject_id, assignment_id):
 
     assignment_phases = app.config['ASSIGNMENT_PHASES']
 
-    # If they are in the Assesment phase only store the first 3 static questions
+    # If they are in the Assesment phase load up the assessment pool questions
     if assignment.assignment_phase == assignment_phases[1]:
         assignment.exercise_pool = A_POOL
         db.session.add(assignment)
@@ -62,7 +62,7 @@ def initialize_subject_exercises(subject_id, assignment_id):
         # If they are in the Experiment phase make a random equal distribution
         # of each level of question to make up for the number of items in the
         # assessment.
-
+        # TODO: Make a random equal distribution of questions based on level
         if subject.experiment_group == 0:
 
             answered_exercises = list_answered_exercise_ids(subject_id,

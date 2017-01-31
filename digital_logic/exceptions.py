@@ -19,7 +19,8 @@ class ExperimentError(Exception):
         quit_experiment_early=1003,
         unknown_status=1004,
         algorithm_error=1005,
-        database_error=1006
+        database_error=1006,
+        phase_completed=1007
     )
 
     error_descriptions = dict()
@@ -65,6 +66,13 @@ class ExperimentError(Exception):
     error_descriptions['database_error'] = unwrap(
         '''
         There was an issue with saving your response to the database. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
+        '''
+    )
+
+    error_descriptions['phase_completed'] = unwrap(
+        '''
+        This phase of the experiment has already been completed. Please contact
         the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
