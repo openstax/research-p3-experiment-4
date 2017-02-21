@@ -112,8 +112,8 @@
     <script src="{{ url_for('static', filename='js/2048/application.js') }}"></script>
 
     <script>
-      var seconds_expired = 0;
-      var total_seconds = 300;
+      var seconds_expired = {{ distractor_seconds|default(session.distractor_seconds|default(0)) }}
+      var total_seconds = {{ session.distractor_timeout | default(300) }};
 
       var update_clock = function () {
         var expired = timer.msToTime(timer.lap());
@@ -129,7 +129,7 @@
           },
 
           complete: function () {
-            console.log('Distractor time elapsed')
+            window.location.replace("{{ url_for('exam.prediction_task') }}");
           }
         })
         ;
@@ -137,9 +137,6 @@
       $(function () {
         timer.start((total_seconds - seconds_expired) * 1000);
         update_clock();
-        window.onbeforeunload = function () {
-          return "By refreshing or closing this page you will abandon the study. Are you sure you want to quit?";
-        }
       })
 
 

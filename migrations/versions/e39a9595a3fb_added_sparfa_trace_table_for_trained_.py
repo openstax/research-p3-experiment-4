@@ -5,10 +5,14 @@ Revises: dcd6ac673a42
 Create Date: 2017-01-27 13:49:59.966351
 
 """
+import os
+
 from alembic import op
 import numpy as np
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+HERE = os.path.dirname(os.path.abspath(__file__))
 
 # revision identifiers, used by Alembic.
 revision = 'e39a9595a3fb'
@@ -44,7 +48,10 @@ def upgrade():
                     )
     ### end Alembic commands ###
 
-    raw_data = np.load('/var/www/openstax-p3-exp-4/digital_logic/alg/P3Code/P3next.npy',
+
+    data_file = os.path.join(HERE, '../..', 'digital_logic/alg/P3Code/P3next.npy')
+
+    raw_data = np.load(data_file,
                        encoding='latin1')
 
     row_item = dict(H=raw_data[0].tobytes(),

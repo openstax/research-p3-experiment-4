@@ -10,25 +10,26 @@
                         <small>You have completed the study.</small>
                     </h4>
                         </span>
-
+                    {% for assignment in assignments %}
                     <div class="card-panel teal white-text lighten-2 experiment-results col s12 center-align">
                         <div class="row">
-                            <h4>Results</h4>
+                            <h4>{{ assignment.assignment_results.phase }} Results</h4>
                             <div class="results-correct results col s12 m4 l4">
                                 <h5>Correct</h5>
-                                {{ result.correct }}
+                                {{ assignment.assignment_results.correct }}
                             </div>
                             <div class="results-incorrect results col s12 m4 l4">
                                 <h5>Incorrect</h5>
-                                {{ result.incorrect }}
+                                {{ assignment.assignment_results.incorrect }}
                             </div>
                             <div class="score results col s12 m4 l4">
                                 <h5>Score</h5>
-                                {{ result.score | round(1, 'floor') }} %
+                                {{ assignment.assignment_results['score'] | round(1, 'floor') }} %
                             </div>
                         </div>
 
                     </div>
+                  {% endfor %}
                     <div class="card-panel center-align">
                         <div class="experiment-succcess">
                             <h5>Your completion code</h5>

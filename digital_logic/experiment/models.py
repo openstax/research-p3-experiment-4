@@ -101,7 +101,7 @@ class SubjectAssignment(db.Model):
     assignment_predictions = db.Column(JSON())
     created_on = db.Column(db.DateTime(),
                            nullable=False,
-                           default=datetime.utcnow)
+                           default=datetime.utcnow())
 
     @classmethod
     def get(cls, assignment_id):
@@ -109,7 +109,7 @@ class SubjectAssignment(db.Model):
 
     @classmethod
     def get_all_by_subject_id(cls, subject_id):
-        return db.session.query(cls).filter(cls.id == subject_id).all()
+        return db.session.query(cls).filter(cls.subject_id == subject_id).all()
 
     @classmethod
     def get_by_subject_id(cls, subject_id):
@@ -155,7 +155,7 @@ class AssignmentSession(db.Model):
                               db.ForeignKey('subject_assignments.id'))
     status = db.Column(db.String(100))
     start_time = db.Column(db.DateTime(), nullable=False,
-                           default=datetime.now())
+                           default=datetime.utcnow())
 
     @classmethod
     def all_by_assignment_id(cls, assignment_id):

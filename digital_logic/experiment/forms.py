@@ -32,7 +32,7 @@ def get_education_choices():
     return choices
 
 
-class GatesRangeField(IntegerField):
+class RangeField(IntegerField):
     """
     Represents an ``<input type="range">``.
     """
@@ -45,14 +45,15 @@ class DemographyForm(WTF.FlaskForm):
                              choices=list(zip(skill_levels, skill_levels)))
 
     english_level = RadioField(u'English proficiency',
-                         validators=[DataRequired()],
-                         choices=[('t',
-                                   "Yes. English IS my first language"),
-                                  ('f',
-                                   "No. English IS NOT my first language.")])
+                               validators=[DataRequired()],
+                               choices=[('t',
+                                         "Yes. English IS my first language"),
+                                        ('f',
+                                         "No. English IS NOT my first language.")])
 
     age = SelectField(u'Age',
-                      validators=[DataRequired()], coerce=int, choices=get_age_choices())
+                      validators=[DataRequired()], coerce=int,
+                      choices=get_age_choices())
 
     gender = StringField(u'Gender',
                          validators=[
@@ -60,7 +61,8 @@ class DemographyForm(WTF.FlaskForm):
                              Length(max=255)])
 
     education = SelectField(u'Education',
-                            validators=[DataRequired()], choices=get_education_choices())
+                            validators=[DataRequired()],
+                            choices=get_education_choices())
 
 
 class FinalizeForm(WTF.FlaskForm):
@@ -78,14 +80,14 @@ class FinalizeForm(WTF.FlaskForm):
     comments = TextAreaField(u'Comments')
 
 
-class PredictionsForm(WTF.Form):
-    overall = GatesRangeField('Overall Score',
-                              validators=[NumberRange(min=0, max=100)])
-    basics = GatesRangeField('Basic Definitions',
+class PredictionsForm(WTF.FlaskForm):
+    overall = RangeField('Overall Score',
+                         validators=[NumberRange(min=0, max=100)])
+    basics = RangeField('Basic Definitions',
+                        validators=[NumberRange(min=0, max=100)])
+    expressions = RangeField('Expressions',
                              validators=[NumberRange(min=0, max=100)])
-    expressions = GatesRangeField('Expressions',
-                                  validators=[NumberRange(min=0, max=100)])
-    circuits = GatesRangeField('Circuits',
-                               validators=[NumberRange(min=0, max=100)])
-    truth_tables = GatesRangeField('Truth Tables',
-                                   validators=[NumberRange(min=0, max=100)])
+    circuits = RangeField('Circuits',
+                          validators=[NumberRange(min=0, max=100)])
+    truth_tables = RangeField('Truth Tables',
+                              validators=[NumberRange(min=0, max=100)])

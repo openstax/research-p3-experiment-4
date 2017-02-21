@@ -122,6 +122,7 @@ def _login_and_prep_subject(worker_id,
         user, subject = login_mturk_user(worker_id,
                                          hit_id,
                                          assignment_id)
+        session['current_subject_id'] = subject.id
 
         latest_assignment = get_latest_subject_assignment(subject.id,
                                                           assignment_phase)

@@ -1,0 +1,181 @@
+{% extends 'layouts/base.html' %}
+{% import '_macros/forms.html' as macros %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+                <div class="card-panel">
+                    <!--Time to render the materialize form-->
+                    <div class="form-wrapper">
+                        <h4 class="center-align form-title">
+                            In a few moments, you will take one final assessment
+                            for what you learned.
+                        </h4>
+                        <form action="{{ url_for('exam.prediction_task') }}"
+                              method="POST" role="form">
+                            {{ form.hidden_tag() }}
+
+
+                            <div class="row">
+                                <!-- OVERALL FORM FIELD -->
+                                <div class="overall-performance-area">
+                                    {% call macros.render_field(form.overall) %}
+                                        <label>
+                                            1. Use the scale below to predict
+                                            how
+                                            well
+                                            you will do overall.
+                                        </label>
+                                        <br/>
+                                        <p class="range-field">
+                                            {{ form.overall(min=0, max=100, value=0, class_='overall-performance', oninput="outputUpdate('#overall-performance-output', value)") }}
+                                            <output for="overall-performance"
+                                                    class="overall-performance-output output"
+                                                    id="overall-performance-output">{{ form.overall.data }}</output>
+                                        </p>
+                                    {% endcall %}
+                                </div>
+                                <div class="section-performance-area"
+                                     style="display:none">
+
+                                    <!-- BASIC DEFINITIONS FIELD -->
+                                    {% call macros.render_field(form.basics) %}
+                                        <label>
+                                            2. Use the scale below to predict
+                                            how
+                                            well
+                                            you will do on basic definitions.
+                                        </label>
+                                        <br/>
+                                        <img src="{{ url_for('static', filename='img/digital_logic/AND.PNG') }}"
+                                             class="responsive-img">
+                                        <br/>
+                                        <p class="range-field">
+                                            {{ form.basics(min=0, max=100, value=0, class_='bascs-performance', oninput="outputUpdate('#basics-output', value)") }}
+                                            <output for="basics"
+                                                    class="basics-output output"
+                                                    id="basics-output">{{ form.basics.data }}</output>
+                                        </p>
+                                    {% endcall %}
+
+                                    <!-- EXPRESSIONS FIELD -->
+                                    {% call macros.render_field(form.expressions) %}
+                                        <label>
+                                            3. Use the scale below to predict
+                                            how
+                                            well
+                                            you will do on basic expressions.
+                                        </label>
+                                        <br/>
+                                        <h4>Example: A AND (B AND C)</h4>
+                                        <p class="range-field">
+                                            {{ form.expressions(min=0, max=100, value=0, class='expressions', oninput="outputUpdate('#expressions-output', value)") }}
+                                            <output for="expressions"
+                                                    class="expressions-output output"
+                                                    id="expressions-output">{{ form.expressions.data }}</output>
+                                        </p>
+                                    {% endcall %}
+
+                                    <!-- BASIC CIRCUITS FIELD -->
+                                    {% call macros.render_field(form.circuits) %}
+                                        <label>
+                                            4. Use the scale below to predict
+                                            how
+                                            well
+                                            you will do on circuits.
+                                        </label>
+                                        <br/>
+                                        <br/>
+                                        <img src="{{ url_for('static',filename='img/digital_logic/circuit_tt_2_prob_v2.png') }}"
+                                             class="responsive-img" width="400">
+                                        <br/>
+                                        <p class="range-field">
+                                            {{ form.circuits(min=0, max=100, value=0, class='circuits', oninput="outputUpdate('#circuits-output', value)") }}
+                                            <output for="circuits"
+                                                    class="circuits-output output"
+                                                    id="circuits-output">{{ form.expressions.data }}</output>
+                                        </p>
+                                    {% endcall %}
+
+                                    <!-- TRUTH TABLE FIELD -->
+                                    {% call macros.render_field(form.truth_tables) %}
+                                        <label>
+                                            5. Use the scale below to predict
+                                            how
+                                            well
+                                            you will do on truth tables.
+                                        </label>
+                                        <br/>
+                                        <br/>
+                                        <img src="{{ url_for('static',filename='img/digital_logic/truth_table_A_AND_B.PNG') }}"
+                                             class="responsive-img" width="400">
+                                        <br/>
+                                        <p class="range-field">
+                                            {{ form.truth_tables(min=0, max=100, value=0, class='truth-tables', oninput="outputUpdate('#truth-tables-output', value)") }}
+                                            <output for="truth-tables"
+                                                    class="truth-tables-output output"
+                                                    id="truth-tables-output">{{ form.truth_tables.data }}</output>
+
+                                        </p>
+                                    {% endcall %}
+
+
+                                </div>
+
+                                <footer class="col s12 form-footer">
+                                    <p class="right-align">
+
+                                        <button type="button"
+                                                class="btn btn-large waves-effect waves-light next">
+                                            Next
+                                        </button>
+                                        <button type="submit"
+                                                class="btn btn-large waves-effect waves-light submit"
+                                                style="display:none">
+                                            Start Assessment
+                                        </button>
+
+                                        <br/><strong>Thank you!</strong></p>
+                                </footer>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+
+      $(document).ready(function () {
+        $('.output').each(function () {
+          this.value = 'Click the slider to make a judgement';
+
+        });
+
+        $('.next').click(function () {
+          $('.next').hide();
+          $('.overall-performance-area').hide();
+          $('.section-performance-area').show();
+          $('.submit').show();
+
+        })
+
+      })
+
+    </script>
+    <script>
+      function outputUpdate(obj, value) {
+        document.querySelector(obj).value = value + '%';
+      }
+    </script>
+
+{% endblock %}
+
+
+
+

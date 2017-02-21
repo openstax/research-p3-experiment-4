@@ -101,6 +101,22 @@ def initialize_subject_exercises(subject_id, assignment_id):
             db.session.commit()
 
 
+def get_subject_assessment_next_exercise(subject_id, assignment_id):
+    subject = UserSubject.get(subject_id)
+    assignment = SubjectAssignment.get(assignment_id)
+
+    answered_exercises = list_answered_exercise_ids(subject.id, assignment.id)
+
+    total_answered = len(answered_exercises)
+
+    if total_answered < len(assignment.exercise_pool):
+        exercise_id = assignment.exercise_pool[total_answered]
+        exercise = Exercise.get(exercise_id)
+        return exercise
+    else:
+        return None
+
+
 def get_subject_next_exercise(subject_id, assignment_id):
     subject = UserSubject.get(subject_id)
     assignment = SubjectAssignment.get(assignment_id)

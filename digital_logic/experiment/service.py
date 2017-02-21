@@ -3,6 +3,8 @@ import logging
 import random
 from collections import Counter
 
+from flask import session
+from flask_login import current_user
 from sqlalchemy import and_
 import numpy as np
 
@@ -32,6 +34,10 @@ def get_user_by_worker_id(worker_id):
 
 def get_exercise(exercise_id):
     return Exercise.get(exercise_id)
+
+
+def get_assignment(assignment_id):
+    return SubjectAssignment.get(assignment_id)
 
 
 def get_experiment_group(num_groups):
@@ -118,31 +124,41 @@ def purge_subject_data(subject_id):
 def purge_subject_assignment_data(assignment_id):
     assignment = SubjectAssignment.get(assignment_id)
     responses = AssignmentResponse.all_by_assignment_id(assignment.id)
-    sessions = AssignmentSession.all_by_assignment_id(assignment.id)
+    assessment_session = AssignmentSession.all_by_assignment_id(assignment.id)
 
     if responses:
         for response in responses:
             db.session.delete(response)
         db.session.commit()
 
-    if sessions:
-        for session in sessions:
-            db.session.delete(session)
+    if assessment_session:
+        for s in assessment_session:
+            db.session.delete(s)
         db.session.commit()
 
     db.session.delete(assignment)
     db.session.commit()
 
 
-def add_session_record(assignment_id, status):
+def save_session_record(assignment_id, status):
     assignment_session = AssignmentSession(assignment_id=assignment_id,
-                                           status=status)
+                                           status=status,
+                                           start_time=datetime.utcnow())
     db.session.add(assignment_session)
     db.session.commit()
     log.info(
         'Recording session status {0} for assignment {1}'.format(assignment_id,
                                                                  status))
     return assignment_session
+
+
+def save_assignment_predictions(assignment_id, prediction_results):
+    assignment = get_assignment(assignment_id)
+    assignment.assignment_predictions = prediction_results
+    db.session.add(assignment)
+    db.session.commit()
+
+    return
 
 
 def list_answered_exercise_ids(subject_id, assignment_id):
@@ -169,12 +185,12 @@ def get_assignment(assignment_id):
     return SubjectAssignment.get(assignment_id)
 
 
-def create_assignment_response(assignment_id,
-                               exercise_id,
-                               credit,
-                               selection,
-                               start_time,
-                               end_time=None):
+def save_assignment_response(assignment_id,
+                             exercise_id,
+                             credit,
+                             selection,
+                             start_time,
+                             end_time=None):
     ex_response = AssignmentResponse(assignment_id=assignment_id,
                                      exercise_id=exercise_id,
                                      credit=credit,
@@ -185,7 +201,8 @@ def create_assignment_response(assignment_id,
     # Check if the subject is in control or experimental group
     subject = get_subject_by_assignment_id(assignment_id)
 
-    if int(subject.experiment_group) == 1 and exercise_id != 64:
+    if (int(subject.experiment_group) == 1
+        and exercise_id != 64 and assignment.assignment_phase == 'Practice'):
         training_set = db.session.query(SparfaTrace).first()
         # if subject is in experiment group update the
         # mastery matrix with the new response
@@ -242,3 +259,49 @@ def get_subject_assignment_response_by_qb_id(assignment_id, qb_id):
 
 def get_exercise_by_qb_id(qb_id):
     return Exercise.get_by_qb_id(qb_id)
+
+
+def get_current_assignment_session():
+    if current_user.is_authenticated:
+        return db.session.query(AssignmentSession).filter(
+            AssignmentSession.assignment_id == session[
+                'current_assignment_id']).order_by(
+            AssignmentSession.start_time.desc()).first()
+    else:
+        return None
+
+
+def get_monkey_catcher_score(assignment_id):
+    monkey = db.session.query(AssignmentResponse).filter(
+        AssignmentResponse.assignment_id == assignment_id,
+        AssignmentResponse.exercise_id == 64).first()
+    if monkey:
+        return monkey.credit
+    else:
+        return None
+
+
+def qualify_assignment(assignment_id):
+    # Get the data required to figure out total reading time.
+    # When did they start reading? When Starting session was set.
+
+    start_time = db.session.query(AssignmentSession.start_time).filter(
+        AssignmentSession.assignment_id == assignment_id,
+        AssignmentSession.status == 'Reading').first()
+
+    end_time = db.session.query(AssignmentSession.start_time).filter(
+        AssignmentSession.assignment_id == assignment_id,
+        AssignmentSession.status == 'Finalizing'
+    ).first()
+
+    reading_time = (end_time[0] - start_time[0]).total_seconds()
+
+
+    monkey_catcher_score = get_monkey_catcher_score(assignment_id)
+    if reading_time >= 10 or monkey_catcher_score == 1:
+        assignment = get_assignment(assignment_id)
+        assignment.mturk_assignment_status = 'Accepted'
+        assignment.mturk_assignment_status_date = datetime.utcnow()
+        return True
+    else:
+        return False

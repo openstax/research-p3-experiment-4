@@ -1,10 +1,13 @@
-from functools import update_wrapper
+from datetime import datetime
+from functools import update_wrapper, wraps
 
-from flask import make_response
-from flask import session
-from flask.ext.login import current_user
+from flask import (make_response,
+                   redirect,
+                   session,
+                   url_for)
 
-from digital_logic.experiment.models import AssignmentSession
+from digital_logic.experiment.service import get_current_assignment_session, \
+    get_assignment
 
 
 def nocache(func):  # pragma: no cover
@@ -20,29 +23,54 @@ def nocache(func):  # pragma: no cover
     return update_wrapper(new_func, func)
 
 
-#
-# def check_state(state, other=None):
-#     def decorator(f):
-#         @wraps(f)
-#         def decorated_view(*args, **kwargs):
-#             if current_user.is_authenticated:
-#                 subject_session = get_subject_current_session(current_user.id)
-#                 assignment = get_latest_assignment()
-#                 if (not user_session and not state) or (user_session.status == state or user_session.status == other)):
-#                     return f(*args, **kwargs)
-#                 flash('This study is strictly sequential. '
-#                       'Going back to redo a step is not allowed.',
-#                       'warning')
-#
-# TODO: Finish check reading status
-def check_reading_status(state, other=None):
+def set_distractor_expired(assignment_session, allowed=300):
+    expired = 0
+    if assignment_session:
+        now = datetime.utcnow()
+        start = assignment_session.start_time
+        expired = (now - start).total_seconds()
+        session['distractor_seconds'] = expired
+        session['distractor_timeout'] = [30 if session['debug_mode'] else 300][0]
+    return expired
+
+
+def set_expired(assignment, allowed=3600):
+    expired = 0
+    if assignment:
+        now = datetime.utcnow()
+        start = assignment.created_on
+        expired = (now - start).total_seconds()
+        session['expired_seconds'] = expired
+    return expired
+
+
+def check_distractor_time(skip_redirect=False, allowed=300):
     def decorator(f):
         @wraps(f)
         def decorated_view(*args, **kwargs):
-            if current_user.is_authenticated:
-                assignment_id = session['current_assignment_id']
-                current_session = AssignmentSession.get_latest_by_assignment_id(
-                    assignment_id)
-
+            assignment_session = get_current_assignment_session()
+            if assignment_session:
+                expired = set_distractor_expired(assignment_session)
+                if expired > allowed and not skip_redirect:
+                    return redirect(url_for('exam.prediction_task'))
+            return f(*args, **kwargs)
         return decorated_view
     return decorator
+
+
+def check_time(skip_redirect=False, allowed=3600):
+    def decorator(f):
+        @wraps(f)
+        def decorated_view(*args, **kwargs):
+            assignment_id = session['current_assignment_id']
+            assignment = get_assignment(assignment_id)
+
+            if assignment:
+                expired = set_expired(assignment, allowed)
+                if expired > allowed and not skip_redirect:
+                    return redirect(url_for('exp.timed_out'))
+
+            return f(*args, **kwargs)
+        return decorated_view
+    return decorator
+

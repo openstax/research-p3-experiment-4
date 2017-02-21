@@ -2,7 +2,7 @@ from flask import Flask
 from flask_security import SQLAlchemyUserDatastore
 
 from digital_logic.ext.markdown_ext import Markdown, markdown
-from jobs import scheduler
+from jobs import scheduler, schedule_approve_worker_assignments
 from .accounts.models import User, Role
 from .core import (db,
                    security,
@@ -67,5 +67,8 @@ def create_app(package_name, package_path, settings_override=None):
     if list_of_jobs:
         for job in list_of_jobs:
             scheduler.cancel(job)
+
+    # Schedule the job to pay workers as they complete assignments
+    schedule_approve_worker_assignments()
 
     return app

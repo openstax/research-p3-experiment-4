@@ -17,6 +17,7 @@ from digital_logic.accounts.auth import (
     logout_mturk_user, mturk_permission)
 from digital_logic.api.endpoints.textbook import render_textbook_text
 from digital_logic.core import db
+from digital_logic.decorators import check_time
 from digital_logic.exceptions import ExperimentError
 from digital_logic.experiment.exercise import get_subject_next_exercise
 from digital_logic.experiment.reading import reading_sections, get_section_obj
@@ -24,10 +25,11 @@ from digital_logic.experiment.service import (
     get_latest_subject_assignment,
     all_subject_assignments,
     get_subject_by_user_id,
-    add_session_record,
+    save_session_record,
     get_exercise,
     get_assignment,
-    create_assignment_response)
+    save_assignment_response,
+    qualify_assignment)
 from digital_logic.experiment.forms import DemographyForm, FinalizeForm
 from digital_logic.experiment.models import UserSubject as Subject
 from digital_logic.experiment.models import SubjectAssignment
@@ -121,7 +123,7 @@ def start():
     assignment_id = request.args.get('assignment_id')
     hit_id = request.args.get('hit_id')
     mode = request.args.get('mode', None)
-    assignment_phase = 'Assessment'
+    assignment_phase = 'Practice'
 
     ua_dict = parse_user_agent(request.headers.get('User-Agent'))
 
@@ -140,7 +142,8 @@ def start():
     if subject:
         assignments = all_subject_assignments(subject.id)
 
-        if len(assignments) < len(app.config['ASSIGNMENT_PHASES']):
+        if len(assignments) < len(app.config['ASSIGNMENT_PHASES']) or debug_mode:
+
             latest_assignment = get_latest_subject_assignment(subject.id,
                                                               assignment_phase)
 
@@ -156,7 +159,7 @@ def start():
                                                      assignment_phase,
                                                      debug_mode)
                 session['current_assignment_id'] = assignment.id
-                add_session_record(assignment.id, 'Started')
+                save_session_record(assignment.id, 'Started')
                 return redirect(url_for('exp.demography'))
         else:
             raise ExperimentError('experiment_completed')
@@ -169,23 +172,23 @@ def start():
                                              assignment_phase,
                                              debug_mode)
         session['current_assignment_id'] = assignment.id
-        add_session_record(assignment.id, 'Started')
+        save_session_record(assignment.id, 'Started')
         return redirect(url_for('exp.demography'))
 
 
 @exp.route('/demography', methods=['GET', 'POST'])
 @mturk_permission.require()
+@check_time()
 def demography():
     subject = get_subject_by_user_id(current_user.id)
-    assignment = SubjectAssignment.get(
-        session['current_assignment_id'])
+    assignment = SubjectAssignment.get(session['current_assignment_id'])
 
     form = DemographyForm(request.form)
 
     if form.validate_on_submit():
         form.populate_obj(subject)
         db.session.add(subject)
-        add_session_record(assignment.id, 'Reading')
+        save_session_record(assignment.id, 'Reading')
         db.session.commit()
         return redirect(url_for('exp.reading'))
 
@@ -194,6 +197,7 @@ def demography():
 
 @exp.route('/reading/next', methods=['GET'])
 @mturk_permission.require()
+@check_time()
 def reading():
     text = None
 
@@ -221,7 +225,7 @@ def reading():
                     session['current_section']['next_section'])
                 session['current_section'] = section_obj
             else:
-                add_session_record(session['current_assignment_id'],
+                save_session_record(session['current_assignment_id'],
                                    'Finalizing')
                 return redirect(url_for('exp.finalize'))
 
@@ -235,6 +239,7 @@ def reading():
 
 @exp.route('/exercise/next')
 @mturk_permission.require()
+@check_time()
 def next_exercise():
     subject = get_subject_by_user_id(current_user.id)
     assignment = get_assignment(session['current_assignment_id'])
@@ -276,6 +281,7 @@ def next_exercise():
 
 @exp.route('/response', methods=['POST'])
 @mturk_permission.require()
+@check_time()
 def submit_response():
     exercise = get_exercise(session['current_exercise_id'])
     assignment = get_assignment(session['current_assignment_id'])
@@ -289,8 +295,8 @@ def submit_response():
             exercise.data['simple_question']['answer_choices'][int(answer)][
                 'credit'])
 
-        create_assignment_response(assignment.id, exercise.id, credit, answer,
-                                   started_on)
+        save_assignment_response(assignment.id, exercise.id, credit, answer,
+                                 started_on)
         if credit == 0:
             session['exercises_incorrect'] += 1
         else:
@@ -304,6 +310,7 @@ def submit_response():
 
 @exp.route('/feedback', methods=['GET', 'POST'])
 @mturk_permission.require()
+@check_time()
 def show_feedback():
     if request.method == 'POST' or (
                     'skip_feedback' in session and session['skip_feedback']):
@@ -323,7 +330,6 @@ def show_feedback():
                          float(c['credit']) == 0]
 
     answer = session['last_answer']
-    print(answer)
     correct_answer = answer in correct_choices
 
     return render_template('exercise.html',
@@ -350,6 +356,7 @@ def finalize():
     assignment = get_assignment(session['current_assignment_id'])
     if form.validate_on_submit():
         form.populate_obj(assignment)
+        subject = get_subject_by_user_id(current_user.id)
         # TODO: move this to its own function
         assignment_results = dict()
         correct = session['exercises_correct']
@@ -361,8 +368,9 @@ def finalize():
         assignment_results['incorrect'] = incorrect
         assignment_results['total'] = total
         assignment_results['score'] = score
+        assignment_results['phase'] = assignment.assignment_phase
 
-        log.info('A score of {0} was recored for subject {1}'.format(
+        log.info('A score of {0} was recorded for subject {1}'.format(
             score,
             assignment.subject_id))
 
@@ -370,12 +378,19 @@ def finalize():
         assignment.is_complete = True
         assignment.assignment_results = assignment_results
         db.session.add(assignment)
-        add_session_record(assignment.id, 'Completed')
-
-        # TODO: Qualify the subject for pt. 2
-        # TODO: Schedule the task for checking if they have started the experiment
+        save_session_record(assignment.id, 'Completed')
 
         db.session.commit()
+
+        qualified = qualify_assignment(assignment.id)
+
+        if qualified:
+            assign_worker_qualification(PART_2_QUAL, subject.mturk_worker_id, 1,
+                                        True)
+            schedule_check_for_start_assessment(current_user.id)
+
+        assign_worker_qualification(DLOGIC_QUAL, subject.mturk_worker_id, 1,
+                                    True)
 
         return redirect(url_for('exp.summary'))
 
@@ -386,11 +401,24 @@ def finalize():
 @mturk_permission.require()
 def summary():
     # TODO: Finish summary page
-    assignment = get_assignment(session['current_assignment_id'])
-    result = assignment.assignment_results
-    completion_code = assignment.mturk_completion_code
+    assignments = all_subject_assignments(session['current_subject_id'])
 
-    return render_template('summary.html', result=result,
+    current_assignment = get_assignment(session['current_assignment_id'])
+
+    completion_code = current_assignment.mturk_completion_code
+
+    return render_template('summary.html',
+                           assignments=assignments,
                            completion_code=completion_code)
 
 
+@exp.route('/timeout', methods=['GET', 'POST'])
+def timed_out():
+    assignment = get_assignment(session['current_assignment_id'])
+    if request.method == 'POST':
+        assignment.did_timeout = True
+        db.session.add(assignment)
+        save_session_record(assignment.id, 'Finalizing')
+        db.session.commit()
+        return redirect(url_for('exp.finalize'))
+    return render_template('timeout.html')
