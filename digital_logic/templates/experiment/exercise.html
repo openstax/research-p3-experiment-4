@@ -23,7 +23,6 @@
                     </div>
                     <h5>Question {{ q_num }} of {{ total_exercises }}</h5>
                     <div class="exercise-text center-align">
-
                         {{ exercise.content.html | safe }}
                     </div>
                     <div>
@@ -40,8 +39,6 @@
                                 {% else %}
                                     <div>
                                 {% endif %}
-
-
                                 {% if feedback %}
                                     {% if correct_answer %}
                                         <div class="feedback correct-answer">
@@ -63,18 +60,18 @@
                                             {% set correct = True %}
                                             {% set choice_classes = choice_classes + ' correct' %}
                                         {% endif %}
-                                        {% if feedback and loop.index0 in incorrect_choices %}
-                                            {% set incorrect = True %}
-                                            {% set choice_classes = choice_classes + ' incorrect' %}
-                                        {% endif %}
+{#                                        {% if feedback and loop.index0 in incorrect_choices %}#}
+{#                                            {% set incorrect = True %}#}
+{#                                            {% set choice_classes = choice_classes + ' incorrect' %}#}
+{#                                        {% endif %}#}
                                         {% if feedback and loop.index0 == answer %}
                                             {% set choice_classes = choice_classes + ' answer' %}
                                             {% set selected = True %}
                                         {% endif %}
-
-
-
-
+                                        {% if feedback and loop.index0 in incorrect_choices and selected %}
+                                           {% set incorrect = True %}
+                                           {% set choice_classes = choice_classes + ' incorrect' %}
+                                      {% endif %}
                                         <li class="{{ choice_classes }}">
                                             {% set choice_id = "exercise-choice-{}".format(loop.index) %}
                                             {% if not feedback %}
@@ -92,10 +89,10 @@
                                                            style="float:left">done</i>
                                                     </div>
                                                 {% elif incorrect and selected %}
-                                                    <div>
-                                                        <i class="material-icons"
-                                                           style="float:left">error_outline</i>
-                                                    </div>
+{#                                                    <div>#}
+{#                                                        <i class="material-icons"#}
+{#                                                           style="float:left">error_outline</i>#}
+{#                                                    </div>#}
                                                 {% endif %}
 
                                                 <input id="{{ choice_id }}"

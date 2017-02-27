@@ -94,11 +94,13 @@ def get_latest_subject_assignment(subject_id, assignment_phase=None):
 def create_subject_assignment(subject_id,
                               assignment_phase,
                               assignment_id,
-                              hit_id, ua_dict):
+                              hit_id,
+                              ua_dict):
     assignment = SubjectAssignment(subject_id=subject_id,
                                    assignment_phase=assignment_phase,
                                    mturk_hit_id=hit_id,
                                    mturk_assignment_id=assignment_id,
+                                   created_on=datetime.utcnow(),
                                    **ua_dict)
     db.session.add(assignment)
     db.session.commit()

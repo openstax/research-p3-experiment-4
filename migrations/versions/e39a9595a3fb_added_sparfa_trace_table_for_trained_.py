@@ -49,7 +49,7 @@ def upgrade():
     ### end Alembic commands ###
 
 
-    data_file = os.path.join(HERE, '../..', 'digital_logic/alg/P3Code/P3next.npy')
+    data_file = os.path.join(HERE, '../..', 'digital_logic/alg/P3code/P3next.npy')
 
     raw_data = np.load(data_file,
                        encoding='latin1')

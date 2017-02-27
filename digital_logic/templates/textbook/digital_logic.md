@@ -46,7 +46,7 @@ These primitive Boolean operations can be used together to produce
 more complex functions. We use the term **Boolean expression** when we
 write these functions mathematically.
 
-# Logic Gates {:.logic-gates}
+## Logic Gates {:.logic-gates}
 
 
 **Logic gates** are the theoretical and physical electronic components
@@ -56,7 +56,7 @@ designing and interpreting digital logic circuits. Here we introduce
 the primitive logic gates. For this section, let A and B be Boolean
 variables.
 
-## AND {:.and}
+### AND {:.and}
 
 The **AND** logic gate takes two inputs. The output of the AND gate is
 $1$ only if both inputs are $1$. For example, A AND B will only equal
@@ -101,7 +101,7 @@ if the first input **and** the second input are true.
 
 {% endcall %}
 
-# Truth Tables {:.truth-tables}
+## Truth Tables {:.truth-tables}
 
 Now that we have seen our first Boolean expression, AB, let's learn
 how to represent its behavior. **Truth tables** show the output of a
@@ -124,7 +124,7 @@ Draw a truth table for A AND B.
 
 {% endcall %}
 
-# OR {:.or}
+## OR {:.or}
 
 The **OR** logic gate takes two inputs. The output of the OR gate is 1
 if at least one of the inputs is 1. A OR B only outputs 0 if A=B=0. In
@@ -150,7 +150,7 @@ Evaluate 0 OR 0.
 
 Since OR only evaluates to 1 when at least one input is 1, 0 OR 0 = 0.
 
-# NOT {:.not}
+## NOT {:.not}
 
 The **NOT** logic gate takes one input. The output of the NOT gate is
 simply the opposite of the input. NOT A, for example, would output 1
@@ -178,8 +178,8 @@ Evaluate NOT 0.
 
 Since NOT flips the input, NOT 0 = 1
 
-Compound Boolean Expression {:.compound-boolean-expression}
----------------------------
+# Compound Boolean Expression {:.compound-boolean-expression}
+
 
 The basic boolean operations can be combined to create more complex and
 useful functions. We can analyze the behavior of these compound
@@ -242,8 +242,8 @@ AND C) term and then use this result to obtain the final output.
 **Figure 9** Truth table for A OR (B AND C).
 {% endcall %}
 
-Circuits to Truth Tables {:.circuits-to-truth-tables}
-------------------------
+## Circuits to Truth Tables {:.circuits-to-truth-tables}
+
 
 It is often very easy to calculate the entries of a truth table using
 digital logic circuit diagram.  This is because digital circuit
@@ -314,8 +314,8 @@ final truth table given below.
 {% endcall %}
 
 
-Truth Tables to Boolean Expressions {:.truth-tables-to-boolean}
------------------------------------
+## Truth Tables to Boolean Expressions {:.truth-tables-to-boolean}
+
 
 Often a digital logic designer will start with a truth table expression
 for a given function and then need to convert it to a Boolean expression
@@ -361,8 +361,8 @@ Write a Boolean expression for Z from the truth table below.
 
     Z = X'Y + XY' + XY
 
-Chapter Summary {:.summary}
----------------
+# Chapter Summary {:.summary}
+
 
 -   **Boolean algebra** performs logical operations on binary inputs to
     produce some useful output.

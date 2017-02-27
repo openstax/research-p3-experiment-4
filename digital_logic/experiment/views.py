@@ -142,14 +142,17 @@ def start():
     if subject:
         assignments = all_subject_assignments(subject.id)
 
-        if len(assignments) < len(app.config['ASSIGNMENT_PHASES']) or debug_mode:
+        if len(assignments) < len(
+                app.config['ASSIGNMENT_PHASES']) or debug_mode:
 
             latest_assignment = get_latest_subject_assignment(subject.id,
                                                               assignment_phase)
 
-            if not debug_mode and (latest_assignment and latest_assignment.did_quit):
+            if not debug_mode and (
+                latest_assignment and latest_assignment.did_quit):
                 raise ExperimentError('quit_experiment_early')
-            elif not debug_mode and (latest_assignment and latest_assignment.is_complete):
+            elif not debug_mode and (
+                latest_assignment and latest_assignment.is_complete):
                 raise ExperimentError('phase_completed')
             else:
                 assignment = _login_and_prep_subject(worker_id,
@@ -195,7 +198,7 @@ def demography():
     return render_template('demography.html', form=form)
 
 
-@exp.route('/reading/next', methods=['GET'])
+@exp.route('/reading/next', methods=['GET', 'POST'])
 @mturk_permission.require()
 @check_time()
 def reading():
@@ -203,7 +206,7 @@ def reading():
 
     subject = get_subject_by_user_id(current_user.id)
 
-    status = request.args.get('status', None)
+    section = request.form.get('section', None)
 
     if 'current_section' not in session or not session['current_section']:
         sections_completed = 0
@@ -215,19 +218,21 @@ def reading():
         section_obj = get_section_obj('preface')
 
         session['current_section'] = section_obj
-
+        session['last_section'] = section_obj['name']
+    elif 'last_section' in session and session['last_section'] == section:
+        section_obj = get_section_obj(session['last_section'])
     else:
         section_obj = session['current_section']
-        if status:
-            session['sections_completed'] += 1
-            if session['sections_completed'] < session['total_sections']:
-                section_obj = get_section_obj(
-                    session['current_section']['next_section'])
-                session['current_section'] = section_obj
-            else:
-                save_session_record(session['current_assignment_id'],
-                                   'Finalizing')
-                return redirect(url_for('exp.finalize'))
+        session['sections_completed'] += 1
+        if session['sections_completed'] < session['total_sections']:
+            section_obj = get_section_obj(
+                session['current_section']['next_section'])
+            session['current_section'] = section_obj
+            session['last_section'] = section_obj['name']
+        else:
+            save_session_record(session['current_assignment_id'],
+                                'Finalizing')
+            return redirect(url_for('exp.finalize'))
 
     session['is_reading'] = True
     text = render_textbook_text(section_obj['name'])
@@ -237,7 +242,7 @@ def reading():
                            subject_id=subject.id)
 
 
-@exp.route('/exercise/next')
+@exp.route('/exercise/next', methods=['GET', 'POST'])
 @mturk_permission.require()
 @check_time()
 def next_exercise():
@@ -254,7 +259,7 @@ def next_exercise():
         session['exercises_correct'] = 0
         session['exercises_incorrect'] = 0
 
-    if not session['is_reading'] and session['answered_exercises'] % 4 == 0:
+    if not session['is_reading'] and session['answered_exercises'] == 6:
         return redirect(
             '{0}?{1}'.format(url_for('exp.reading'), 'status=complete'))
 
@@ -401,15 +406,22 @@ def finalize():
 @mturk_permission.require()
 def summary():
     # TODO: Finish summary page
+    qualified = False
+
     assignments = all_subject_assignments(session['current_subject_id'])
 
     current_assignment = get_assignment(session['current_assignment_id'])
 
     completion_code = current_assignment.mturk_completion_code
 
+    if (current_assignment.assignment_phase == 'Practice'
+            and current_assignment.mturk_assignment_status == 'Accepted'):
+        qualified = True
+
     return render_template('summary.html',
                            assignments=assignments,
-                           completion_code=completion_code)
+                           completion_code=completion_code,
+                           qualified=qualified)
 
 
 @exp.route('/timeout', methods=['GET', 'POST'])

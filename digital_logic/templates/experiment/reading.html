@@ -16,13 +16,13 @@
                     </div>
                     <div>
                         {% if not exercises %}
-                        <form action="{{ url_for('exp.reading') }}" method="GET">
+                        <form action="{{ url_for('exp.reading') }}" method="POST">
 
-                            <input type="hidden" name="status" id="status_button" value="complete"/>
+                            <input type="hidden" name="section" id="status_button" value="{{ section.next_section }}"/>
                             <p class="right-align"><button type="submit" class="btn btn-large waves-effect waves-light">Next</button></p>
                         </form>
                             {% else %}
-                            <form action="{{ url_for('exp.next_exercise') }}" method="GET">
+                            <form action="{{ url_for('exp.next_exercise') }}" method="POST">
                                 <input type="hidden" name="reading_section" id="reading_section" value="{{ section_name }}"/>
                                 <p class="right-align"><button class="btn btn-large waves-effect waves-light">Practice Questions</button><br/>
                                 <strong>You have some practice exercises coming up next.</strong>
