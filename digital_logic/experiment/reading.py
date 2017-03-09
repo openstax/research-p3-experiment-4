@@ -23,7 +23,6 @@ reading_sections = [
         'exercises': [],
         'next_section': 'compound-boolean-expression'
     },
-
     {
         'section_id': 4,
         'name': 'compound-boolean-expression',
@@ -31,7 +30,6 @@ reading_sections = [
         'exercises': ['q14296v1'],
         'next_section': 'summary'
     },
-
     {
         'section_id': 5,
         'name': 'summary',

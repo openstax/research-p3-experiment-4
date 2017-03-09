@@ -1,4 +1,4 @@
-from random import random
+import random
 
 import numpy as np
 from flask import current_app as app
@@ -15,6 +15,10 @@ from digital_logic.experiment.service import list_answered_exercise_ids, \
 Q_POOL = [1, 2, 9, 16, 17, 18, 19, 21, 22, 27,
           32, 34, 43, 44, 45, 48, 49, 50,
           51, 52, 53, 57, 58, 59, 60, 61, 62]
+
+BEGINNER_POOL = [1, 9, 16, 18, 27, 32, 44, 48, 49, 50, 52, 58, 60, 61, 62]
+
+INTERMEDIATE_POOL = [2, 17, 19, 21, 22, 34, 43, 45, 51, 53, 57, 59]
 
 A_POOL = [4, 5, 11, 25, 31, 39, 40, 54, 56, 63]
 
@@ -63,39 +67,44 @@ def initialize_subject_exercises(subject_id, assignment_id):
         # of each level of question to make up for the number of items in the
         # assessment.
         # TODO: Make a random equal distribution of questions based on level
-        if subject.experiment_group == 0:
+        if int(subject.experiment_group) == 0:
 
             answered_exercises = list_answered_exercise_ids(subject_id,
                                                             assignment_id)
 
             total_exercises = DEFAULT_E_NUM
-            static_pool = STATIC_POOL
+            # static_pool = STATIC_POOL
 
-            needed_exercises = total_exercises - len(answered_exercises) - 4
+            needed_exercises = total_exercises - len(answered_exercises) - 1
 
-            assessment_qs = A_POOL
+            # assessment_qs = A_POOL
 
-            unanswered = list_unanswered_exercise_ids(subject_id, assignment_id)
-            unanswered = [q_id for q_id in unanswered]
+            # unanswered = list_unanswered_exercise_ids(subject_id, assignment_id)
+            # unanswered = [q_id for q_id in unanswered]
 
-            exercise_pool = [q_id for q_id in unanswered if
-                             q_id not in assessment_qs and q_id not in static_pool]
+            beginner_pool = [q_id for q_id in BEGINNER_POOL if
+                             q_id not in answered_exercises]
+
+            intermediate_pool = [q_id for q_id in INTERMEDIATE_POOL if
+                                 q_id not in answered_exercises]
+
+            beginner_pool = random.sample(beginner_pool, 6)
+
+            intermediate_pool = random.sample(intermediate_pool, 7)
+
+            exercises = beginner_pool + intermediate_pool
 
             monkey_catcher = MONKEY_CATCHER
-            monkey_catcher_index = needed_exercises / 2
+            monkey_catcher_index = int(needed_exercises / 2)
 
-            exercises = random.sample(exercise_pool,
-                                      needed_exercises)
             exercises.insert(monkey_catcher_index, monkey_catcher)
-
-            exercises = static_pool + exercises
 
             assignment.exercise_pool = exercises
 
             db.session.add(assignment)
             db.session.commit()
         else:
-            assignment.exercise_pool = STATIC_POOL
+            assignment.exercise_pool = [STATIC_POOL[0]]
             assignment.mastery = [0, 0, 0, 0, 3, 3, 3, 3]
             db.session.add(subject)
             db.session.commit()
@@ -165,8 +174,9 @@ def get_subject_next_exercise(subject_id, assignment_id):
             # available to sparfa trace
             avail = []
             for qb_id in qb_ids:
-                answered = get_subject_assignment_response_by_qb_id(assignment.id,
-                                                                    qb_id)
+                answered = get_subject_assignment_response_by_qb_id(
+                    assignment.id,
+                    qb_id)
                 if answered:
                     avail.append(float(0.0))
                 else:

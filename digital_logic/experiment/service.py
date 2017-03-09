@@ -304,6 +304,8 @@ def qualify_assignment(assignment_id):
         assignment = get_assignment(assignment_id)
         assignment.mturk_assignment_status = 'Accepted'
         assignment.mturk_assignment_status_date = datetime.utcnow()
+        db.session.add(assignment)
+        db.session.commit()
         return True
     else:
         return False

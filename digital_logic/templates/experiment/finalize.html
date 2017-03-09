@@ -2,54 +2,68 @@
 {% import '_macros/forms.html' as macros %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
-                <div class="card-panel">
-                    <!--Time to render the materialize form-->
-                    <div class="form-wrapper">
-                        <h4 class="center-align form-title">
-                            Excellent. You are almost done.
-                        </h4>
-                        <form action="{{ url_for('exp.finalize') }}" method="POST" role="form">
-                            {{ form.hidden_tag() }}
+  <div class="container">
+    <div class="row">
+      <div
+        class="col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+        <div class="card-panel">
+          <!--Time to render the materialize form-->
+          <div class="form-wrapper">
+            <h4 class="center-align form-title">
+              Excellent. You are almost done.
+            </h4>
+            <form action="{{ url_for('exp.finalize') }}" method="POST"
+                  role="form">
+              {{ form.hidden_tag() }}
 
-                            <!-- DID CHEAT FORM FIELD -->
-                            <div class="row">
-                            <div class="card-panel white-text teal">
-                                We are interested in studying how well people perform while
-                                answering the questions from memory or working the problems
-                                out on paper.  If you used aids while answering the questions, that is okay!
-                                You will be paid regardless of how you answer.  Please answer truthfully so that
-                                we can obtain more reliable data.
-                            </div>
-                                {% call macros.render_field(form.did_cheat) %}
-                                    <label>
-                                        Did you refer to the text, notes, external sources or any
-                                        other aids while answering the questions?
-                                    </label>
-                                    <br/>
-                                    {{ form.did_cheat }}
-                                {% endcall %}
-                                <!-- ENGLISH LEVEL FORM FIELD -->
-                                {% call macros.render_field(form.comments) %}
-                                    <label>
-                                        Do you have any comments or thoughts about the study?
-                                    </label>
-                                    <br/>
-                                    {{ form.comments(class_='materialize-textarea') }}
-                                {% endcall %}
-
-
-                                <footer class="col s12 form-footer">
-                                    <p class="right-align">
-                                    <button type="submit" class="btn btn-large waves-effect waves-light">Finish</button><br/><strong>Have an amazing day!</strong></p>
-                                </footer>
-                            </div>
-                        </form>
-                    </div>
+              <!-- DID CHEAT FORM FIELD -->
+              <div class="row">
+                <div class="card-panel white-text teal">
+                  We are interested in studying how well people perform while
+                  answering the questions from memory or working the problems
+                  out on paper. If you used aids while answering the questions,
+                  that is okay!
+                  You will be paid regardless of how you answer. Please answer
+                  truthfully so that
+                  we can obtain more reliable data.
                 </div>
-            </div>
+                {% call macros.render_field(form.did_cheat) %}
+                  <label>
+                    Did you refer to the text, notes, external sources or any
+                    other aids while answering the questions?
+                  </label>
+                  <br/>
+                  {{ form.did_cheat }}
+                {% endcall %}
+                <!-- ENGLISH LEVEL FORM FIELD -->
+                {% call macros.render_field(form.comments) %}
+                  <label>
+                    Do you have any comments or thoughts about the study?
+                  </label>
+                  <br/>
+                  {{ form.comments(class_='materialize-textarea') }}
+                {% endcall %}
+
+
+                <footer class="col s12 form-footer">
+                  <p class="right-align">
+                    <button type="submit"
+                            class="btn btn-large waves-effect waves-light">
+                      Finish
+                    </button>
+                    <br/><strong>Have an amazing day!</strong></p>
+                </footer>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 {% endblock content %}
+
+{% block scripts %}
+  {{ super() }}
+  {% include '_includes/onunload.html' %}
+
+{% endblock scripts %}

@@ -53,3 +53,9 @@
         </div>
     </div>
 {% endblock content %}
+
+
+{% block scripts %}
+  {{ super() }}
+    {% include '_includes/onunload.html' %}
+{% endblock scripts %}

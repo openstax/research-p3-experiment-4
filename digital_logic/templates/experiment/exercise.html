@@ -35,7 +35,7 @@
                               method="POST">
                             <div class="row">
                                 {% if not feedback %}
-                                    <div class="input-field col s12">
+                                    <div>
                                 {% else %}
                                     <div>
                                 {% endif %}
@@ -51,7 +51,7 @@
                                     {% endif %}
                                 {% endif %}
 
-                                <ul class="letter">
+                                <ol class="letter" type="a">
                                     {% for choice in exercise.answer_choices %}
                                         {% set correct, incorrect = False, False %}
                                         {% set selected = False %}
@@ -79,21 +79,19 @@
                                                 <input id="{{ choice_id }}"
                                                        type="radio"
                                                        name="choice"
-                                                       value="{{ loop.index0 }}">
+                                                        {% if selected %}
+                                                       checked="checked" {% endif %}
+                                                       value="{{ loop.index0 }}"
+                                                       style="float:right">
                                             {% endif %}
 
                                             {% if feedback %}
-                                                {% if correct and selected %}
-                                                    <div>
-                                                        <i class="material-icons"
-                                                           style="float:left">done</i>
-                                                    </div>
-                                                {% elif incorrect and selected %}
+{#                                                {% if correct and selected %}#}
 {#                                                    <div>#}
 {#                                                        <i class="material-icons"#}
-{#                                                           style="float:left">error_outline</i>#}
+{#                                                           style="float:left">done</i>#}
 {#                                                    </div>#}
-                                                {% endif %}
+{#                                                {% endif %}#}
 
                                                 <input id="{{ choice_id }}"
                                                        type="radio" disabled
@@ -111,7 +109,7 @@
                                         </li>
 
                                     {% endfor %}
-                                </ul>
+                                </ol>
                                 </div>
 
                                 <p class="right-align">
@@ -162,5 +160,7 @@
       }
       setTimeout(delayLoad, 800)
     </script>
+
+    {% include '_includes/onunload.html' %}
 
 {% endblock scripts %}
