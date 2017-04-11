@@ -59,6 +59,7 @@ def initialize_subject_exercises(subject_id, assignment_id):
 
     # If they are in the Assesment phase load up the assessment pool questions
     if assignment.assignment_phase == assignment_phases[1]:
+        random.shuffle(A_POOL)
         assignment.exercise_pool = A_POOL
         db.session.add(assignment)
         db.session.commit()
