@@ -140,5 +140,7 @@ def _login_and_prep_subject(worker_id,
                                                    ua_dict)
             initialize_subject_exercises(subject.id, assignment.id)
             return assignment
+        else:
+            return None
     else:
         raise ExperimentError('incorrect_experiment_params')

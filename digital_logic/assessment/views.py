@@ -133,9 +133,13 @@ def start():
                                                      ua_dict,
                                                      assignment_phase,
                                                      debug_mode)
-                session['current_assignment_id'] = assignment.id
-                save_session_record(assignment.id, 'Distracting')
-                return redirect(url_for('exam.distractor_task'))
+                if not assignment:
+                    raise ExperimentError('quit_experiment_early')
+                else:
+                    session['current_assignment_id'] = assignment.id
+
+                    save_session_record(assignment.id, 'Distracting')
+                    return redirect(url_for('exam.distractor_task'))
         else:
             raise ExperimentError('experiment_completed')
     else:
@@ -274,4 +278,4 @@ def finalize():
 
         return redirect(url_for('exp.summary'))
 
-    return render_template('finalize.html', form=form)
+    return render_template('exam_finalize.html', form=form)
