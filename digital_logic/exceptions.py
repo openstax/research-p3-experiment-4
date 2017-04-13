@@ -17,7 +17,10 @@ class ExperimentError(Exception):
         biglearn_service_error=1001,
         experiment_completed=1002,
         quit_experiment_early=1003,
-        unknown_status=1004
+        unknown_status=1004,
+        algorithm_error=1005,
+        database_error=1006,
+        phase_completed=1007
     )
 
     error_descriptions = dict()
@@ -57,6 +60,20 @@ class ExperimentError(Exception):
         '''
         There was an issue with the status of the experiment that the
         application cannot handle.
+        '''
+    )
+
+    error_descriptions['database_error'] = unwrap(
+        '''
+        There was an issue with saving your response to the database. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
+        '''
+    )
+
+    error_descriptions['phase_completed'] = unwrap(
+        '''
+        This phase of the experiment has already been completed. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
 

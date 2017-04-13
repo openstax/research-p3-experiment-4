@@ -8,6 +8,16 @@ import numpy as np
 from scipy.stats import norm
 import scipy.io as sio
 
+def prepare_question_params(Q, H, d, wmu, Gamma):
+    question_params = []
+    for ii in range(Q):
+        temp_question = []
+        k = np.where(H[ii,] > 0)[0][0]
+        temp_question = [wmu[k, ii], wmu[-1, ii], d[k, ii], Gamma[k, k, ii], k]
+        question_params.append(temp_question)
+
+    return question_params
+
 
 def approx(m0, V0, w, mu):
     """
@@ -113,12 +123,7 @@ if __name__ == '__main__':
     K, Q = d.shape
 
     # re-format the trained info
-    question_params_all = []
-    for ii in range(Q):
-        temp_question = []
-        k = np.where(H[ii,] > 0)[0][0]
-        temp_question = [wmu[k, ii], wmu[-1, ii], d[k, ii], Gamma[k, k, ii], k]
-        question_params_all.append(temp_question)
+    question_params_all = prepare_question_params(Q, H, d, wmu, Gamma)
 
     # start of time parameters
     m0 = np.zeros((K,))

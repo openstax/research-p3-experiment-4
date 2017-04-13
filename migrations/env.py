@@ -8,8 +8,6 @@ from os.path import dirname, abspath
 from alembic import context
 from sqlalchemy import create_engine
 
-
-
 sys.path.append(dirname(dirname(abspath(__file__))))
 sys.path.append(os.getcwd())
 
@@ -36,6 +34,7 @@ target_metadata = db.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+app = create_app()
 url = make_database_url()
 
 

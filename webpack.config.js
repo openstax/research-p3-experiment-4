@@ -18,6 +18,9 @@ module.exports = {
     app: [
       rootAssetPath + '/js/src/index.js',
       cssAssetPath + '/style.css'
+    ],
+    exercise_js: [
+      rootAssetPath + '/js/src/Exercise.js'
     ]
   },
   output: {
@@ -29,10 +32,10 @@ module.exports = {
   devServer: {
     // Proxy requests to the API server that the
     // webpack-dev-server can't satisfy.
-    host: '0.0.0.0',
+    host: 'localhost',
     proxy: {
       '*': {
-        target: 'http://web:5000',
+        target: 'http://127.0.0.1:5000',
         secure: false
       }
     },
@@ -43,7 +46,10 @@ module.exports = {
   },
   resolve: {
     // Avoid having to require files with an extension if they are here.
-    extensions: ['', '.js', '.jsx', '.css']
+    extensions: ['', '.js', '.jsx', '.css'],
+    alias: {
+      'jquery': path.resolve(__dirname, 'node_modules/jquery/dist/jquery.js')
+    }
   },
   module: {
     // Various loaders to pre-process files of specific types.

@@ -4,7 +4,7 @@
 
 {% markdown %}
 
-## Preface {:.preface}
+# Preface {:.preface}
 
 Digital logic is the basis of every modern computer. Digital logic
 takes binary inputs, valued at 1 or 0, and transforms them into useful
@@ -13,8 +13,7 @@ understanding the basic building blocks of digital logic circuits and
 how these can be combined to produce more complicated logic circuits.
 
 
-Introductory Digital Logic {:.introduction}
-===========================================
+# Introductory Digital Logic {:.introduction}
 
 Digital logic is a subarea of traditional algebra. Like algebra,
 digital logic consists of variables and operations that can be carried
@@ -24,8 +23,7 @@ the types of variables that are used and operations that allow us to
 manipulate those variables.
 
 
-Boolean Variables {:.boolean-variables}
----------------------------------------
+# Boolean Variables {:.boolean-variables}
 
 Traditional algebraic variables can take on a wide array of values. For
 example, $x=7$, $t=-7.3$, and $z=57$ are perfectly acceptable
@@ -45,11 +43,11 @@ another binary value. The three primitive Boolean operations are:
 
 The outputs of these operations will be discussed in the next section.
 These primitive Boolean operations can be used together to produce
-more complex functions. We use the term **Boolean experssion** when we
+more complex functions. We use the term **Boolean expression** when we
 write these functions mathematically.
 
-Logic Gates {:.logic-gates}
----------------------------
+## Logic Gates {:.logic-gates}
+
 
 **Logic gates** are the theoretical and physical electronic components
 that execute Boolean operations. They are often used to provide a
@@ -103,7 +101,7 @@ if the first input **and** the second input are true.
 
 {% endcall %}
 
-### Truth Tables {:.truth-tables}
+## Truth Tables {:.truth-tables}
 
 Now that we have seen our first Boolean expression, AB, let's learn
 how to represent its behavior. **Truth tables** show the output of a
@@ -120,13 +118,13 @@ Draw a truth table for A AND B.
 3.  Underneath A AND B, write the value of A AND B based on the values
     of A and B in that row.
 
-{% call m.figure("truth_table_A_and_B.PNG", "truth table for A AND B", "restrict no-border") %}
+{% call m.figure("truth_table_A_AND_B.PNG", "truth table for A AND B", "restrict no-border responsive-img") %}
 
 **Figure 2**  Truth table for A AND B.
 
 {% endcall %}
 
-### OR {:.or}
+## OR {:.or}
 
 The **OR** logic gate takes two inputs. The output of the OR gate is 1
 if at least one of the inputs is 1. A OR B only outputs 0 if A=B=0. In
@@ -140,7 +138,7 @@ A OR B = A + B
 **Figure 3** The electronic symbol for the OR logic gate.
 {% endcall %}
 
-{% call m.figure("truth_table_A_or_B.PNG", "truth table for A OR B", "no-border") %}
+{% call m.figure("truth_table_A_OR_B.PNG", "truth table for A OR B", "no-border responsive-img") %}
 **Figure 4** Truth table for A OR B.
 {% endcall %}
 
@@ -152,7 +150,7 @@ Evaluate 0 OR 0.
 
 Since OR only evaluates to 1 when at least one input is 1, 0 OR 0 = 0.
 
-### NOT {:.not}
+## NOT {:.not}
 
 The **NOT** logic gate takes one input. The output of the NOT gate is
 simply the opposite of the input. NOT A, for example, would output 1
@@ -168,7 +166,7 @@ NOT A = A'
 **Figure 5** The electronic symbol for the NOT logic gate.
 {% endcall %}
 
-{% call m.figure("truth_table_NOT_A.PNG", "truth table for NOT A", "no-border") %}
+{% call m.figure("truth_table_NOT_A.PNG", "truth table for NOT A", "no-border responsive-img") %}
 **Figure 6** Truth table for NOT A.
 {% endcall %}
 
@@ -180,8 +178,8 @@ Evaluate NOT 0.
 
 Since NOT flips the input, NOT 0 = 1
 
-Compound Boolean Expression {:.compound-boolean-expression}
----------------------------
+# Compound Boolean Expression {:.compound-boolean-expression}
+
 
 The basic boolean operations can be combined to create more complex and
 useful functions. We can analyze the behavior of these compound
@@ -198,7 +196,7 @@ Write the truth table for A OR A'.
 **Solution**
 
 Since we only have one variable – A – we will have $2^1=2$ rows in the
-truth table. We will explicitly state the value of A' for the sake
+truth table. We will explicitly state the value of A' for the sake of
 clarity. We recall that the OR function will evaluate to 1 when either
 input is 1. Recall that A' indicates NOT A and will be 1 anytime that
 A is 0. Therefore, either A or A' will be 1, and the entire expression
@@ -217,13 +215,14 @@ the order of operations.
 Write the truth table for A AND (B AND C).
 
 **Solution**
+
 Since we have three variables, we will have $2^3=8$ rows in the truth
 table. For each row in the truth table, we can first evaluate the (B
 AND C) term and then use this result to obtain the final output. By
 inspection we can see that this expression will evaluate to 1 only
 when A, B, and C are 1.
 
-{% call m.figure("TT_AandBandC.png", "truth table for A AND (B AND C)", "no-border restrict") %}
+{% call m.figure("TT_AandBandC.png", "truth table for A AND (B AND C)", "no-border restrict responsive-img") %}
 
 **Figure 8** Truth table for A AND (B AND C).  We note that the
 only time the output of this circuit is is 1 is for the case when
@@ -239,12 +238,12 @@ Since we have three variables, we will have $2^3=8$ rows in the truth
 table. For each row in the truth table, we can first evaluate the (B
 AND C) term and then use this result to obtain the final output.
 
-{% call m.figure("TT_AorBandC.png", "truth table for A OR (B AND C)", "no-border restrict") %}
+{% call m.figure("TT_AorBandC.png", "truth table for A OR (B AND C)", "no-border restrict responsive-img") %}
 **Figure 9** Truth table for A OR (B AND C).
 {% endcall %}
 
-Circuits to Truth Tables {:.circuits-to-truth-tables}
-------------------------
+## Circuits to Truth Tables {:.circuits-to-truth-tables}
+
 
 It is often very easy to calculate the entries of a truth table using
 digital logic circuit diagram.  This is because digital circuit
@@ -257,7 +256,7 @@ implements the expression A OR (B AND C) from the previous example.
 
 Write the truth table for the following circuit.
 
-{% call m.figure("circuit_tt_1_prob_v2.png", "Circuit diagram for A OR (B AND C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_1_prob_v2.png", "Circuit diagram for A OR (B AND C)", "no-border restrict responsive-img") %}
 **Figure 10** Circuit diagram for A OR (B AND C)
 {% endcall %}
 
@@ -268,7 +267,7 @@ the circuit. We can then propagate the results through the circuit to
 obtain the final result. As a concrete example, we show how this works
 for the case A=1, B=1, and C=0.
 
-{% call m.figure("circuit_tt_1_ans_v2.png", "Realization of the circuit diagram for A OR (B AND C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_1_ans_v2.png", "Realization of the circuit diagram for A OR (B AND C)", "no-border restrict responsive-img") %}
 **Figure 11** Realization of the circuit diagram for A OR (B AND C) for A=1, B=1 and C=0.
 {% endcall %}
 
@@ -285,7 +284,7 @@ at the final truth table given in Example 6.
 Write the truth table for the following circuit, which implements the expression
 (NOT A) AND (B OR C) = A' $\cdot$ (B + C).
 
-{% call m.figure("circuit_tt_2_prob_v2.png", "Circuit diagram for (NOT A) AND (B OR C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_2_prob_v2.png", "Circuit diagram for (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
 **Figure 12** Circuit diagram for (NOT A) AND (B OR C).
 {% endcall %}
 
@@ -296,7 +295,7 @@ and apply their inputs into the circuit. Propagating the results
 through the circuit will obtain the final result. As a concrete
 example, we show how this works for the case A=0, B=1, and C=0.
 
-{% call m.figure("circuit_tt_2_ans_v2.png", "Realization of the circuit (NOT A) AND (B OR C)", "no-border restrict") %}
+{% call m.figure("circuit_tt_2_ans_v2.png", "Realization of the circuit (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
 **Figure 13** Realization of the circuit (NOT A) AND (B OR C) when A=0, B=1 and C=0.
 {% endcall %}
 
@@ -308,15 +307,15 @@ achieved for the case under consideration.  This, the final result
 is 1.  Repeating this for all input combinations we can arrive at the
 final truth table given below.
 
-{% call m.figure("truth_table_NOTA_AND_BORC.png", "Truth table for (NOT A) AND (B OR C)", "no-border restrict") %}
+{% call m.figure("truth_table_NOTA_AND_BORC.png", "Truth table for (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
 
 **Figure 14** Truth table for (NOT A) AND (B OR C).
 
 {% endcall %}
 
 
-Truth Tables to Boolean Expressions {:.truth-tables-to-boolean}
------------------------------------
+## Truth Tables to Boolean Expressions {:.truth-tables-to-boolean}
+
 
 Often a digital logic designer will start with a truth table expression
 for a given function and then need to convert it to a Boolean expression
@@ -345,7 +344,7 @@ This process will be clearer with an example.
 
 Write a Boolean expression for Z from the truth table below.
 
-{% call m.figure("truth_bool.PNG", "Truth table to be translated to a boolean expression", "no-border restrict") %}
+{% call m.figure("truth_bool.PNG", "Truth table to be translated to a boolean expression", "no-border restrict responsive-img") %}
 **Figure 15** Truth table to be translated to a boolean expression.
 {% endcall %}
 
@@ -362,8 +361,8 @@ Write a Boolean expression for Z from the truth table below.
 
     Z = X'Y + XY' + XY
 
-Chapter Summary {:.summary}
----------------
+# Chapter Summary {:.summary}
+
 
 -   **Boolean algebra** performs logical operations on binary inputs to
     produce some useful output.

@@ -9,22 +9,22 @@ def test_api_subject_post_successful(test_client):
     assert response.status_code == 201
 
 
-def test_api_subject_post_validation_assignment_id_missing(test_client):
-    subject = subject_data_copy()
-    del subject['assignment_id']
-    response = test_client.post_json(RESOURCE, subject, expect_errors=True)
-
-    assert response.status_code == 400
-
-    response = response.json
-
-    assert response['errors'][
-               'assignment_id'] == "'assignment_id' is a required property"
+# def test_api_subject_post_validation_assignment_id_missing(test_client):
+#     subject = subject_data_copy()
+#     del subject['assignment_id']
+#     response = test_client.post_json(RESOURCE, subject, expect_errors=True)
+#
+#     assert response.status_code == 400
+#
+#     response = response.json
+#
+#     assert response['errors'][
+#                'assignment_id'] == "'assignment_id' is a required property"
 
 
 def test_api_subject_post_validation_worker_id_missing(test_client):
     subject = subject_data_copy()
-    del subject['worker_id']
+    del subject['mturk_worker_id']
     response = test_client.post_json(RESOURCE, subject, expect_errors=True)
 
     assert response.status_code == 400
@@ -32,7 +32,7 @@ def test_api_subject_post_validation_worker_id_missing(test_client):
     response = response.json
 
     assert response['errors'][
-               'worker_id'] == "'worker_id' is a required property"
+               'mturk_worker_id'] == "'mturk_worker_id' is a required property"
 
 
 def test_api_subject_post_validation_experiment_group_missing(test_client):
@@ -48,29 +48,29 @@ def test_api_subject_post_validation_experiment_group_missing(test_client):
                'experiment_group'] == "'experiment_group' is a required property"
 
 
-def test_api_subject_post_validation_hit_id_missing(test_client):
-    subject = subject_data_copy()
-    del subject['hit_id']
-    response = test_client.post_json(RESOURCE, subject, expect_errors=True)
+# def test_api_subject_post_validation_hit_id_missing(test_client):
+#     subject = subject_data_copy()
+#     del subject['hit_id']
+#     response = test_client.post_json(RESOURCE, subject, expect_errors=True)
+#
+#     assert response.status_code == 400
+#
+#     response = response.json
+#
+#     assert response['errors']['hit_id'] == "'hit_id' is a required property"
 
-    assert response.status_code == 400
 
-    response = response.json
-
-    assert response['errors']['hit_id'] == "'hit_id' is a required property"
-
-
-def test_api_subject_post_validation_experiment_group_missing(test_client):
-    subject = subject_data_copy()
-    del subject['assignment_id']
-    response = test_client.post_json(RESOURCE, subject, expect_errors=True)
-
-    assert response.status_code == 400
-
-    response = response.json
-
-    assert response['errors'][
-               'assignment_id'] == "'assignment_id' is a required property"
+# def test_api_subject_post_validation_experiment_group_missing(test_client):
+#     subject = subject_data_copy()
+#     del subject['assignment_id']
+#     response = test_client.post_json(RESOURCE, subject, expect_errors=True)
+#
+#     assert response.status_code == 400
+#
+#     response = response.json
+#
+#     assert response['errors'][
+#                'assignment_id'] == "'assignment_id' is a required property"
 
 
 def test_api_subjects_get_all_successful(test_client):
@@ -92,10 +92,10 @@ def test_api_subjects_get_item_unsuccessful(test_client):
 
 def test_api_subjects_put_successful(test_client):
     data = {
-        "worker_id": "debug231G32"
+        "experiment_group": "1"
     }
     response = test_client.put_json(RESOURCE + '1', params=data)
     assert response.status_code == 204
     response = test_client.get(RESOURCE + '1')
     response = response.json
-    assert response['worker_id'] == 'debug231G32'
+    assert response['experiment_group'] == '1'

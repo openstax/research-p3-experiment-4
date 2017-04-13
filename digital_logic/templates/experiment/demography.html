@@ -1,0 +1,89 @@
+{% extends 'layouts/base.html' %}
+{% import '_macros/forms.html' as macros %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+                <div class="card-panel">
+                    <!--Time to render the materialize form-->
+                    <div class="form-wrapper">
+                        <h4 class="center-align form-title">
+                            We'd like to know a little bit about you before you begin the study.
+                        </h4>
+                        <form action="{{ url_for('exp.demography') }}" method="POST" role="form">
+                            {{ form.hidden_tag() }}
+
+                            <!-- SKILL LEVEL FORM FIELD -->
+                            <div class="row">
+                                {% call macros.render_field(form.skill_level) %}
+                                    <label>
+                                        What's your experience level in digital logic?
+                                    </label>
+                                    <br/>
+                                    {{ form.skill_level }}
+                                {% endcall %}
+
+                                <!-- ENGLISH LEVEL FORM FIELD -->
+                                {% call macros.render_field(form.english_level) %}
+                                    <label>
+                                        Is english your first language?
+                                    </label>
+                                    <br/>
+                                    {{ form.english_level }}
+                                {% endcall %}
+
+                                <!-- AGE FORM FIELD -->
+                                {% call macros.render_field(form.age) %}
+                                    <label>
+                                    What is your age?
+                                    </label>
+                                    <br/>
+                                    {{ form.age }}
+                                {% endcall %}
+
+                                 <!-- GENDER FORM FIELD -->
+                                {% call macros.render_field(form.gender) %}
+                                    <label>
+                                    What is your gender?
+                                    </label>
+                                    <br/>
+                                    {{ form.gender }}
+                                {% endcall %}
+                                <!-- EDUCATION LEVEL FORM FIELD -->
+                                {% call macros.render_field(form.education) %}
+                                    <label>
+                                    Indicate the highest level of education completed:
+                                    </label>
+                                    <br/>
+                                    {{ form.education }}
+                                {% endcall %}
+                                <footer class="col s12 form-footer">
+                                    <p class="right-align">
+                                    <button type="submit" class="btn btn-large waves-effect waves-light">Start Reading</button><br/><strong>Thank you!</strong></p>
+                                </footer>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+    $(document).ready(function() {
+      // This is needed in order to change the first values of the select without causing errors to flask-wtf
+      // I tried dynamic values but the age field would not validate. This is a hack but it works.
+      $('select option:first-child').html('Select an option').val('');
+
+      $('select').material_select();
+    });
+    </script>
+
+  {% include '_includes/onunload.html' %}
+
+{% endblock %}
+

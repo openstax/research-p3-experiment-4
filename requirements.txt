@@ -3,9 +3,11 @@ aniso8601==1.2.0
 bcrypt==3.1.1
 beautifulsoup4==4.5.1
 blinker==1.4
+boto==2.45.0
 cffi==1.9.1
 click==6.6
 coverage==4.2
+croniter==0.3.13
 cssselect==1.0.0
 factory-boy==2.7.0
 fake-factory==0.7.2
@@ -23,6 +25,7 @@ inflection==0.3.1
 itsdangerous==0.24
 Jinja2==2.8
 jsonschema==2.5.1
+logger==1.4
 lxml==3.6.4
 Mako==1.0.6
 Markdown==2.6.7
@@ -47,9 +50,12 @@ python-editor==1.0.3
 pytz==2016.10
 PyYAML==3.12
 redis==2.10.5
+rq==0.7.1
+rq-scheduler==0.7.0
 scipy==0.18.1
 six==1.10.0
 SQLAlchemy==1.1.4
+transitions==0.4.3
 ua-parser==0.7.2
 waitress==1.0.1
 WebOb==1.6.3

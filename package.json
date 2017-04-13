@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --port 2992 --content-base digital_logic/build/public --hot --watch --inline",
-    "build": "webpack --display-error-details --progress --profile --colors"
+    "build": "webpack --config webpack.config.prod.js --display-error-details --progress --profile --colors"
   },
   "author": "m1yag1",
   "license": "AGPL-3.0",

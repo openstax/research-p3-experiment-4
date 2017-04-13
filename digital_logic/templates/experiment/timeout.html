@@ -1,0 +1,28 @@
+{% extends 'layouts/base.html' %}
+{% import '_macros/forms.html' as macros %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div
+        class="col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+        <div class="card-panel">
+          <h4 class="center-align form-title">
+            Our Apologies, you have exceeded the time limit
+          </h4>
+
+          <p>Don't worry though. Our researchers will ensure that you will get
+            paid as
+            long as you were attempting the study sincerely.</p>
+          <form method="POST">
+            <button type="submit" class="btn btn-lg btn-primary pull-right">
+              Finish
+              <span class="glyphicon glyphicon-chevron-right"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}

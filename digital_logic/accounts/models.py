@@ -1,9 +1,7 @@
-
-
 from flask_security import UserMixin, RoleMixin
 
+from digital_logic.experiment.models import UserSubject
 from ..core import db
-
 
 roles_users = db.Table(
     'roles_users',
@@ -44,6 +42,19 @@ class User(UserMixin, db.Model):
 
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
+    subject = db.relationship('UserSubject',
+                              backref=db.backref('users'))
+
+    @classmethod
+    def get_by_worker_id(cls, mturk_worker_id):
+        query = db.session.query(cls).join(UserSubject).filter(
+            UserSubject.mturk_worker_id == mturk_worker_id)
+        return query.first()
+
+    @classmethod
+    def get(cls, id):
+        return db.session.query(cls).filter(cls.id == id).first()
+
 
 __all__ = [
     'Role',

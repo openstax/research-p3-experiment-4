@@ -1,0 +1,67 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col s12 m10 l10 offset-l1 offset-m1">
+      <div class="card">
+        <div class="card-content">
+                    <span class="card-title">
+                    <h4>Congratulations!
+                        <small>You have completed the study.</small>
+                    </h4>
+                        </span>
+          {% for assignment in assignments %}
+            <div
+              class="card-panel teal white-text lighten-2 experiment-results col s12 center-align">
+              <div class="row">
+                <h4>{{ assignment.assignment_results.phase }} Results</h4>
+                <div class="results-correct results col s12 m4 l4">
+                  <h5>Correct</h5>
+                  {{ assignment.assignment_results.correct }}
+                </div>
+                <div class="results-incorrect results col s12 m4 l4">
+                  <h5>Incorrect</h5>
+                  {{ assignment.assignment_results.incorrect }}
+                </div>
+                <div class="score results col s12 m4 l4">
+                  <h5>Score</h5>
+                  {{ assignment.assignment_results['score'] | round(1, 'floor') }}
+                  %
+                </div>
+              </div>
+
+            </div>
+          {% endfor %}
+          <div class="card-panel center-align">
+            <div class="experiment-success">
+              <h5>Your completion code</h5>
+              <p class="completion-code results">{{ completion_code }}</p>
+              <p>
+                <small>
+                  Paste this code in the mechanical turk window
+                  and press the
+                  submit button to complete your assignment.
+                </small>
+            </div>
+          </div>
+          {% if qualified %}
+          <div class="card-panel orange white-text darken-3 center-align">
+            <div class="experiment-qualified">
+              <h5>You Qualified for Part II</h5>
+              <p>
+                The qualification for completing Part I has been added to your
+                Mechanical Turk user. You should now be able to see the HIT
+                for Part II on the Amazon Mechanical turk website. If you do not
+                begin Part II in 1 hour the qualification
+                and access to Part II will be revoked.
+              </p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock content %}
+

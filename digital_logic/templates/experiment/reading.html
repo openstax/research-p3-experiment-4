@@ -1,0 +1,81 @@
+{% extends 'layouts/base.html' %}
+
+{% set section_name = section.name %}
+{% set exercises = section.has_exercises %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12 m10 l10 offset-l1 offset-m1">
+            <div class="card-panel">
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                </div>
+                <div class="reading-wrapper loading">
+                    <div class="textbook-text">
+                        {{ text | safe }}
+                    </div>
+                    <div>
+                        {% if not exercises %}
+                        <form action="{{ url_for('exp.reading') }}" method="POST">
+
+                            <input type="hidden" name="section" id="status_button" value="{{ section.next_section }}"/>
+                            <p class="right-align"><button type="submit" class="btn btn-large waves-effect waves-light">Next</button></p>
+                        </form>
+                            {% else %}
+                            <form action="{{ url_for('exp.next_exercise') }}" method="POST">
+                                <input type="hidden" name="reading_section" id="reading_section" value="{{ section_name }}"/>
+                                <p class="right-align"><button class="btn btn-large waves-effect waves-light">Practice Questions</button><br/>
+                                <strong>You have some practice exercises coming up next.</strong>
+                                </p>
+                            </form>
+                            {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+          processEscapes: true
+        }
+      });
+
+    </script>
+    <script type="text/javascript"
+            src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+
+    <script>
+        function loaded() {
+          $('.reading-wrapper').removeClass('loading');
+          $('.progress').hide()
+        }
+
+        function delayLoad() {
+          MathJax.Hub.Queue(function() {
+            loaded();
+          });
+          setTimeout(loaded, 500)
+        }
+        setTimeout(delayLoad, 800)
+    </script>
+
+  {% include '_includes/onunload.html' %}
+
+
+{#    {% if exercises %}#}
+{#    <script>#}
+{#        $('.exercise-button').on('click', function() {#}
+{#          window.ExercisePhase.start('{{section_name}}', '{{subject_id}}', '{{assignment_id}}')#}
+{#        })#}
+{#    </script>#}
+{#    {% endif %}#}
+{% endblock scripts %}

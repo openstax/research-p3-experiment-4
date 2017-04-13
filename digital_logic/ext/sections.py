@@ -144,7 +144,12 @@ hgroup level two:
 """
 
 from collections import deque
-from itertools import zip_longest, tee
+from itertools import tee
+
+try:
+    from itertools import zip_longest
+except ImportError:
+    from itertools import izip_longest as zip_longest
 
 import markdown
 from markdown.util import etree

@@ -5,32 +5,36 @@
     <div class="row">
         <div class="col s12 m10 l10 offset-l1 offset-m1">
             <div class="card-panel">
-                <h4>Introduction to Digital Logic</h4>
-                <p>
-                    This study will take no longer than an hour to complete.
-                    Please start the study only if you have an hour to work
-                    without distractions.
-                </p>
-                <h5>Overview</h5>
-                {% include '_includes/intro_blurb.html' %}
-                <h5>Confidentiality</h5>
-                <p>
-                    All data collection in this pilot study will be anonymized
-                    and completely confidential.
-                </p>
-                {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" or not assignment_id %}
-                    <div class="card-panel materialize-red white-text">
-                        <div class="col sm1 md1 lg1">
-                        <i class="material-icons medium">info_outline</i>
+                <div class="introduction-text">
+                    <h4>Introduction to Digital Logic</h4>
+                    <p>
+                        This study will take no longer than an hour to complete.
+                        Please start the study only if you have an hour to work
+                        without distractions.
+                    </p>
+                    <h5>Overview</h5>
+                    {% include '_includes/intro_blurb.html' %}
+                    <h5>Confidentiality</h5>
+                    <p>
+                        All data collection in this pilot study will be
+                        anonymized
+                        and completely confidential.
+                    </p>
+                    {% if assignment_id == "ASSIGNMENT_ID_NOT_AVAILABLE" or not assignment_id %}
+                        <div class="card-panel materialize-red white-text">
+                            <div class="col sm1 md1 lg1">
+                                <i class="material-icons medium">info_outline</i>
+                            </div>
+                            <p>
+                                Please accept the hit on Mechanical Turk and
+                                visit again to participate in this study.
+                            </p>
                         </div>
-                        <p>
-                            Please accept the hit on Mechanical Turk and visit again to participate in this study.
-                        </p>
-                    </div>
-                {% else %}
-                    <a class="waves-effect waves-light btn" onclick="startExperiment()">Begin Experiment</a>
-                {% endif %}
-
+                    {% else %}
+                        <a class="waves-effect waves-light btn"
+                           onclick="startExperiment()">Begin Experiment</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -40,9 +44,9 @@
 {% block scripts %}
     {{ super() }}
     <script>
-    function startExperiment() {
-        window.open("{{ url_for('exp.start') }}" + "?worker_id={{ worker_id }}" + "&hit_id={{ hit_id }}" + "&assignment_id={{ assignment_id }}" + "&mode={{ mode }}", 'Popup', 'toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=no, width='+1024+', height='+768+'');
-    }
+      function startExperiment() {
+        window.open("{{ url_for('exp.start') }}" + "?worker_id={{ worker_id }}" + "&hit_id={{ hit_id }}" + "&assignment_id={{ assignment_id }}" + "&mode={{ mode }}", 'Popup', 'toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=' + 1024 + ', height=' + 768 + '');
+      }
     </script>
 
 {% endblock scripts %}

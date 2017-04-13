@@ -1,11 +1,10 @@
 from flask_security.utils import encrypt_password
 
-from digital_logic.experiment.models import Subject
+from digital_logic.experiment.models import UserSubject as Subject, \
+    SubjectAssignment
 
 subject_data = {
-    'assignment_id': u'debugSIP7SD',
-    'worker_id': u'debugT7MSZ2',
-    'hit_id': u'debugVY4J2G',
+    'mturk_worker_id': u'debugT7MSZ2',
     'experiment_group': u'test',
 }
 
@@ -33,7 +32,9 @@ def create_users(ds):
     https://github.com/mattupstate/flask-security/blob/develop/tests/utils.py
     """
     users = [('mike@mike.com', 'password', ['admin'], True),
-             ('joe@joe.com', 'password', ['subject'], True)
+             ('joe@mturk.com', 'password', ['mturk'], True),
+             ('jack@mturk.com', 'password', ['mturk'], True),
+             ('john@mturk.com', 'password', ['mturk'], True),
              ]
 
     for u in users:
@@ -51,21 +52,35 @@ def create_users(ds):
 
 def create_subjects(db):
     # assignment_id, worker_id, hit_id, group_num, external_id, status
-    subjects = [('debug28VFCH', 'debug5FQYY0', 'debug8O8WX0', 0,
-                 'b9733ca6b41fec7402e5b014a826b2ed', 'QUITEARLY'),
-                ('debug07N3PA', 'debugTU4D8C', 'debug8RIZSB', 1,
-                 'ffe8e5f3447c73aac014e4612f3890da', 'COMPLETED'),
-                ('debug5FQYY0', 'debugEBK0OZ', 'debugN3WMIY', 0,
-                 'add6094c1d7eaa8bc2533c91472ff292', 'GARBAGE')]
+    subjects = [('debug5FQYY0', 2, 0,
+                 'b9733ca6b41fec7402e5b014a826b2ed'),
+                ('debugTU4D8C', 3, 1,
+                 'ffe8e5f3447c73aac014e4612f3890da'),
+                ('debugEBK0OZ', 4, 0,
+                 'add6094c1d7eaa8bc2533c91472ff292'),
+                ('debug6DB4LQ', 4, 0,
+                 'add6094c1d7eaa8bc3434546567ff292')
+                ]
 
     for s in subjects:
-        subject = Subject(assignment_id=s[0],
-                          worker_id=s[1],
-                          hit_id=s[2],
-                          experiment_group=s[3],
-                          external_id=s[4],
-                          status=s[5])
+        subject = Subject(mturk_worker_id=s[0],
+                          user_id=s[1],
+                          experiment_group=s[2],
+                          external_id=s[3])
         db.session.add(subject)
+    db.session.commit()
+
+
+def create_assignments(db):
+    assignments = [(2, 'debug45678', 'debug45678', True),
+                   (3, 'debug91234', 'debug91234', False),
+                   (4, 'debug56789', 'debug56789', False)]
+    for a in assignments:
+        assignment = SubjectAssignment(subject_id=a[0],
+                                       mturk_assignment_id=a[1],
+                                       mturk_hit_id=a[2],
+                                       is_complete=a[3])
+        db.session.add(assignment)
     db.session.commit()
 
 
