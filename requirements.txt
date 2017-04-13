@@ -3,6 +3,7 @@ aniso8601==1.2.0
 bcrypt==3.1.1
 beautifulsoup4==4.5.1
 blinker==1.4
+boto==2.45.0
 cffi==1.9.1
 click==6.6
 coverage==4.2
@@ -54,6 +55,7 @@ rq-scheduler==0.7.0
 scipy==0.18.1
 six==1.10.0
 SQLAlchemy==1.1.4
+transitions==0.4.3
 ua-parser==0.7.2
 waitress==1.0.1
 WebOb==1.6.3

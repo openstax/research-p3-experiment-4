@@ -28,7 +28,7 @@ def test_start_valid_mturk_params(test_client):
                   )
     headers = {'User-Agent': 'Py.Test'}
     response = test_client.get('/exp/start', params=params, headers=headers)
-    assert 'Experiment Start!' in response
+    assert response.status_code == 302
 
 
 def test_start_debug_mode_disabled(test_client):
@@ -55,5 +55,4 @@ def test_start_debug_mode_enabled(test_client):
                                params=params,
                                headers=headers,
                                expect_errors=True)
-    assert response.status_code == 200
-    assert 'Experiment Start!' in response
+    assert response.status_code == 302

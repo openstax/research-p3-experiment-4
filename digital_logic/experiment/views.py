@@ -149,10 +149,10 @@ def start():
                                                               assignment_phase)
 
             if not debug_mode and (
-                latest_assignment and latest_assignment.did_quit):
+                        latest_assignment and latest_assignment.did_quit):
                 raise ExperimentError('quit_experiment_early')
             elif not debug_mode and (
-                latest_assignment and latest_assignment.is_complete):
+                        latest_assignment and latest_assignment.is_complete):
                 raise ExperimentError('phase_completed')
             else:
                 assignment = _login_and_prep_subject(worker_id,
@@ -161,9 +161,12 @@ def start():
                                                      ua_dict,
                                                      assignment_phase,
                                                      debug_mode)
-                session['current_assignment_id'] = assignment.id
-                save_session_record(assignment.id, 'Started')
-                return redirect(url_for('exp.demography'))
+                if not assignment:
+                    raise ExperimentError('quit_experiment_early')
+                else:
+                    session['current_assignment_id'] = assignment.id
+                    save_session_record(assignment.id, 'Started')
+                    return redirect(url_for('exp.demography'))
         else:
             raise ExperimentError('experiment_completed')
     else:
@@ -415,7 +418,7 @@ def summary():
     completion_code = current_assignment.mturk_completion_code
 
     if (current_assignment.assignment_phase == 'Practice'
-            and current_assignment.mturk_assignment_status == 'Accepted'):
+        and current_assignment.mturk_assignment_status == 'Accepted'):
         qualified = True
 
     return render_template('summary.html',

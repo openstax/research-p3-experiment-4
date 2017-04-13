@@ -138,7 +138,7 @@ A OR B = A + B
 **Figure 3** The electronic symbol for the OR logic gate.
 {% endcall %}
 
-{% call m.figure("truth_table_A_or_B.PNG", "truth table for A OR B", "no-border responsive-img") %}
+{% call m.figure("truth_table_A_OR_B.PNG", "truth table for A OR B", "no-border responsive-img") %}
 **Figure 4** Truth table for A OR B.
 {% endcall %}
 
@@ -196,7 +196,7 @@ Write the truth table for A OR A'.
 **Solution**
 
 Since we only have one variable – A – we will have $2^1=2$ rows in the
-truth table. We will explicitly state the value of A' for the sake
+truth table. We will explicitly state the value of A' for the sake of
 clarity. We recall that the OR function will evaluate to 1 when either
 input is 1. Recall that A' indicates NOT A and will be 1 anytime that
 A is 0. Therefore, either A or A' will be 1, and the entire expression
