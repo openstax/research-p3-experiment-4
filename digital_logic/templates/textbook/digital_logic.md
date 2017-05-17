@@ -186,28 +186,10 @@ rows. For example, the basic logic gates with $K=2$ inputs have
 $2^2 = 4$ rows in their truth table. A compound boolean expression with
 $K=3$ variables will have $2^3 = 8$ rows in its truth table.
 
-#### **Example 6** {:.exercise}
-
-Write the truth table for A OR A'.
-
-**Solution**
-
-Since we only have one variable – A – we will have $2^1=2$ rows in the
-truth table. We will explicitly state the value of A' for the sake of
-clarity. We recall that the OR function will evaluate to 1 when either
-input is 1. Recall that A' indicates NOT A and will be 1 anytime that
-A is 0. Therefore, either A or A' will be 1, and the entire expression
-will evaluate to 1 for all cases.
-
-
-{% call m.figure("TT_AorA'.png", "truth table for A OR A'", "no-border") %}
-**Figure 7** Truth table for A OR A'.
-{% endcall %}
-
 As in traditional algebra, Boolean algebra uses parentheses to indicate
 the order of operations.
 
-#### **Example 7** {:.exercise}
+#### **Example 6** {:.exercise}
 
 Write the truth table for A AND (B AND C).
 
@@ -221,13 +203,13 @@ when A, B, and C are 1.
 
 {% call m.figure("TT_AandBandC.png", "truth table for A AND (B AND C)", "no-border restrict responsive-img") %}
 
-**Figure 8** Truth table for A AND (B AND C).  We note that the
+**Figure 7** Truth table for A AND (B AND C).  We note that the
 only time the output of this circuit is is 1 is for the case when
 A=B=C=1.
 
 {% endcall %}
 
-#### **Example 8** {:.exercise}
+#### **Example 7** {:.exercise}
 Write the truth table for A OR (B AND C).
 
 **Solution**
@@ -236,7 +218,7 @@ table. For each row in the truth table, we can first evaluate the (B
 AND C) term and then use this result to obtain the final output.
 
 {% call m.figure("TT_AorBandC.png", "truth table for A OR (B AND C)", "no-border restrict responsive-img") %}
-**Figure 9** Truth table for A OR (B AND C).
+**Figure 8** Truth table for A OR (B AND C).
 {% endcall %}
 
 ## Circuits to Truth Tables {:.circuits-to-truth-tables}
@@ -245,7 +227,7 @@ AND C) term and then use this result to obtain the final output.
 Digital logic circuit diagrams can be a useful aid when calculating the entries of a truth table. This is because digital circuit diagrams provide a visualization of how logic gates operate on boolean variables and how the function of these gates combine to produce the final output.  We will illustrate this using the logic circuit that implements the expression A OR (B AND C).
 
 {% call m.figure("circuit_tt_1_ans_v2.png", "Realization of the circuit diagram for A OR (B AND C)", "no-border restrict responsive-img") %}
-**Figure 11** Realization of the circuit diagram for A OR (B AND C) for A=1, B=1 and C=0.
+**Figure 9** Realization of the circuit diagram for A OR (B AND C) for A=1, B=1 and C=0.
 {% endcall %}
 
 We have labeled the Boolean values in the circuit in red for
@@ -253,10 +235,10 @@ convenience.  We first evaluate the output of the AND gate. Since 1
 AND 0 = 0, we end up with 0 at the output of the AND gate.  Finally,
 we evaluate the output of the OR gate using the 0 output from the AND
 gate and with the value of A=1.  This evaluates to 1, which gives the
-final result. By repeating this method for all possible input combinations, we can fill out the entire truth table (see Example 9).
+final result. By repeating this method for all possible input combinations, we can fill out the entire truth table (see Example 8).
 
 
-#### **Example 9** {:.exercise}
+#### **Example 8** {:.exercise}
 
 Write the truth table for the following circuit.
 
@@ -273,13 +255,13 @@ for the case A=1, B=1, and C=0.
 
 
 
-#### **Example 10** {:.exercise}
+#### **Example 9** {:.exercise}
 
 Write the truth table for the following circuit, which implements the expression
 (NOT A) AND (B OR C) = A' $\cdot$ (B + C).
 
 {% call m.figure("circuit_tt_2_prob_v2.png", "Circuit diagram for (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
-**Figure 12** Circuit diagram for (NOT A) AND (B OR C).
+**Figure 11** Circuit diagram for (NOT A) AND (B OR C).
 {% endcall %}
 
 **Solution**
@@ -290,7 +272,7 @@ through the circuit will obtain the final result. As a concrete
 example, we show how this works for the case A=0, B=1, and C=0.
 
 {% call m.figure("circuit_tt_2_ans_v2.png", "Realization of the circuit (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
-**Figure 13** Realization of the circuit (NOT A) AND (B OR C) when A=0, B=1 and C=0.
+**Figure 12** Realization of the circuit (NOT A) AND (B OR C) when A=0, B=1 and C=0.
 {% endcall %}
 
 The NOT gate will invert the value of A = 0 to 1.  The output of the
@@ -303,7 +285,7 @@ final truth table given below.
 
 {% call m.figure("truth_table_NOTA_AND_BORC.png", "Truth table for (NOT A) AND (B OR C)", "no-border restrict responsive-img") %}
 
-**Figure 14** Truth table for (NOT A) AND (B OR C).
+**Figure 13** Truth table for (NOT A) AND (B OR C).
 
 {% endcall %}
 
@@ -334,12 +316,12 @@ intuitive method called the **sum-of-products** Boolean expression form:
 
 This process will be clearer with an example.
 
-#### **Example 11** {:.exercise}
+#### **Example 10** {:.exercise}
 
 Write a Boolean expression for Z from the truth table below.
 
 {% call m.figure("truth_bool.PNG", "Truth table to be translated to a boolean expression", "no-border restrict responsive-img") %}
-**Figure 15** Truth table to be translated to a boolean expression.
+**Figure 14** Truth table to be translated to a boolean expression.
 {% endcall %}
 
 **Solution**
