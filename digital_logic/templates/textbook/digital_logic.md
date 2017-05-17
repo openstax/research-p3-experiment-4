@@ -301,7 +301,7 @@ and, ultimately, a circuit. This is an important conversion because:
     about a circuit: what the circuit should output given different
     combinations of inputs.
 
-2.  From a Boolean expression, it is very easy to design the final
+2.  From a Boolean expression, it is relatively easy to design the final
     circuit.
 
 There are multiple methods of transforming a truth table to a Boolean
