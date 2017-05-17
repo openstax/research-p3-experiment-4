@@ -6,7 +6,7 @@
 
 # Preface {:.preface}
 
-Digital logic is the basis of every modern computer. Digital logic
+Digital logic is the basis of all modern computers. Digital logic
 takes binary inputs, valued at 1 or 0, and transforms them into useful
 outputs using logic operations. This learning module will focus on
 understanding the basic building blocks of digital logic circuits and
@@ -69,7 +69,7 @@ A AND B = A$\cdot$B = AB
 
 #### **Example 1** {:.exercise}
 
-Evaluate 1 AND 1.
+Evaluate 1 AND 1 = ?
 
 **Solution**
 
@@ -89,9 +89,8 @@ time.  Then we can write G = M AND T = MT.  If either M is false (Lisa
 does not have money) or T is false (she does not have any free time),
 then Lisa will not go (G) to the movies.
 
-It is very easy to understand the behavior of the AND gate when we
-think of a binary value 1 denoting true and the binary value 0
-denoting false.  In this case, the output of the AND gate is true only
+The behavior of the AND gate can be understood by thinking of a binary value 1 as true and the binary value 0
+as false.  In this case, the output of the AND gate is true only
 if the first input **and** the second input are true.
 
 {% call m.figure("AND.PNG", "AND logic gate") %}
@@ -144,7 +143,7 @@ A OR B = A + B
 
 #### **Example 4** {:.exercise}
 
-Evaluate 0 OR 0.
+Evaluate 0 OR 0 = ?
 
 **Solution**
 
@@ -152,10 +151,8 @@ Since OR only evaluates to 1 when at least one input is 1, 0 OR 0 = 0.
 
 ## NOT {:.not}
 
-The **NOT** logic gate takes one input. The output of the NOT gate is
-simply the opposite of the input. NOT A, for example, would output 1
-if A=0 and output 0 if A=1. For this reason, a NOT gate is often
-called an inverter. In Boolean algebra, NOT is represented as an
+The **NOT** logic gate takes only one input. The output of the NOT gate is
+simply the opposite of the input. For example, if A=0, then NOT A would output 1. If A=1, then NOT A would output 0. For this reason, a NOT gate is often called an inverter. In Boolean algebra, NOT is represented as an
 apostrophe.
 
 {% call m.equation() %}
@@ -172,7 +169,7 @@ NOT A = A'
 
 #### **Example 5** {:.exercise}
 
-Evaluate NOT 0.
+Evaluate NOT 0 = ?
 
 **Solution**
 
@@ -245,12 +242,19 @@ AND C) term and then use this result to obtain the final output.
 ## Circuits to Truth Tables {:.circuits-to-truth-tables}
 
 
-It is often very easy to calculate the entries of a truth table using
-digital logic circuit diagram.  This is because digital circuit
-diagrams make it easy to visualize how logic gates operate on boolean
-variables and how the function of these gates combine to produce the
-final output.  We will illustrate this using the logic circuit that
-implements the expression A OR (B AND C) from the previous example.
+Digital logic circuit diagrams can be a useful aid when calculating the entries of a truth table. This is because digital circuit diagrams provide a visualization of how logic gates operate on boolean variables and how the function of these gates combine to produce the final output.  We will illustrate this using the logic circuit that implements the expression A OR (B AND C).
+
+{% call m.figure("circuit_tt_1_ans_v2.png", "Realization of the circuit diagram for A OR (B AND C)", "no-border restrict responsive-img") %}
+**Figure 11** Realization of the circuit diagram for A OR (B AND C) for A=1, B=1 and C=0.
+{% endcall %}
+
+We have labeled the Boolean values in the circuit in red for
+convenience.  We first evaluate the output of the AND gate. Since 1
+AND 0 = 0, we end up with 0 at the output of the AND gate.  Finally,
+we evaluate the output of the OR gate using the 0 output from the AND
+gate and with the value of A=1.  This evaluates to 1, which gives the
+final result. By repeating this method for all possible input combinations, we can fill out the entire truth table (see Example 9).
+
 
 #### **Example 9** {:.exercise}
 
@@ -267,17 +271,7 @@ the circuit. We can then propagate the results through the circuit to
 obtain the final result. As a concrete example, we show how this works
 for the case A=1, B=1, and C=0.
 
-{% call m.figure("circuit_tt_1_ans_v2.png", "Realization of the circuit diagram for A OR (B AND C)", "no-border restrict responsive-img") %}
-**Figure 11** Realization of the circuit diagram for A OR (B AND C) for A=1, B=1 and C=0.
-{% endcall %}
 
-We have labeled the Boolean values in the circuit in red for
-convenience.  We first evaluate the output of the AND gate. Since 1
-AND 0 = 0, we end up with 0 at the output of the AND gate.  Finally,
-we evaluate the output of the OR gate using the 0 output from the AND
-gate and with the value of A=1.  This evaluates to 1, which gives the
-final result.  Repeating this for all input combinations we can arrive
-at the final truth table given in Example 6.
 
 #### **Example 10** {:.exercise}
 
