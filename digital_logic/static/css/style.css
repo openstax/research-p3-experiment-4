@@ -98,3 +98,18 @@ li.exercise-choice.correct .choice-matter {
     border-bottom: 1px solid;
     text-align: center;
 }
+
+section.exercise {
+    margin: 12px 0;
+    padding: 10px 20px;
+    background-color: #fafafa;
+}
+
+h3.exercise {
+    font-size: 1.2em;
+}
+
+img.responsive-img {
+    max-width: 70%;
+    height: auto;
+}

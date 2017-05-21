@@ -15,8 +15,8 @@ from digital_logic.accounts.auth import logout_mturk_user, \
 from digital_logic.core import db
 from digital_logic.decorators import check_distractor_time, check_time
 from digital_logic.exceptions import ExperimentError
-from digital_logic.experiment.exercise import (
-    get_subject_assessment_next_exercise)
+from digital_logic.experiment.exercise import (next_exercise_from_pool,
+                                               get_assignment_next_exercise)
 from digital_logic.experiment.forms import PredictionsForm, FinalizeForm
 from digital_logic.experiment.service import (
     all_subject_assignments,
@@ -206,7 +206,7 @@ def next_exercise():
     elif session['answered_exercises'] == total_exercises:
         return redirect(url_for('exam.finalize'))
 
-    exercise = get_subject_assessment_next_exercise(subject.id, assignment.id)
+    exercise = get_assignment_next_exercise(assignment)
     session['current_exercise_id'] = exercise.id
     session['exercise_start'] = datetime.utcnow()
 
@@ -264,7 +264,7 @@ def finalize():
         assignment_results['score'] = score
         assignment_results['phase'] = assignment.assignment_phase
 
-        log.info('A score of {0} was recored for subject {1}'.format(
+        log.info('A score of {0} was recorded for subject {1}'.format(
             score,
             assignment.subject_id))
 

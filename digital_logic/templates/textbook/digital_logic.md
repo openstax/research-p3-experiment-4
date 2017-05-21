@@ -67,7 +67,7 @@ equal $0$. In Boolean algebra, AND is represented as multiplication.
 A AND B = A$\cdot$B = AB
 {% endcall %}
 
-#### **Example 1** {:.exercise}
+### **Example 1** {:.exercise}
 
 Evaluate 1 AND 1 = ?
 
@@ -75,7 +75,7 @@ Evaluate 1 AND 1 = ?
 
 Since AND evaluates to 1 when both inputs are 1, 1 AND 1 = 1.
 
-#### **Example 2** {:.exercise}
+### **Example 2** {:.exercise}
 
 Lisa will go to the movies only if she has money and free time.  Model
 this situation with a Boolean expression.
@@ -106,7 +106,7 @@ Now that we have seen our first Boolean expression, AB, let's learn
 how to represent its behavior. **Truth tables** show the output of a
 Boolean expression for every possible combination of inputs.
 
-#### **Example 3** {:.exercise}
+### **Example 3** {:.exercise}
 
 Draw a truth table for A AND B.
 
@@ -141,7 +141,7 @@ A OR B = A + B
 **Figure 4** Truth table for A OR B.
 {% endcall %}
 
-#### **Example 4** {:.exercise}
+### **Example 4** {:.exercise}
 
 Evaluate 0 OR 0 = ?
 
@@ -167,7 +167,7 @@ NOT A = A'
 **Figure 6** Truth table for NOT A.
 {% endcall %}
 
-#### **Example 5** {:.exercise}
+### **Example 5** {:.exercise}
 
 Evaluate NOT 0 = ?
 
@@ -189,7 +189,7 @@ $K=3$ variables will have $2^3 = 8$ rows in its truth table.
 As in traditional algebra, Boolean algebra uses parentheses to indicate
 the order of operations.
 
-#### **Example 6** {:.exercise}
+### **Example 6** {:.exercise}
 
 Write the truth table for A AND (B AND C).
 
@@ -209,7 +209,7 @@ A=B=C=1.
 
 {% endcall %}
 
-#### **Example 7** {:.exercise}
+### **Example 7** {:.exercise}
 Write the truth table for A OR (B AND C).
 
 **Solution**
@@ -238,7 +238,7 @@ gate and with the value of A=1.  This evaluates to 1, which gives the
 final result. By repeating this method for all possible input combinations, we can fill out the entire truth table (see Example 8).
 
 
-#### **Example 8** {:.exercise}
+### **Example 8** {:.exercise}
 
 Write the truth table for the following circuit.
 
@@ -255,7 +255,7 @@ for the case A=1, B=1, and C=0.
 
 
 
-#### **Example 9** {:.exercise}
+### **Example 9** {:.exercise}
 
 Write the truth table for the following circuit, which implements the expression
 (NOT A) AND (B OR C) = A' $\cdot$ (B + C).
@@ -316,7 +316,7 @@ intuitive method called the **sum-of-products** Boolean expression form:
 
 This process will be clearer with an example.
 
-#### **Example 10** {:.exercise}
+### **Example 10** {:.exercise}
 
 Write a Boolean expression for Z from the truth table below.
 

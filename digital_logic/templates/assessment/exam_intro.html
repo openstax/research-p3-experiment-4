@@ -31,7 +31,7 @@
                             </p>
                         </div>
                     {% else %}
-                        <a class="waves-effect waves-light btn"
+                        <a class="waves-effect waves-light btn btn-start-experiment"
                            onclick="startExperiment()">Begin Experiment</a>
                     {% endif %}
                 </div>
@@ -45,6 +45,7 @@
     {{ super() }}
     <script>
       function startExperiment() {
+        $('.btn-start-experiment').hide();
         window.open("{{ url_for('exam.start') }}" + "?worker_id={{ worker_id }}" + "&hit_id={{ hit_id }}" + "&assignment_id={{ assignment_id }}" + "&mode={{ mode }}", 'Popup', 'toolbar=no, location=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=' + 1024 + ', height=' + 768 + '');
       }
     </script>

@@ -1,166 +1,151 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <div class="row">
-        <div class="col s12 m10 l10 offset-l1 offset-m1">
-            <div class="card-panel">
-                <div class="progress">
-                    <div class="indeterminate"></div>
-                </div>
-                <div class="exercise-wrapper loading">
-                    {% set q_num = answered_exercises if feedback else answered_exercises + 1 %}
-                    <div class="card-panel white-text teal">
-                        Please take your time to answer the question. Some
-                        questions
-                        may require you to work the answers using a pen and
-                        paper. Note
-                        that some of the questions are designed to be a lot
-                        harder than
-                        the rest. Please try your hardest to answer these
-                        questions,
-                        but don't let them discourage you from completing the
-                        study.
-                    </div>
-                    <h5>Question {{ q_num }} of {{ total_exercises }}</h5>
-                    <div class="exercise-text center-align">
-                        {{ exercise.content.html | safe }}
-                    </div>
-                    <div>
+  <div class="row">
+    <div class="col s12 m10 l10 offset-l1 offset-m1">
+      <div class="card-panel">
+        <div class="progress">
+          <div class="indeterminate"></div>
+        </div>
+        <div class="exercise-wrapper loading">
+          {% set q_num = answered_exercises if feedback else answered_exercises + 1 %}
+          <div class="card-panel white-text teal">
+            Please take your time to answer the question. Some
+            questions
+            may require you to work the answers using a pen and
+            paper. Note
+            that some of the questions are designed to be a lot
+            harder than
+            the rest. Please try your hardest to answer these
+            questions,
+            but don't let them discourage you from completing the
+            study.
+          </div>
+          <h5>Question {{ q_num }} of {{ total_exercises }}</h5>
+          <div class="exercise-text center-align">
+            {{ exercise.content.html | safe }}
+          </div>
+          <div>
 
-                        <form role="form"
-                              novalidate
-                              action="{{ url_for('exp.submit_response'
+            <form role="form"
+                  novalidate
+                  action="{{ url_for('exp.submit_response'
                                     if not feedback
                                     else 'exp.show_feedback') }}"
-                              method="POST">
-                            <div class="row">
-                                {% if not feedback %}
-                                    <div>
-                                {% else %}
-                                    <div>
-                                {% endif %}
-                                {% if feedback %}
-                                    {% if correct_answer %}
-                                        <div class="feedback correct-answer">
-                                            <h5>You answered correctly</h5>
-                                        </div>
-                                    {% else %}
-                                        <div class="feedback incorrect-answer">
-                                            <h5>You answered incorrectly</h5>
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
+                  method="POST">
+              <div class="row">
+                <div>
 
-                                <ol class="letter" type="a">
-                                    {% for choice in exercise.answer_choices %}
-                                        {% set correct, incorrect = False, False %}
-                                        {% set selected = False %}
-                                        {% set choice_classes = 'exercise-choice' %}
-                                        {% if feedback and loop.index0 in correct_choices %}
-                                            {% set correct = True %}
-                                            {% set choice_classes = choice_classes + ' correct' %}
-                                        {% endif %}
-{#                                        {% if feedback and loop.index0 in incorrect_choices %}#}
-{#                                            {% set incorrect = True %}#}
-{#                                            {% set choice_classes = choice_classes + ' incorrect' %}#}
-{#                                        {% endif %}#}
-                                        {% if feedback and loop.index0 == answer %}
-                                            {% set choice_classes = choice_classes + ' answer' %}
-                                            {% set selected = True %}
-                                        {% endif %}
-                                        {% if feedback and loop.index0 in incorrect_choices and selected %}
-                                           {% set incorrect = True %}
-                                           {% set choice_classes = choice_classes + ' incorrect' %}
-                                      {% endif %}
-                                        <li class="{{ choice_classes }}">
-                                            {% set choice_id = "exercise-choice-{}".format(loop.index) %}
-                                            {% if not feedback %}
+                  {% if feedback %}
+                    {% if correct_answer %}
+                      <div class="feedback correct-answer">
+                        <h5>You answered correctly</h5>
+                      </div>
+                    {% else %}
+                      <div class="feedback incorrect-answer">
+                        <h5>You answered incorrectly</h5>
+                      </div>
+                    {% endif %}
+                  {% endif %}
 
-                                                <input id="{{ choice_id }}"
-                                                       type="radio"
-                                                       name="choice"
-                                                        {% if selected %}
-                                                       checked="checked" {% endif %}
-                                                       value="{{ loop.index0 }}"
-                                                       style="float:right">
-                                            {% endif %}
+                  <ol class="letter" type="a">
+                    {% for choice in exercise.answer_choices %}
+                      {% set correct, incorrect = False, False %}
+                      {% set selected = False %}
+                      {% set choice_classes = 'exercise-choice' %}
+                      {% if feedback and loop.index0 in correct_choices %}
+                        {% set correct = True %}
+                        {% set choice_classes = choice_classes + ' correct' %}
+                      {% endif %}
+                      {% if feedback and loop.index0 == answer %}
+                        {% set choice_classes = choice_classes + ' answer' %}
+                        {% set selected = True %}
+                      {% endif %}
+                      {% if feedback and loop.index0 in incorrect_choices and selected %}
+                        {% set incorrect = True %}
+                        {% set choice_classes = choice_classes + ' incorrect' %}
+                      {% endif %}
+                      <li class="{{ choice_classes }}">
+                        {% set choice_id = "exercise-choice-{}".format(loop.index) %}
+                        {% if not feedback %}
 
-                                            {% if feedback %}
-{#                                                {% if correct and selected %}#}
-{#                                                    <div>#}
-{#                                                        <i class="material-icons"#}
-{#                                                           style="float:left">done</i>#}
-{#                                                    </div>#}
-{#                                                {% endif %}#}
+                          <input id="{{ choice_id }}"
+                                 type="radio"
+                                 name="choice"
+                            {% if selected %}
+                                 checked="checked" {% endif %}
+                                 value="{{ loop.index0 }}"
+                                 style="float:right">
+                        {% endif %}
 
-                                                <input id="{{ choice_id }}"
-                                                       type="radio" disabled
-                                                       name="choice"
-                                                        {% if selected %}
-                                                       checked="checked" {% endif %}
-                                                       value="{{ loop.index0 }}"
-                                                       style="float:right">
+                        {% if feedback %}
+                          <input id="{{ choice_id }}"
+                                 type="radio" disabled
+                                 name="choice"
+                            {% if selected %}
+                                 checked="checked" {% endif %}
+                                 value="{{ loop.index0 }}"
+                                 style="float:right">
 
-                                            {% endif %}
-                                            <label class="choice-matter"
-                                                   for="{{ choice_id }}">
-                                                {{ choice.markup }}
-                                            </label>
-                                        </li>
+                        {% endif %}
+                        <label class="choice-matter"
+                               for="{{ choice_id }}">
+                          {{ choice.markup }}
+                        </label>
+                      </li>
 
-                                    {% endfor %}
-                                </ol>
-                                </div>
-
-                                <p class="right-align">
-                                    <button class="btn btn-large waves-effect waves-light">
-                                        {% if not feedback %} Submit
-                                            Answer {% else %} Next
-                                            Exercise {% endif %}
-                                    </button>
-                                    <br/></p>
-                                </div>
-                        </form>
-                    </div>
+                    {% endfor %}
+                  </ol>
                 </div>
-            </div>
+
+                <p class="right-align">
+                  <button class="btn btn-large waves-effect waves-light">
+                    {% if not feedback %} Submit
+                      Answer {% else %} Next
+                      Exercise {% endif %}
+                  </button>
+                  <br/></p>
+              </div>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 
 {% endblock content %}
 
 {% block scripts %}
-    {{ super() }}
+  {{ super() }}
 
-    <script type="text/x-mathjax-config">
+  <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
         tex2jax: {
           inlineMath: [ ['$','$'], ["\\(","\\)"] ],
           processEscapes: true
         }
       });
+  </script>
 
+  <script type="text/javascript"
+          src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
 
-    </script>
-    <script type="text/javascript"
-            src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-    </script>
+  <script>
+    function loaded() {
+      $('.exercise-wrapper').removeClass('loading');
+      $('.progress').hide()
+    }
 
-    <script>
-      function loaded() {
-        $('.exercise-wrapper').removeClass('loading');
-        $('.progress').hide()
-      }
+    function delayLoad() {
+      MathJax.Hub.Queue(function () {
+        loaded();
+      });
+      setTimeout(loaded, 500)
+    }
+    setTimeout(delayLoad, 800)
+  </script>
 
-      function delayLoad() {
-        MathJax.Hub.Queue(function () {
-          loaded();
-        });
-        setTimeout(loaded, 500)
-      }
-      setTimeout(delayLoad, 800)
-    </script>
-
-    {% include '_includes/onunload.html' %}
+  {% include '_includes/onunload.html' %}
 
 {% endblock scripts %}

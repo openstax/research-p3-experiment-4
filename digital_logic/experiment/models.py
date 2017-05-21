@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.dialects.postgresql import ARRAY, JSON
 from sqlalchemy import func
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from ..core import db
 
@@ -51,6 +52,10 @@ class Exercise(db.Model):
     @classmethod
     def get(cls, id):
         return db.session.query(cls).filter(cls.id == id).one()
+
+    @classmethod
+    def all(cls):
+        return db.session.query(cls).all()
 
     @classmethod
     def get_random(cls):
@@ -103,6 +108,10 @@ class SubjectAssignment(db.Model):
                            nullable=False,
                            default=datetime.utcnow())
 
+    subject = db.relationship('UserSubject')
+
+    responses = db.relationship('AssignmentResponse')
+
     @classmethod
     def get(cls, assignment_id):
         return db.session.query(cls).filter(cls.id == assignment_id).first()
@@ -122,6 +131,10 @@ class SubjectAssignment(db.Model):
         if assignment_phase:
             query = query.filter(cls.assignment_phase == assignment_phase)
         return query.first()
+
+    @hybrid_property
+    def total_answered(self):
+        return len(self.responses)
 
 
 class AssignmentResponse(db.Model):

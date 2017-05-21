@@ -1,8 +1,12 @@
 import flask_wtf as WTF
 
 from wtforms.widgets import html5 as widget
-from wtforms.fields import RadioField, SelectField, TextField, TextAreaField, \
-    IntegerField, StringField
+from wtforms.fields import (
+    RadioField,
+    SelectField,
+    TextAreaField,
+    IntegerField,
+    StringField)
 from wtforms.validators import Length, DataRequired, NumberRange
 
 skill_levels = ('Zero', 'A little', 'Some', 'A lot')
