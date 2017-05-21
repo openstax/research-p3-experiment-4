@@ -1,3 +1,6 @@
+import random
+import string
+
 import click
 from datetime import datetime
 
@@ -8,6 +11,31 @@ from digital_logic import create_app
 from digital_logic.core import db
 
 app = create_app()
+
+
+def random_id_generator(size=6, chars=string.ascii_uppercase +
+                                      string.digits):
+    return ''.join(random.choice(chars) for x in range(size))
+
+
+def create_debug_url(base_url, worker_id=None):
+    if worker_id:
+        worker_id=worker_id
+    else:
+        worker_id = random_id_generator()
+    hit_id = random_id_generator()
+    assignment_id = random_id_generator()
+
+    info = dict(base_url=base_url,
+                worker_id=worker_id,
+                hit_id=hit_id,
+                assignment_id=assignment_id)
+
+    launch_url = ('{base_url}?worker_id=debug{worker_id}'
+                  '&hit_id=debug{hit_id}'
+                  '&assignment_id=debug{assignment_id}'
+                  '&mode=debug'.format(**info))
+    return launch_url
 
 
 @app.cli.command()
@@ -27,9 +55,11 @@ def list_routes():
 
 
 @app.cli.command()
-@click.confirmation_option(prompt='This will erase everything in the database. Do you want to continue?')
+@click.confirmation_option(
+    prompt='This will erase everything in the database. Do you want to continue?')
 def reset_db():
-    """Resets the database to the original state using alembic downgrade and upgrade commands"""
+    """Resets the database to the original state using 
+    alembic downgrade and upgrade commands"""
     from alembic.command import downgrade, upgrade
     from alembic.config import Config as AlembicConfig
     config = AlembicConfig('alembic.ini')
@@ -76,6 +106,16 @@ def send_test_email():
         sender=current_app.config['SECURITY_EMAIL_SENDER']
     )
     mail.send(msg)
+
+
+@app.cli.command()
+def debug_urls():
+    practice_url = create_debug_url('http://localhost:2992/exp/')
+    worker_id = practice_url.split('?')[1].split('&')[0].split('debug')[1]
+    assessment_url = create_debug_url('http://localhost:2992/exam', worker_id)
+
+    print('practice_url: {}'.format(practice_url))
+    print('assessment_url: {}'.format(assessment_url))
 
 
 if __name__ == '__main__':

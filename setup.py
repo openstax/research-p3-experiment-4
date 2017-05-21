@@ -51,6 +51,5 @@ setup(
     ],
     setup_requires=[
         'pytest-runner',
-        # 'flake-8'
     ]
 )

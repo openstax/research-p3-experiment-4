@@ -48,6 +48,7 @@ def app_config(config_database):
     # Ensure our migrations have been ran.
     # alembic.command.upgrade(config.alembic_config(), "head")
     config = AlembicConfig('alembic.ini')
+    config.set_main_option('sqlalchemy.url', config_database)
     upgrade(config, 'head')
 
     return settings

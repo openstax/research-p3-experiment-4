@@ -7,7 +7,7 @@ from flask_security import utils
 
 from digital_logic.core import db
 from digital_logic.exceptions import ExperimentError
-from digital_logic.experiment.exercise import initialize_subject_exercises
+from digital_logic.experiment.exercise import initialize_assignment_exercises
 from digital_logic.experiment.service import (
     create_subject,
     get_subject_by_user_id,
@@ -138,7 +138,7 @@ def _login_and_prep_subject(worker_id,
                                                    assignment_id,
                                                    hit_id,
                                                    ua_dict)
-            initialize_subject_exercises(subject.id, assignment.id)
+            initialize_assignment_exercises(assignment)
             return assignment
         else:
             return None

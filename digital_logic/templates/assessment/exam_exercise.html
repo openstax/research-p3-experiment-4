@@ -1,7 +1,6 @@
 {% extends 'layouts/base.html' %}
 
 
-
 {% block content %}
     <div class="row">
         <div class="col s12 m10 l10 offset-l1 offset-m1">
@@ -25,7 +24,6 @@
                     </div>
                     <h5>Question {{ q_num }} of {{ total_exercises }}</h5>
                     <div class="exercise-text center-align">
-
                         {{ exercise.content.html | safe }}
                     </div>
                     <div>
@@ -35,13 +33,7 @@
                               action="{{ url_for('exam.submit_response') }}"
                               method="POST">
                             <div class="row">
-                                {% if not feedback %}
-                                    <div class="input-field col s12">
-                                {% else %}
-                                    <div>
-                                {% endif %}
-
-
+                                <div>
                                 {% if feedback %}
                                     {% if correct_answer %}
                                         <div class="feedback correct-answer">
@@ -54,7 +46,7 @@
                                     {% endif %}
                                 {% endif %}
 
-                                <ul class="letter" type="a">
+                                <ol class="letter" type="a">
                                     {% for choice in exercise.answer_choices %}
                                         {% set correct, incorrect = False, False %}
                                         {% set selected = False %}
@@ -71,9 +63,6 @@
                                             {% set choice_classes = choice_classes + ' answer' %}
                                             {% set selected = True %}
                                         {% endif %}
-
-
-
 
                                         <li class="{{ choice_classes }}">
                                             {% set choice_id = "exercise-choice-{}".format(loop.index) %}
@@ -114,7 +103,7 @@
                                         </li>
 
                                     {% endfor %}
-                                </ul>
+                                </ol>
                                 </div>
 
                                 <p class="right-align">

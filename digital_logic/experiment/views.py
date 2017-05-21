@@ -14,12 +14,14 @@ from flask_login import current_user
 
 from digital_logic.accounts.auth import (
     _login_and_prep_subject,
-    logout_mturk_user, mturk_permission)
-from digital_logic.api.endpoints.textbook import render_textbook_text
+    logout_mturk_user,
+    mturk_permission)
+from digital_logic.experiment.reading import render_textbook_text
 from digital_logic.core import db
 from digital_logic.decorators import check_time
 from digital_logic.exceptions import ExperimentError
-from digital_logic.experiment.exercise import get_subject_next_exercise
+from digital_logic.experiment._constants import DEFAULT_E_NUM
+from digital_logic.experiment.exercise import get_assignment_next_exercise
 from digital_logic.experiment.reading import reading_sections, get_section_obj
 from digital_logic.experiment.service import (
     get_latest_subject_assignment,
@@ -36,8 +38,7 @@ from digital_logic.experiment.models import SubjectAssignment
 from digital_logic.helpers import parse_user_agent
 from digital_logic.utils import id_generator
 
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
+__logs__ = logging.getLogger(__name__)
 
 exp = Blueprint('exp',
                 __name__,
@@ -73,7 +74,7 @@ def introduction():
     assignment_id = request.values.get('assignment_id', None)
     worker_id = request.values.get('worker_id', None)
     mode = request.values.get('mode', None)
-    log.info(
+    __logs__.info(
         'MTurk worker {0} loaded practice introduction page'.format(worker_id))
 
     return render_template('introduction.html',
@@ -97,7 +98,7 @@ def start():
     this experiment before. If they have they are redirected.
     2. If the mturk_worker_id is unique their browser user agent is parsed and
     a new `Subject` and `SubjectAssignment` is created in the database.
-    3. If the mode is debug the subject is allowed to be overwritten in the
+    3. If the mode is debug the subject data is allowed to be overwritten in the
     database.
 
     Required GET request params:
@@ -129,7 +130,7 @@ def start():
 
     subject = Subject.get_by_mturk_worker_id(worker_id)
 
-    log.info(
+    __logs__.info(
         'MTurk worker {} attempting to start the experiment'.format(worker_id))
 
     if mode == 'debug':
@@ -137,7 +138,7 @@ def start():
     else:
         debug_mode = False
 
-    log.info('debug mode is {0}'.format(debug_mode))
+    __logs__.info('debug mode is {0}'.format(debug_mode))
 
     if subject:
         assignments = all_subject_assignments(subject.id)
@@ -249,12 +250,9 @@ def reading():
 @mturk_permission.require()
 @check_time()
 def next_exercise():
-    subject = get_subject_by_user_id(current_user.id)
     assignment = get_assignment(session['current_assignment_id'])
-    total_exercises = 14
+    total_exercises = DEFAULT_E_NUM
     answered_exercises = session.get('answered_exercises', 0)
-
-    reading_section = session['current_section']
 
     if 'answered_exercises' not in session or not session['answered_exercises']:
         session['answered_exercises'] = answered_exercises
@@ -276,7 +274,7 @@ def next_exercise():
 
         session['is_reading'] = False
 
-        exercise = get_subject_next_exercise(subject.id, assignment.id)
+        exercise = get_assignment_next_exercise(assignment)
         session['current_exercise_id'] = exercise.id
         session['exercise_start'] = datetime.utcnow()
 
@@ -378,7 +376,7 @@ def finalize():
         assignment_results['score'] = score
         assignment_results['phase'] = assignment.assignment_phase
 
-        log.info('A score of {0} was recorded for subject {1}'.format(
+        __logs__.info('A score of {0} was recorded for subject {1}'.format(
             score,
             assignment.subject_id))
 

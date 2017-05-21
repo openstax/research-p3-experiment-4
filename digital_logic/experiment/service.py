@@ -163,12 +163,11 @@ def save_assignment_predictions(assignment_id, prediction_results):
     return
 
 
-def list_answered_exercise_ids(subject_id, assignment_id):
+def list_answered_exercise_ids(assignment_id):
     query = db.session.query(
         Exercise.id, Exercise.qb_id, Exercise.level).join(
         AssignmentResponse).join(
         SubjectAssignment).filter(
-        SubjectAssignment.subject_id == subject_id,
         SubjectAssignment.id == assignment_id)
 
     return query.all()
