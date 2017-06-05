@@ -192,7 +192,6 @@ def prediction_task():
 @mturk_permission.require()
 @check_time()
 def next_exercise():
-    subject = get_subject_by_user_id(current_user.id)
     assignment = get_assignment(session['current_assignment_id'])
     total_exercises = len(assignment.exercise_pool)
     answered_exercises = session.get('answered_exercises', 0)

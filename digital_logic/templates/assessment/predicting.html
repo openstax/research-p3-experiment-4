@@ -127,12 +127,13 @@
                                     <p class="right-align">
 
                                         <button type="button"
-                                                class="btn btn-large waves-effect waves-light next">
+                                                class="btn btn-large waves-effect waves-light next"
+                                                style="display:none"
+                                        >
                                             Next
                                         </button>
                                         <button type="submit"
-                                                class="btn btn-large waves-effect waves-light submit"
-                                                style="display:none">
+                                                class="btn btn-large waves-effect waves-light submit">
                                             Start Assessment
                                         </button>
 
@@ -157,13 +158,13 @@
 
         });
 
-        $('.next').click(function () {
-          $('.next').hide();
-          $('.overall-performance-area').hide();
-          $('.section-performance-area').show();
-          $('.submit').show();
-
-        })
+{#        $('.next').click(function () {#}
+{#          $('.next').hide();#}
+{#          $('.overall-performance-area').hide();#}
+{#          $('.section-performance-area').show();#}
+{#          $('.submit').show();#}
+{##}
+{#        })#}
 
       })
 
