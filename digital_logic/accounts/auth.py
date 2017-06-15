@@ -7,6 +7,7 @@ from flask_security import utils
 
 from digital_logic.core import db
 from digital_logic.exceptions import ExperimentError
+from digital_logic.experiment._constants import EXPERIMENT_GROUPS
 from digital_logic.experiment.exercise import initialize_assignment_exercises
 from digital_logic.experiment.service import (
     create_subject,
@@ -84,7 +85,7 @@ def find_or_create_user(worker_id, assignment_id, hit_id):
                                                assignment_id,
                                                hit_id)
 
-        data['experiment_group'] = get_experiment_group(2)
+        data['experiment_group'] = get_experiment_group(EXPERIMENT_GROUPS)
 
         subject = create_subject(data)
 
@@ -123,6 +124,7 @@ def _login_and_prep_subject(worker_id,
                                          hit_id,
                                          assignment_id)
         session['current_subject_id'] = subject.id
+        session['experiment_group'] = subject.experiment_group
 
         latest_assignment = get_latest_subject_assignment(subject.id,
                                                           assignment_phase)
