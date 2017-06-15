@@ -234,6 +234,10 @@ def reading():
             session['current_section'] = section_obj
             session['last_section'] = section_obj['name']
         else:
+            if int(subject.experiment_group) == 2:
+                save_session_record(session['current_assignment_id'],
+                                    'Distracting')
+                return redirect(url_for('exam.distractor_task'))
             save_session_record(session['current_assignment_id'],
                                 'Finalizing')
             return redirect(url_for('exp.finalize'))

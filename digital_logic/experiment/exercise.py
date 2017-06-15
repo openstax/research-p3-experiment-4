@@ -45,7 +45,8 @@ def get_question_params():  # pragma: no cover
 def initialize_assignment_exercises(assignment):
     assignment_phases = app.config['ASSIGNMENT_PHASES']
 
-    if assignment.assignment_phase == assignment_phases[1]:
+    if assignment.assignment_phase == assignment_phases[1] or int(
+            assignment.subject.experiment_group) == 2:
         random.shuffle(A_POOL)
         assignment.exercise_pool = A_POOL
         db.session.add(assignment)
@@ -115,7 +116,7 @@ def get_available_exercises(assignment_id, qb_ids):
     non_pool_exercise_qb_ids = [exercise.qb_id for exercise in exercises if
                                 exercise.id not in exercise_ids]
     pool_exercise_qb_ids = [exercise.qb_id for exercise in exercises if
-                             exercise.id in exercise_ids]
+                            exercise.id in exercise_ids]
 
     avail = []
 
@@ -165,7 +166,8 @@ def experiment_group_next_exercise(assignment):
 
 def get_assignment_next_exercise(assignment):
     if assignment.assignment_phase == 'Practice':
-        if int(assignment.subject.experiment_group) == 0:
+        if int(assignment.subject.experiment_group) == 0 or int(
+                assignment.subject.experiment_group) == 2:
             return next_exercise_from_pool(assignment)
         elif int(assignment.subject.experiment_group) == 1:
             return experiment_group_next_exercise(assignment)
