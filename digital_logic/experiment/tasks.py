@@ -13,6 +13,7 @@ def check_for_start_assessment(user_id):
     mturk_qual = current_app.config['MTURK_PT2_QUALIFICATION']
     user = User.get(user_id)
     assignment = get_latest_assignment_by_user_id(user_id)
+    print(assignment.id)
 
     if assignment and assignment.assignment_phase == 'Assessment':
 
@@ -20,12 +21,10 @@ def check_for_start_assessment(user_id):
                                     mturk_qual,
                                     reason=success_reason)
         return {'message': 'worker started assessment'}
-    elif assignment and assignment.assignment_phase == 'Experiment':
-        completed_time = [session.start_time
-                          for session in assignment.sessions
-                          if session.status == 'Completed'][0]
+    elif assignment and assignment.assignment_phase == 'Practice':
+        completed_time = assignment.completed_on
         diff = (datetime.datetime.utcnow() - completed_time).seconds
-
+        print(diff)
         if diff > 3600:
             revoke_worker_qualification(user.mturk_worker_id,
                                         mturk_qual,

@@ -250,7 +250,7 @@ def get_latest_assignment_by_user_id(user_id):
     return db.session.query(SubjectAssignment).join(Subject).filter(
         Subject.user_id == user_id).filter(
         SubjectAssignment.is_complete == True).order_by(
-        SubjectAssignment.created_on.desc())
+        SubjectAssignment.created_on.desc()).first()
 
 
 def get_subject_by_assignment_id(assignment_id):

@@ -96,6 +96,8 @@ class SubjectAssignment(db.Model):
     is_complete = db.Column(db.Boolean(),
                             nullable=False,
                             default=False)
+    completed_on = db.Column(db.DateTime(),
+                             nullable=True)
     exercise_pool = db.Column(ARRAY(db.Integer()))
     mastery = db.Column(ARRAY(db.Float()))
 

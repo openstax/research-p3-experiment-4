@@ -37,6 +37,8 @@ from digital_logic.experiment.models import UserSubject as Subject
 from digital_logic.experiment.models import SubjectAssignment
 from digital_logic.helpers import parse_user_agent
 from digital_logic.utils import id_generator
+from jobs import schedule_check_for_start_assessment, \
+    schedule_periodic_check_for_start_assessment
 
 __logs__ = logging.getLogger(__name__)
 
@@ -387,6 +389,7 @@ def finalize():
         assignment.mturk_completion_code = id_generator()
         assignment.is_complete = True
         assignment.assignment_results = assignment_results
+        assignment.completed_on = datetime.utcnow()
         db.session.add(assignment)
         save_session_record(assignment.id, 'Completed')
 
@@ -397,7 +400,7 @@ def finalize():
         if qualified:
             assign_worker_qualification(PART_2_QUAL, subject.mturk_worker_id, 1,
                                         True)
-            schedule_check_for_start_assessment(current_user.id)
+            schedule_periodic_check_for_start_assessment(current_user.id)
 
         assign_worker_qualification(DLOGIC_QUAL, subject.mturk_worker_id, 1,
                                     True)
