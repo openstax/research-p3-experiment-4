@@ -1,32 +1,28 @@
 import datetime
 from flask import current_app
 
-from digital_logic.accounts.models import User
+from digital_logic.experiment.service import get_latest_subject_assignment
 
 
-def check_for_start_assessment(user_id):
-    from .service import get_latest_assignment_by_user_id
+def check_for_start_assessment(subject_id):
     from jobs import revoke_worker_qualification
 
     fail_reason = "Part II of HIT was not started within 1 hour."
     success_reason = "Part II of HIT was started within 1 hour, good luck!"
     mturk_qual = current_app.config['MTURK_PT2_QUALIFICATION']
-    user = User.get(user_id)
-    assignment = get_latest_assignment_by_user_id(user_id)
-    print(assignment.id)
+    assignment = get_latest_subject_assignment(subject_id)
 
     if assignment and assignment.assignment_phase == 'Assessment':
 
-        revoke_worker_qualification(user.mturk_worker_id,
+        revoke_worker_qualification(assignment.subject.mturk_worker_id,
                                     mturk_qual,
                                     reason=success_reason)
         return {'message': 'worker started assessment'}
     elif assignment and assignment.assignment_phase == 'Practice':
         completed_time = assignment.completed_on
         diff = (datetime.datetime.utcnow() - completed_time).seconds
-        print(diff)
         if diff > 3600:
-            revoke_worker_qualification(user.mturk_worker_id,
+            revoke_worker_qualification(assignment.subject.mturk_worker_id,
                                         mturk_qual,
                                         reason=fail_reason
                                         )
