@@ -11,7 +11,7 @@ def check_for_start_assessment(user_id):
     fail_reason = "Part II of HIT was not started within 1 hour."
     success_reason = "Part II of HIT was started within 1 hour, good luck!"
     mturk_qual = current_app.config['MTURK_PT2_QUALIFICATION']
-    user = User(user_id)
+    user = User.get(user_id)
     assignment = get_latest_assignment_by_user_id(user_id)
 
     if assignment and assignment.assignment_phase == 'Assessment':
