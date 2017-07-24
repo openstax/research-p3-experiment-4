@@ -400,7 +400,7 @@ def finalize():
         if qualified:
             assign_worker_qualification(PART_2_QUAL, subject.mturk_worker_id, 1,
                                         True)
-            schedule_periodic_check_for_start_assessment(current_user.id)
+            schedule_periodic_check_for_start_assessment(subject.id)
 
         assign_worker_qualification(DLOGIC_QUAL, subject.mturk_worker_id, 1,
                                     True)

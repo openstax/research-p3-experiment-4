@@ -74,13 +74,13 @@ def schedule_approve_worker_assignments():
     return schedule
 
 
-def schedule_periodic_check_for_start_assessment(user_id):
+def schedule_periodic_check_for_start_assessment(subject_id):
     schedule = scheduler.schedule(
         scheduled_time=datetime.utcnow(),
         func=check_for_start_assessment,
-        args=(user_id,),
+        args=(subject_id,),
         interval=600,
         result_ttl=5000,
-        repeat=7
+        repeat=10
     )
     return schedule
