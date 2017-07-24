@@ -9,15 +9,21 @@ from sqlalchemy import and_
 import numpy as np
 
 from digital_logic.accounts.models import User
-from digital_logic.alg.P3code.p3_selectquestion import prepare_question_params, \
-    update
+from digital_logic.alg.P3code.p3_selectquestion import (
+    prepare_question_params,
+    update)
 from digital_logic.core import db
-from digital_logic.experiment.models import UserSubject as Subject, \
-    SubjectAssignment, AssignmentResponse, AssignmentSession, Exercise, \
-    UserSubject, SparfaTrace
+from digital_logic.experiment.models import (
+    UserSubject as Subject,
+    SubjectAssignment,
+    AssignmentResponse,
+    AssignmentSession,
+    Exercise,
+    UserSubject,
+    SparfaTrace)
 
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
+
+__logs__ = logging.getLogger(__name__)
 
 
 def all_subject_assignments(subject_id):
@@ -148,7 +154,7 @@ def save_session_record(assignment_id, status):
                                            start_time=datetime.utcnow())
     db.session.add(assignment_session)
     db.session.commit()
-    log.info(
+    __logs__.info(
         'Recording session status {0} for assignment {1}'.format(assignment_id,
                                                                  status))
     return assignment_session
@@ -173,7 +179,7 @@ def list_answered_exercise_ids(assignment_id):
     return query.all()
 
 
-def list_unanswered_exercise_ids(subject_id, assignment_id):
+def list_unanswered_exercise_ids(subject_id):
     subquery = db.session.query(AssignmentResponse).join(
         SubjectAssignment).filter(
         SubjectAssignment.subject_id == subject_id).subquery()
@@ -299,7 +305,7 @@ def qualify_assignment(assignment_id):
 
 
     monkey_catcher_score = get_monkey_catcher_score(assignment_id)
-    if reading_time >= 10 or monkey_catcher_score == 1:
+    if reading_time >= 600 or monkey_catcher_score == 1:
         assignment = get_assignment(assignment_id)
         assignment.mturk_assignment_status = 'Accepted'
         assignment.mturk_assignment_status_date = datetime.utcnow()

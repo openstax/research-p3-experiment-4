@@ -157,7 +157,7 @@ def start():
 
 @exam.route('/distractor', methods=['GET'])
 @mturk_permission.require()
-@check_time()
+@check_time(allowed=1800)
 @check_distractor_time()
 def distractor_task():
     return render_template('distracting.html')
@@ -165,7 +165,7 @@ def distractor_task():
 
 @exam.route('/predicting', methods=['GET', 'POST'])
 @mturk_permission.require()
-@check_time()
+@check_time(allowed=1800)
 def prediction_task():
     form = PredictionsForm(request.form)
     assignment = get_assignment(session['current_assignment_id'])
@@ -190,7 +190,7 @@ def prediction_task():
 
 @exam.route('/exercise/next')
 @mturk_permission.require()
-@check_time()
+@check_time(allowed=1800)
 def next_exercise():
     assignment = get_assignment(session['current_assignment_id'])
     total_exercises = len(assignment.exercise_pool)
@@ -218,7 +218,7 @@ def next_exercise():
 
 @exam.route('/response', methods=['POST'])
 @mturk_permission.require()
-@check_time()
+@check_time(allowed=1800)
 def submit_response():
     exercise = get_exercise(session['current_exercise_id'])
     assignment = get_assignment(session['current_assignment_id'])
