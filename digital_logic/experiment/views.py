@@ -195,6 +195,7 @@ def demography():
     form = DemographyForm(request.form)
 
     if form.validate_on_submit():
+        __logs__.info('Subject {0} demography data validated successfully')
         form.populate_obj(subject)
         db.session.add(subject)
         save_session_record(assignment.id, 'Reading')
@@ -215,6 +216,7 @@ def reading():
     section = request.form.get('section', None)
 
     if 'current_section' not in session or not session['current_section']:
+        __logs__.info('No Reading section found in session ... adding')
         sections_completed = 0
         total_sections = len(reading_sections)
 
@@ -225,6 +227,7 @@ def reading():
 
         session['current_section'] = section_obj
         session['last_section'] = section_obj['name']
+
     elif 'last_section' in session and session['last_section'] == section:
         section_obj = get_section_obj(session['last_section'])
     else:

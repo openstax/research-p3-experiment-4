@@ -22,7 +22,6 @@ from digital_logic.experiment.models import (
     UserSubject,
     SparfaTrace)
 
-
 __logs__ = logging.getLogger(__name__)
 
 
@@ -155,8 +154,8 @@ def save_session_record(assignment_id, status):
     db.session.add(assignment_session)
     db.session.commit()
     __logs__.info(
-        'Recording session status {0} for assignment {1}'.format(assignment_id,
-                                                                 status))
+        'Recording session status {0} for assignment {1}'.format(status,
+                                                                 assignment_id))
     return assignment_session
 
 
@@ -302,7 +301,6 @@ def qualify_assignment(assignment_id):
     ).first()
 
     reading_time = (end_time[0] - start_time[0]).total_seconds()
-
 
     monkey_catcher_score = get_monkey_catcher_score(assignment_id)
     if reading_time >= 600 or monkey_catcher_score == 1:

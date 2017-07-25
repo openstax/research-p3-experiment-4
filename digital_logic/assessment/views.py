@@ -269,6 +269,7 @@ def finalize():
 
         assignment.mturk_completion_code = id_generator()
         assignment.is_complete = True
+        assignment.completed_on = datetime.utcnow()
         assignment.assignment_results = assignment_results
         db.session.add(assignment)
         save_session_record(assignment.id, 'Completed')
