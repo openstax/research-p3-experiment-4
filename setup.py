@@ -1,5 +1,4 @@
 import codecs
-from pathlib import Path
 
 from setuptools import find_packages, setup
 
@@ -25,18 +24,8 @@ def parse_reqs(req_path='./requirements.txt'):
     return install_requires
 
 
-def parse_readme():
-    """Parse contents of the README."""
-    # Get the long description from the relevant file
-    readme_file = str(Path(__file__).parent / 'README.md')
-    with codecs.open(readme_file, encoding='utf-8') as handle:
-        long_description = handle.read()
-
-    return long_description
-
-
 setup(
-    long_description=parse_readme(),
+    long_description="",
     name="openstax-p3-exp-4",
     version="0.0.3",
     author="m1yag1",

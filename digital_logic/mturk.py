@@ -27,7 +27,6 @@ class MTurkHIT(object):
 
 
 class MTurk(object):
-
     def __init__(self, app=None):
         self.host = 'https://mechanicalturk.sandbox.amazonaws.com'
         self.secret_key = None
@@ -41,7 +40,8 @@ class MTurk(object):
         app.config.setdefault('MTURK_SECRET_KEY', None)
         app.config.setdefault('MTURK_ACCESS_ID', None)
         app.config.setdefault('MTURK_SANDBOX', True)
-        self.update_credentials(app.config['MTURK_ACCESS_ID'], app.config['MTURK_SECRET_KEY'])
+        self.update_credentials(app.config['MTURK_ACCESS_ID'],
+                                app.config['MTURK_SECRET_KEY'])
         self.is_sandbox = app.config['MTURK_SANDBOX']
         self.valid_login = self.verify_aws_login()
 
@@ -50,7 +50,8 @@ class MTurk(object):
         self.aws_secret_access_key = aws_secret_access_key
 
     def verify_aws_login(self):
-        if ((self.aws_secret_access_key is None) or (self.aws_access_key_id is None)):
+        if ((self.aws_secret_access_key is None) or (
+            self.aws_access_key_id is None)):
             logging.warning('No AWS keys found in app configuration')
         else:
             host = 'mechanicalturk.amazonaws.com'
@@ -68,7 +69,8 @@ class MTurk(object):
 
     def connect_to_turk(self):
         if not self.valid_login:
-            logging.warning('Sorry, unable to connect to Amazon Mechanical Turk. Please check your credentials')
+            logging.warning(
+                'Sorry, unable to connect to Amazon Mechanical Turk. Please check your credentials')
             return False
         if self.is_sandbox:
             host = 'mechanicalturk.sandbox.amazonaws.com'
@@ -177,27 +179,29 @@ class MTurk(object):
         try:
             hits = self.mtc.search_hits(sort_direction='Descending',
                                         page_size=20)
-            hit_ids = [hit.HITId for hit in hits]
-            workers_nested = [
-                self.mtc.get_assignments(
-                    hit_id,
-                    status=assignment_status,
-                    sort_by='SubmitTime',
-                    page_size=100
-                ) for hit_id in hit_ids]
-
-            workers = [val for subl in workers_nested for val in subl]  # Flatten nested lists
         except MTurkRequestError as e:
             return False
+        hit_ids = [hit.HITId for hit in hits]
+        workers_nested = [
+            self.mtc.get_assignments(
+                hit_id,
+                status=assignment_status,
+                sort_by='SubmitTime',
+                page_size=100
+            ) for hit_id in hit_ids]
+
+        workers = [val for subl in workers_nested for val in
+                   subl]  # Flatten nested lists
+
         worker_data = [{
-                           'hitId': worker.HITId,
-                           'assignmentId': worker.AssignmentId,
-                           'workerId': worker.WorkerId,
-                           'submit_time': worker.SubmitTime,
-                           'accept_time': worker.AcceptTime,
-                           'status': worker.AssignmentStatus,
-                           'completion_code': worker.answers[0][0].fields[0]
-                       } for worker in workers]
+            'hitId': worker.HITId,
+            'assignmentId': worker.AssignmentId,
+            'workerId': worker.WorkerId,
+            'submit_time': worker.SubmitTime,
+            'accept_time': worker.AcceptTime,
+            'status': worker.AssignmentStatus,
+            'completion_code': worker.answers[0][0].fields[0]
+        } for worker in workers]
         return worker_data
 
     def bonus_worker(self, assignment_id, amount, reason=""):
@@ -243,20 +247,24 @@ class MTurk(object):
         except MTurkRequestError as e:
             return dict(success=False, message=e.error_message)
 
-    def assign_qualification(self, qualification_type_id, worker_id, value=1, send_notification=True):
+    def assign_qualification(self, qualification_type_id, worker_id, value=1,
+                             send_notification=True):
         if not self.connect_to_turk():
             return dict(success=False, message='Could not connect to AWS')
         try:
-            self.mtc.assign_qualification(qualification_type_id, worker_id, value, send_notification)
+            self.mtc.assign_qualification(qualification_type_id, worker_id,
+                                          value, send_notification)
             return True
         except MTurkRequestError as e:
             return dict(success=False, message=e.error_message)
 
-    def revoke_qualification(self, subject_id, qualification_type_id, reason=None):
+    def revoke_qualification(self, subject_id, qualification_type_id,
+                             reason=None):
         if not self.connect_to_turk():
             return False
         try:
-            self.mtc.revoke_qualification(subject_id, qualification_type_id, reason)
+            self.mtc.revoke_qualification(subject_id, qualification_type_id,
+                                          reason)
             return True
         except MTurkRequestError as e:
             return dict(success=False, message=e.error_message)
@@ -269,3 +277,14 @@ class MTurk(object):
             return True
         except MTurkRequestError as e:
             return dict(success=False, message=e.error_message)
+
+    def list_workers_with_qualification(self, qualification_type_id):
+        if not self.connect_to_turk():
+            return False
+        try:
+            workers = self.mtc.get_all_qualifications_for_qual_type(
+                qualification_type_id)
+        except MTurkRequestError as e:
+            return dict(success=False, message=e.error_message)
+        workers = [w.SubjectId for w in workers]
+        return workers
