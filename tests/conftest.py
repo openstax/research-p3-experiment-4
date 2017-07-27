@@ -49,6 +49,7 @@ def app_config(config_database):
     # alembic.command.upgrade(config.alembic_config(), "head")
     config = AlembicConfig('alembic.ini')
     config.set_main_option('sqlalchemy.url', config_database)
+    print('\n----- RUN ALEMBIC MIGRATION\n')
     upgrade(config, 'head')
 
     return settings

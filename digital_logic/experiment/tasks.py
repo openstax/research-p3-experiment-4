@@ -54,7 +54,7 @@ def approve_worker_assignments():
     if workers:
 
         for worker in workers:
-            # Query gates_user_assignments table for a matching assignment_id
+            # Query assignments table for a matching assignment_id
             assignment = db.session.query(SubjectAssignment).filter(
                 SubjectAssignment.mturk_assignment_id == worker['assignmentId'],
                 SubjectAssignment.mturk_completion_code != None).first()

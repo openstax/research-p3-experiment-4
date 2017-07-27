@@ -112,47 +112,44 @@ def start():
 
     log.info('debug mode is {0}'.format(debug_mode))
 
+    # Login Process:
+    # This is the assessment phase and if we do not have a subject that means
+    # they did not complete the experiment. Send them away if no subject is
+    # found for their worker_id.
+
     if subject:
-        assignments = all_subject_assignments(subject.id)
-
-        if len(assignments) < len(
-                app.config['ASSIGNMENT_PHASES']) or debug_mode:
-            latest_assignment = get_latest_subject_assignment(subject.id,
-                                                              assignment_phase)
-
-            if not debug_mode and (
-                latest_assignment and latest_assignment.did_quit):
-                raise ExperimentError('quit_experiment_early')
-            elif not debug_mode and (
-                latest_assignment and latest_assignment.is_complete):
-                raise ExperimentError('phase_completed')
-            else:
+        # We have evidence of a subject in the db.
+        if not debug_mode:
+            # This is live action!
+            # Conduct a qualification check on mturk
+            if subject.has_assessment_qualification(worker_id):
                 assignment = _login_and_prep_subject(worker_id,
                                                      assignment_id,
                                                      hit_id,
                                                      ua_dict,
                                                      assignment_phase,
-                                                     debug_mode)
-                if not assignment:
-                    raise ExperimentError('quit_experiment_early')
-                else:
-                    session['current_assignment_id'] = assignment.id
+                                                     debug_mode=False)
+                session['current_assignment_id'] = assignment.id
 
-                    save_session_record(assignment.id, 'Distracting')
-                    return redirect(url_for('exam.distractor_task'))
+                save_session_record(assignment.id, 'Distracting')
+                return redirect(url_for('exam.distractor_task'))
+            else:
+                raise ExperimentError('unqualified_worker')
         else:
-            raise ExperimentError('experiment_completed')
+            assignment = _login_and_prep_subject(worker_id,
+                                                 assignment_id,
+                                                 hit_id,
+                                                 ua_dict,
+                                                 assignment_phase,
+                                                 debug_mode)
+            session['current_assignment_id'] = assignment.id
+
+            save_session_record(assignment.id, 'Distracting')
+            return redirect(url_for('exam.distractor_task'))
     else:
-        # If no subject is found create one and enter the experiment
-        assignment = _login_and_prep_subject(worker_id,
-                                             assignment_id,
-                                             hit_id,
-                                             ua_dict,
-                                             assignment_phase,
-                                             debug_mode)
-        session['current_assignment_id'] = assignment.id
-        save_session_record(assignment.id, 'Distracting')
-        return redirect(url_for('exam.distractor_task'))
+        # If no subject is found that is a problem as they should have finished
+        # Part 1
+        raise ExperimentError('phase_not_completed')
 
 
 @exam.route('/distractor', methods=['GET'])

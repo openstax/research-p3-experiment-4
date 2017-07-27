@@ -20,7 +20,9 @@ class ExperimentError(Exception):
         unknown_status=1004,
         algorithm_error=1005,
         database_error=1006,
-        phase_completed=1007
+        phase_completed=1007,
+        phase_not_completed=1008,
+        unqualified_worker=1009,
     )
 
     error_descriptions = dict()
@@ -73,6 +75,19 @@ class ExperimentError(Exception):
     error_descriptions['phase_completed'] = unwrap(
         '''
         This phase of the experiment has already been completed. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
+        '''
+    )
+
+    error_descriptions['phase_not_completed'] = unwrap(
+        '''
+        You have not completed the first part of this experiment. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
+        '''
+    )
+    error_descriptions['unqualified_worker'] = unwrap(
+        '''
+        You do not have the correct qualification on your Mechanical Turk account. Please contact
         the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )

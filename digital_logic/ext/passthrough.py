@@ -1,20 +1,4 @@
-"""
-This extension adds passthrough Blocks to Python-Markdown. Passthrough blocks
-are not transformed by the markdown processor at all.
-    >>> import markdown
-    >>> text = '''
-    ... A paragraph before a *passthrough* block:
-    ...
-    ... +++++
-    ... *passed through*
-    ... +++++
-    ... '''
-    >>> html = markdown.markdown(text, extensions=['digital_logic.ext.passthrough'])
-    >>> html
-    '<p>A paragraph before a <em>passthrough</em> block:</p>\\n*passed through*'
-    >>> markdown.markdown(text, extensions=['digital_logic.ext.passthrough'], safe_mode='replace')
-    '<p>A paragraph before a <em>passthrough</em> block:</p>\\n*passed through*'
-"""
+
 
 import re
 

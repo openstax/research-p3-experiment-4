@@ -1,10 +1,11 @@
 from datetime import datetime
 
+from flask import current_app
 from sqlalchemy.dialects.postgresql import ARRAY, JSON
 from sqlalchemy import func
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
-from ..core import db
+from ..core import db, mturk
 
 
 class UserSubject(db.Model):
@@ -39,6 +40,15 @@ class UserSubject(db.Model):
     @classmethod
     def get_by_user_id(cls, user_id):
         return db.session.query(cls).filter(cls.user_id == user_id).first()
+
+    @hybrid_method
+    def has_assessment_qualification(self, cls):
+        workers = mturk.list_workers_with_qualification(
+            current_app.config['MTURK_PT2_QUALIFICATION'])
+        if cls.mturk_worker_id in workers:
+            return True
+        else:
+            return False
 
 
 class Exercise(db.Model):
