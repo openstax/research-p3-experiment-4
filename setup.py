@@ -60,6 +60,7 @@ setup(
         "Flask-WTF==0.14.2",
         "functools32>=3.2",
         "gunicorn==19.7.1",
+        "honcho==1.0.1",
         "inflection==0.3.1",
         "ipaddress==1.0.18",
         "itsdangerous==0.24",
