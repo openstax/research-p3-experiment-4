@@ -1,8 +1,10 @@
+import os
 import random
 import string
+import sys
+from datetime import datetime
 
 import click
-from datetime import datetime
 
 from flask import current_app
 from flask_security import utils
@@ -116,6 +118,50 @@ def debug_urls():
 
     print('practice_url: {}'.format(practice_url))
     print('assessment_url: {}'.format(assessment_url))
+
+@app.cli.command()
+@click.option('--web/--no-web',
+              default=True,
+              help="Whether or not to run the flask dev server")
+@click.option('--worker/--no-worker',
+              default=True,
+              help="Whether or not to run the worker process")
+@click.option('--sched/--no-sched',
+              default=True,
+              help="Whether or not to run the scheduler process")
+@click.option('--webpack/--no-webpack',
+              default=True,
+              help="Whether or not to run the webpack dev server")
+def devserver(web, worker, sched, webpack):
+    """
+    Run the flask development server, workers, and scheduler
+    """
+    try:
+        from honcho.manager import Manager
+    except ImportError:
+        raise click.ClickException(
+            'cannot import honcho: did you run `pip install -e .` ?'
+        )
+
+    os.environ['PYTHONUNBUFFERED'] = 'true'
+
+    m = Manager()
+
+    if web:
+        m.add_process('web', 'python wsgi.py')
+
+    if worker:
+        m.add_process('worker', 'python worker.py')
+
+    if sched:
+        m.add_process('sched', 'python scheduler.py')
+
+    if webpack:
+        m.add_process('webpack', 'npm run start')
+
+    m.loop()
+
+    sys.exit(m.returncode)
 
 
 if __name__ == '__main__':
