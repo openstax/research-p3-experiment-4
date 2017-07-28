@@ -41,6 +41,11 @@ exam = Blueprint('exam',
                  template_folder='../templates/assessment')
 
 
+@exam.errorhandler(ExperimentError)
+def error_handler(exception):
+    return exception.error_page(request)
+
+
 @exam.route('/')
 def exam_index():
     hit_id = request.values.get('hit_id', None)
