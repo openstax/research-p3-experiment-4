@@ -55,7 +55,10 @@
                 </noscript>
                 <!-- ADD JAVASCRIPT SOURCES NEEDED FOR ALL TEMPLATES -->
                 {{ javascript_tag('app') | safe }}
+
             {% endblock scripts %}
+            {% block extra_scripts %}
+            {% endblock extra_scripts %}
 
         {%- endblock body %}
         </body>

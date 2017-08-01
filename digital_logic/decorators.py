@@ -34,13 +34,14 @@ def set_distractor_expired(assignment_session, allowed=300):
     return expired
 
 
-def set_expired(assignment, allowed=3600):
+def set_expired(assignment):
     expired = 0
     if assignment:
         now = datetime.utcnow()
         start = assignment.created_on
         expired = (now - start).total_seconds()
         session['expired_seconds'] = expired
+        session['assignment_timeout'] = assignment.expire_time
     return expired
 
 
@@ -58,15 +59,19 @@ def check_distractor_time(skip_redirect=False, allowed=300):
     return decorator
 
 
-def check_time(skip_redirect=False, allowed=3600):
+def check_time(skip_redirect=False):
     def decorator(f):
         @wraps(f)
         def decorated_view(*args, **kwargs):
             assignment_id = session['current_assignment_id']
             assignment = get_assignment(assignment_id)
+            allowed = assignment.expire_time
+
+            if session['debug_mode']:
+                allowed = 150
 
             if assignment:
-                expired = set_expired(assignment, allowed)
+                expired = set_expired(assignment)
                 if expired > allowed and not skip_redirect:
                     return redirect(url_for('exp.timed_out'))
 

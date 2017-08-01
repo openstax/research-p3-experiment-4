@@ -1,9 +1,7 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/timer_base.html' %}
 
 {% set section_name = section.name %}
 {% set exercises = section.has_exercises %}
-
-
 
 {% block content %}
   <div class="row">
@@ -12,6 +10,7 @@
         {% include '_includes/debug_info.html' %}
 
       {% endif %}
+      <span class="clock"></span>
       <div class="card-panel">
         <div class="progress">
           <div class="indeterminate"></div>
@@ -44,6 +43,7 @@
                   <strong>You have some practice exercises coming up
                     next.</strong>
                 </p>
+                <span class="clock"></span>
               </form>
             {% endif %}
           </div>

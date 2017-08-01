@@ -7,13 +7,13 @@ from flask import (Blueprint,
                    render_template,
                    request,
                    session,
-                   current_app as app)
+                   current_app as app, jsonify)
 from flask import redirect
 from flask import url_for
 from flask_login import current_user
 
 from digital_logic.accounts.auth import (
-    _login_and_prep_subject,
+    _login_and_create_assignment,
     logout_mturk_user,
     mturk_permission)
 from digital_logic.experiment.reading import render_textbook_text
@@ -37,8 +37,7 @@ from digital_logic.experiment.models import UserSubject as Subject
 from digital_logic.experiment.models import SubjectAssignment
 from digital_logic.helpers import parse_user_agent
 from digital_logic.utils import id_generator
-from jobs import schedule_check_for_start_assessment, \
-    schedule_periodic_check_for_start_assessment
+from jobs import schedule_periodic_check_for_start_assessment
 
 __logs__ = logging.getLogger(__name__)
 
@@ -127,6 +126,7 @@ def start():
     hit_id = request.args.get('hit_id')
     mode = request.args.get('mode', None)
     assignment_phase = 'Practice'
+    expire_time = 3600
 
     ua_dict = parse_user_agent(request.headers.get('User-Agent'))
 
@@ -158,12 +158,13 @@ def start():
                         latest_assignment and latest_assignment.is_complete):
                 raise ExperimentError('phase_completed')
             else:
-                assignment = _login_and_prep_subject(worker_id,
-                                                     assignment_id,
-                                                     hit_id,
-                                                     ua_dict,
-                                                     assignment_phase,
-                                                     debug_mode)
+                assignment = _login_and_create_assignment(worker_id,
+                                                          assignment_id,
+                                                          hit_id,
+                                                          ua_dict,
+                                                          assignment_phase,
+                                                          expire_time,
+                                                          debug_mode)
                 if not assignment:
                     raise ExperimentError('quit_experiment_early')
                 else:
@@ -174,12 +175,13 @@ def start():
             raise ExperimentError('experiment_completed')
     else:
         # If no subject is found create one and enter the experiment
-        assignment = _login_and_prep_subject(worker_id,
-                                             assignment_id,
-                                             hit_id,
-                                             ua_dict,
-                                             assignment_phase,
-                                             debug_mode)
+        assignment = _login_and_create_assignment(worker_id,
+                                                  assignment_id,
+                                                  hit_id,
+                                                  ua_dict,
+                                                  assignment_phase,
+                                                  3600,
+                                                  debug_mode)
         session['current_assignment_id'] = assignment.id
         save_session_record(assignment.id, 'Started')
         return redirect(url_for('exp.demography'))
@@ -437,11 +439,23 @@ def summary():
 
 @exp.route('/timeout', methods=['GET', 'POST'])
 def timed_out():
-    assignment = get_assignment(session['current_assignment_id'])
     if request.method == 'POST':
+        posted = request.get_json()
+        assignment_id = posted['assignment_id']
+        assignment = get_assignment(session['current_assignment_id'])
+        if assignment:
+            assignment.did_timeout = True
+            db.session.add(assignment)
+            save_session_record(assignment.id, 'Finalizing')
+            db.session.commit()
+            return jsonify(dict(success=True,
+                                message='User set to timed_out successfully'))
+        else:
+            raise ExperimentError('no_assignment')
+    elif request.method == 'GET':
+        assignment = get_assignment(session['current_assignment_id'])
         assignment.did_timeout = True
         db.session.add(assignment)
         save_session_record(assignment.id, 'Finalizing')
         db.session.commit()
-        return redirect(url_for('exp.finalize'))
     return render_template('timeout.html')

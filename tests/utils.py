@@ -72,14 +72,15 @@ def create_subjects(db):
 
 
 def create_assignments(db):
-    assignments = [(2, 'debug45678', 'debug45678', True),
-                   (3, 'debug91234', 'debug91234', False),
-                   (4, 'debug56789', 'debug56789', False)]
+    assignments = [(2, 'debug45678', 'debug45678', True, 3600),
+                   (3, 'debug91234', 'debug91234', False, 1600),
+                   (4, 'debug56789', 'debug56789', False, 3600)]
     for a in assignments:
         assignment = SubjectAssignment(subject_id=a[0],
                                        mturk_assignment_id=a[1],
                                        mturk_hit_id=a[2],
-                                       is_complete=a[3])
+                                       is_complete=a[3],
+                                       expire_time=a[4])
         db.session.add(assignment)
     db.session.commit()
 

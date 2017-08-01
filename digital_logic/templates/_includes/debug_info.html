@@ -2,5 +2,8 @@
   <ul>
     <li>subject_id: {{ session.current_subject_id }}</li>
     <li>experiment_group: {{ session.experiment_group }}</li>
+    <li>assignment_id: {{ session.current_assignment_id }}</li>
+    <li>exercises_correct: {{ session.exercises_correct | default(0) }}</li>
+    <li>exercises_incorrect: {{ session.exercises_incorrect | default(0) }}</li>
   </ul>
 </div>
