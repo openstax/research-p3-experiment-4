@@ -1,0 +1,46 @@
+<script src="{{ url_for('static', filename='js/tock.min.js') }}"></script>
+<script>
+  // Default the total seconds to something small so it ends quick and is obvious.
+  var seconds_expired = {{ session.expired_seconds|default(session.expired_seconds|default(0)) }};
+  var total_seconds = {{ session.assignment_timeout | default(150) }};
+  var debug_mode = {{ session.debug_mode | lower }};
+
+  if (debug_mode == true) {
+    total_seconds = 150
+  }
+
+  var update_clock = function () {
+    var expired = timer.msToTime(timer.lap());
+    expired = expired.split('.')[0];
+
+    // If you want to use the timer you'll need to place this html text box.
+    $('.clock').text('Time Remaining: ' + expired);
+  };
+
+  var timer = new Tock({
+      countdown: true,
+      interval: 1000,
+      callback: function () {
+        update_clock()
+      },
+
+      complete: function () {
+        // Function to call when the timer is done. This should do whatever
+        // you need when it times out.
+      $.ajax({
+        type: 'POST',
+        url: '{{ url_for('exp.timed_out') }}',
+        data: JSON.stringify({'assignment_id': {{ session.current_assignment_id }} }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json'
+      })
+      }
+    })
+  ;
+
+  $(function () {
+    timer.start((total_seconds - seconds_expired) * 1000);
+    update_clock();
+  })
+
+</script>

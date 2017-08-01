@@ -100,12 +100,14 @@ def create_subject_assignment(subject_id,
                               assignment_phase,
                               assignment_id,
                               hit_id,
+                              expire_time,
                               ua_dict):
     assignment = SubjectAssignment(subject_id=subject_id,
                                    assignment_phase=assignment_phase,
                                    mturk_hit_id=hit_id,
                                    mturk_assignment_id=assignment_id,
                                    created_on=datetime.utcnow(),
+                                   expire_time=expire_time,
                                    **ua_dict)
     db.session.add(assignment)
     db.session.commit()
@@ -127,6 +129,8 @@ def purge_subject_data(subject_id):
             db.session.add(assignment)
     db.session.commit()
 
+    return
+
 
 def purge_subject_assignment_data(assignment_id):
     assignment = SubjectAssignment.get(assignment_id)
@@ -145,6 +149,8 @@ def purge_subject_assignment_data(assignment_id):
 
     db.session.delete(assignment)
     db.session.commit()
+
+    return
 
 
 def save_session_record(assignment_id, status):
@@ -243,6 +249,8 @@ def save_assignment_response(assignment_id,
     db.session.add(ex_response)
 
     db.session.commit()
+
+    return ex_response
 
 
 def get_latest_assignment_by_user_id(user_id):

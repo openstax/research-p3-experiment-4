@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/timer_base.html' %}
 
 
 {% block content %}
@@ -10,6 +10,7 @@
                 </div>
                 <div class="exercise-wrapper loading">
                     {% set q_num = answered_exercises if feedback else answered_exercises + 1 %}
+                    {% set expired_time = session.expired_time %}
                     <div class="card-panel white-text teal">
                         Please take your time to answer the question. Some
                         questions
@@ -110,7 +111,9 @@
                                     <button class="btn btn-large waves-effect waves-light">
                                         Next Exercise
                                     </button>
-                                    <br/></p>
+                                    <br/>
+                                    <span class="clock"></span>
+                                </p>
                                 </div>
                         </form>
                     </div>

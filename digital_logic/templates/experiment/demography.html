@@ -1,4 +1,4 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/timer_base.html' %}
 {% import '_macros/forms.html' as macros %}
 
 {% block content %}
@@ -8,6 +8,7 @@
               {% if session.debug_mode %}
                   {% include '_includes/debug_info.html' %}
                 {% endif %}
+            <span class="clock"></span>
                 <div class="card-panel">
                     <!--Time to render the materialize form-->
                     <div class="form-wrapper">

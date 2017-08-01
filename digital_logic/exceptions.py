@@ -23,45 +23,53 @@ class ExperimentError(Exception):
         phase_completed=1007,
         phase_not_completed=1008,
         unqualified_worker=1009,
+        no_assignment=1010,
+        serious_error=911
     )
 
     error_descriptions = dict()
     error_descriptions['page_not_found'] = unwrap(
         '''
-        The resource you are looking for cannot be found.
+        The resource you are looking for cannot be found. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
 
     error_descriptions['incorrect_experiment_params'] = unwrap(
         '''
         Either the HIT id, the assignment id, or the worker id
-        were not provided to the start experiment page.
+        were not provided to the start experiment page. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
 
     error_descriptions['biglearn_service_error'] = unwrap(
         '''
-        There was an error with the Biglearn API.
+        There was an error with the Biglearn API. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
 
     error_descriptions['experiment_completed'] = unwrap(
         '''
         The experiment has already been completed by the user.
+        Please contact the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
 
     error_descriptions['quit_experiment_early'] = unwrap(
         '''
         The experiment was started and cannot be continued because
-        it ended prematurely.
+        it ended prematurely. Please contact the research team via 
+        email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
 
     error_descriptions['unknown_status'] = unwrap(
         '''
         There was an issue with the status of the experiment that the
-        application cannot handle.
+        application cannot handle. Please contact the research team via email 
+        at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
 
@@ -85,10 +93,24 @@ class ExperimentError(Exception):
         the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
         '''
     )
+
     error_descriptions['unqualified_worker'] = unwrap(
         '''
         You do not have the correct qualification on your Mechanical Turk account. Please contact
         the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
+        '''
+    )
+
+    error_descriptions['no_assignment'] = unwrap(
+        '''
+        An error occured when trying to create your assignment. Please contact
+        the research team via email at <a href="mailto:labs@openstax.org">labs@openstax.org</a>.
+        '''
+    )
+
+    error_descriptions['serious_error'] = unwrap(
+        '''
+        The resource you are looking for cannot be found.
         '''
     )
 

@@ -10,27 +10,27 @@ from flask import (Blueprint,
 from flask import current_app as app
 from flask_login import current_user
 
-from digital_logic.accounts.auth import logout_mturk_user, \
-    _login_and_prep_subject, mturk_permission
+from digital_logic.accounts.auth import (
+    logout_mturk_user,
+    _login_and_create_assignment,
+    mturk_permission)
 from digital_logic.core import db
 from digital_logic.decorators import check_distractor_time, check_time
 from digital_logic.exceptions import ExperimentError
-from digital_logic.experiment.exercise import (next_exercise_from_pool,
-                                               get_assignment_next_exercise)
+from digital_logic.experiment.exercise import get_assignment_next_exercise
 from digital_logic.experiment.forms import PredictionsForm, FinalizeForm
 from digital_logic.experiment.service import (
-    all_subject_assignments,
-    get_latest_subject_assignment,
     save_session_record,
     get_assignment,
     save_assignment_predictions,
-    get_subject_by_user_id,
     get_exercise,
     save_assignment_response,
     get_current_assignment_session)
 from digital_logic.helpers import parse_user_agent
 from digital_logic.models import UserSubject as Subject
-from digital_logic.utils import id_generator
+from digital_logic.utils import (
+    id_generator,
+    subject_has_assessment_qualification)
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -102,6 +102,7 @@ def start():
     hit_id = request.args.get('hit_id')
     mode = request.args.get('mode', None)
     assignment_phase = 'Assessment'
+    expire_time = 1600
 
     ua_dict = parse_user_agent(request.headers.get('User-Agent'))
 
@@ -127,13 +128,14 @@ def start():
         if not debug_mode:
             # This is live action!
             # Conduct a qualification check on mturk
-            if subject.has_assessment_qualification(worker_id):
-                assignment = _login_and_prep_subject(worker_id,
-                                                     assignment_id,
-                                                     hit_id,
-                                                     ua_dict,
-                                                     assignment_phase,
-                                                     debug_mode=False)
+            if subject_has_assessment_qualification(subject):
+                assignment = _login_and_create_assignment(worker_id,
+                                                          assignment_id,
+                                                          hit_id,
+                                                          ua_dict,
+                                                          assignment_phase,
+                                                          expire_time,
+                                                          debug_mode=False)
                 session['current_assignment_id'] = assignment.id
 
                 save_session_record(assignment.id, 'Distracting')
@@ -141,16 +143,20 @@ def start():
             else:
                 raise ExperimentError('unqualified_worker')
         else:
-            assignment = _login_and_prep_subject(worker_id,
-                                                 assignment_id,
-                                                 hit_id,
-                                                 ua_dict,
-                                                 assignment_phase,
-                                                 debug_mode)
-            session['current_assignment_id'] = assignment.id
+            assignment = _login_and_create_assignment(worker_id,
+                                                      assignment_id,
+                                                      hit_id,
+                                                      ua_dict,
+                                                      assignment_phase,
+                                                      expire_time,
+                                                      debug_mode)
+            if assignment:
+                session['current_assignment_id'] = assignment.id
 
-            save_session_record(assignment.id, 'Distracting')
-            return redirect(url_for('exam.distractor_task'))
+                save_session_record(assignment.id, 'Distracting')
+                return redirect(url_for('exam.distractor_task'))
+            else:
+                raise ExperimentError('no_assignment')
     else:
         # If no subject is found that is a problem as they should have finished
         # Part 1
@@ -159,7 +165,7 @@ def start():
 
 @exam.route('/distractor', methods=['GET'])
 @mturk_permission.require()
-@check_time(allowed=1800)
+@check_time()
 @check_distractor_time()
 def distractor_task():
     return render_template('distracting.html')
@@ -167,7 +173,7 @@ def distractor_task():
 
 @exam.route('/predicting', methods=['GET', 'POST'])
 @mturk_permission.require()
-@check_time(allowed=1800)
+@check_time()
 def prediction_task():
     form = PredictionsForm(request.form)
     assignment = get_assignment(session['current_assignment_id'])
@@ -192,7 +198,7 @@ def prediction_task():
 
 @exam.route('/exercise/next')
 @mturk_permission.require()
-@check_time(allowed=1800)
+@check_time()
 def next_exercise():
     assignment = get_assignment(session['current_assignment_id'])
     total_exercises = len(assignment.exercise_pool)
@@ -220,7 +226,7 @@ def next_exercise():
 
 @exam.route('/response', methods=['POST'])
 @mturk_permission.require()
-@check_time(allowed=1800)
+@check_time()
 def submit_response():
     exercise = get_exercise(session['current_exercise_id'])
     assignment = get_assignment(session['current_assignment_id'])

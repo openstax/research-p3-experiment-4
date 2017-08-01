@@ -113,12 +113,13 @@ def logout_mturk_user():
     utils.logout_user()
 
 
-def _login_and_prep_subject(worker_id,
-                            assignment_id,
-                            hit_id,
-                            ua_dict,
-                            assignment_phase,
-                            debug_mode=False):
+def _login_and_create_assignment(worker_id,
+                                 assignment_id,
+                                 hit_id,
+                                 ua_dict,
+                                 assignment_phase,
+                                 expire_time,
+                                 debug_mode=False):
     if worker_id and assignment_id != 'ASSIGNMENT_ID_NOT_AVAILABLE':
         user, subject = login_mturk_user(worker_id,
                                          hit_id,
@@ -135,11 +136,12 @@ def _login_and_prep_subject(worker_id,
             latest_assignment = None
 
         if not latest_assignment:
-            assignment = create_subject_assignment(subject.id,
-                                                   assignment_phase,
-                                                   assignment_id,
-                                                   hit_id,
-                                                   ua_dict)
+            assignment = create_subject_assignment(subject_id=subject.id,
+                                                   assignment_phase=assignment_phase,
+                                                   assignment_id=assignment_id,
+                                                   hit_id=hit_id,
+                                                   expire_time=expire_time,
+                                                   ua_dict=ua_dict)
             initialize_assignment_exercises(assignment)
             return assignment
         else:

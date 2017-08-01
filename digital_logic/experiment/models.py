@@ -41,15 +41,6 @@ class UserSubject(db.Model):
     def get_by_user_id(cls, user_id):
         return db.session.query(cls).filter(cls.user_id == user_id).first()
 
-    @hybrid_method
-    def has_assessment_qualification(self, cls):
-        workers = mturk.list_workers_with_qualification(
-            current_app.config['MTURK_PT2_QUALIFICATION'])
-        if cls.mturk_worker_id in workers:
-            return True
-        else:
-            return False
-
 
 class Exercise(db.Model):
     __tablename__ = 'exercises'
@@ -85,9 +76,8 @@ class SubjectAssignment(db.Model):
 
     mturk_assignment_id = db.Column(db.String(128), nullable=False)
     mturk_hit_id = db.Column(db.String(128), nullable=False)
-
     assignment_phase = db.Column(db.String(50))
-
+    expire_time = db.Column(db.Integer(), nullable=False)
     ua_raw = db.Column(db.String(255))
     ua_browser = db.Column(db.String(128))
     ua_browser_version = db.Column(db.String(128))

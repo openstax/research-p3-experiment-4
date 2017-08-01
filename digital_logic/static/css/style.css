@@ -21,6 +21,10 @@ strong {
     padding: 0 1em;
 }
 
+.clock {
+    float: right;
+}
+
 .exercise-text {
     font-size: 1.4em;
     font-family: 'Merriweather', Georgia, 'Times New Roman', Times, serif;
